@@ -51,7 +51,7 @@ require (
 	github.com/crewjam/saml v0.0.0-20190521120225-344d075952c9
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/docker/distribution v2.7.1+incompatible
+	github.com/docker/distribution v2.8.0+incompatible
 	github.com/docker/docker v1.4.2-0.20190924003213-a8608b5b67c7
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect

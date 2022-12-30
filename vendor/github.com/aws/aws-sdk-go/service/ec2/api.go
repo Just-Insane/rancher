@@ -440,8 +440,8 @@ func (c *EC2) AdvertiseByoipCidrRequest(input *AdvertiseByoipCidrInput) (req *re
 
 // AdvertiseByoipCidr API operation for Amazon Elastic Compute Cloud.
 //
-// Advertises an IPv4 address range that is provisioned for use with your AWS
-// resources through bring your own IP addresses (BYOIP).
+// Advertises an IPv4 or IPv6 address range that is provisioned for use with
+// your AWS resources through bring your own IP addresses (BYOIP).
 //
 // You can perform this operation at most once every 10 seconds, even if you
 // specify different address ranges each time.
@@ -787,6 +787,9 @@ func (c *EC2) AssignIpv6AddressesRequest(input *AssignIpv6AddressesInput) (req *
 // Type (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
+// You must specify either the IPv6 addresses or the IPv6 address count in the
+// request.
+//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -877,6 +880,8 @@ func (c *EC2) AssignPrivateIpAddressesRequest(input *AssignPrivateIpAddressesInp
 // Remapping an IP address is an asynchronous operation. When you move an IP
 // address from one network interface to another, check network/interfaces/macs/mac/local-ipv4s
 // in the instance metadata to confirm that the remapping is complete.
+//
+// You must specify either the IP addresses or the IP address count in the request.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1056,6 +1061,12 @@ func (c *EC2) AssociateClientVpnTargetNetworkRequest(input *AssociateClientVpnTa
 // with a Client VPN endpoint. You can associate only one subnet in each Availability
 // Zone. We recommend that you associate at least two subnets to provide Availability
 // Zone redundancy.
+//
+// If you specified a VPC when you created the Client VPN endpoint or if you
+// have previous subnet associations, the specified subnet must be in the same
+// VPC. To specify a subnet that's in a different VPC, you must first modify
+// the Client VPN endpoint (ModifyClientVpnEndpoint) and change the VPC that's
+// associated with it.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1603,8 +1614,13 @@ func (c *EC2) AssociateVpcCidrBlockRequest(input *AssociateVpcCidrBlockInput) (r
 // AssociateVpcCidrBlock API operation for Amazon Elastic Compute Cloud.
 //
 // Associates a CIDR block with your VPC. You can associate a secondary IPv4
-// CIDR block, or you can associate an Amazon-provided IPv6 CIDR block. The
-// IPv6 CIDR block size is fixed at /56.
+// CIDR block, an Amazon-provided IPv6 CIDR block, or an IPv6 CIDR block from
+// an IPv6 address pool that you provisioned through bring your own IP addresses
+// (BYOIP (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-byoip.html)).
+// The IPv6 CIDR block size is fixed at /56.
+//
+// You must specify one of the following in the request: an IPv4 CIDR block,
+// an IPv6 pool, or an Amazon-provided IPv6 CIDR block.
 //
 // For more information about associating CIDR blocks with your VPC and applicable
 // restrictions, see VPC and Subnet Sizing (https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#VPC_Sizing)
@@ -3910,13 +3926,13 @@ func (c *EC2) CreateDhcpOptionsRequest(input *CreateDhcpOptionsInput) (req *requ
 //    * domain-name - If you're using AmazonProvidedDNS in us-east-1, specify
 //    ec2.internal. If you're using AmazonProvidedDNS in another Region, specify
 //    region.compute.internal (for example, ap-northeast-1.compute.internal).
-//    Otherwise, specify a domain name (for example, MyCompany.com). This value
-//    is used to complete unqualified DNS hostnames. Important: Some Linux operating
-//    systems accept multiple domain names separated by spaces. However, Windows
-//    and other Linux operating systems treat the value as a single domain,
-//    which results in unexpected behavior. If your DHCP options set is associated
-//    with a VPC that has instances with multiple operating systems, specify
-//    only one domain name.
+//    Otherwise, specify a domain name (for example, ExampleCompany.com). This
+//    value is used to complete unqualified DNS hostnames. Important: Some Linux
+//    operating systems accept multiple domain names separated by spaces. However,
+//    Windows and other Linux operating systems treat the value as a single
+//    domain, which results in unexpected behavior. If your DHCP options set
+//    is associated with a VPC that has instances with multiple operating systems,
+//    specify only one domain name.
 //
 //    * ntp-servers - The IP addresses of up to four Network Time Protocol (NTP)
 //    servers.
@@ -4416,7 +4432,7 @@ func (c *EC2) CreateInstanceExportTaskRequest(input *CreateInstanceExportTaskInp
 
 // CreateInstanceExportTask API operation for Amazon Elastic Compute Cloud.
 //
-// Exports a running or stopped instance to an S3 bucket.
+// Exports a running or stopped instance to an Amazon S3 bucket.
 //
 // For information about the supported operating systems, image formats, and
 // known limitations for the types of instances you can export, see Exporting
@@ -4662,6 +4678,8 @@ func (c *EC2) CreateLaunchTemplateRequest(input *CreateLaunchTemplateInput) (req
 // Creates a launch template. A launch template contains the parameters to launch
 // an instance. When you launch an instance using RunInstances, you can specify
 // a launch template instead of providing the launch parameters in the request.
+// For more information, see Launching an instance from a launch template (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html)in
+// the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4740,6 +4758,9 @@ func (c *EC2) CreateLaunchTemplateVersionRequest(input *CreateLaunchTemplateVers
 //
 // Launch template versions are numbered in the order in which they are created.
 // You cannot specify, change, or replace the numbering of launch template versions.
+//
+// For more information, see Managing launch template versions (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html#manage-launch-template-versions)in
+// the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4912,6 +4933,84 @@ func (c *EC2) CreateLocalGatewayRouteTableVpcAssociation(input *CreateLocalGatew
 // for more information on using Contexts.
 func (c *EC2) CreateLocalGatewayRouteTableVpcAssociationWithContext(ctx aws.Context, input *CreateLocalGatewayRouteTableVpcAssociationInput, opts ...request.Option) (*CreateLocalGatewayRouteTableVpcAssociationOutput, error) {
 	req, out := c.CreateLocalGatewayRouteTableVpcAssociationRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opCreateManagedPrefixList = "CreateManagedPrefixList"
+
+// CreateManagedPrefixListRequest generates a "aws/request.Request" representing the
+// client's request for the CreateManagedPrefixList operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See CreateManagedPrefixList for more information on using the CreateManagedPrefixList
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the CreateManagedPrefixListRequest method.
+//    req, resp := client.CreateManagedPrefixListRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/CreateManagedPrefixList
+func (c *EC2) CreateManagedPrefixListRequest(input *CreateManagedPrefixListInput) (req *request.Request, output *CreateManagedPrefixListOutput) {
+	op := &request.Operation{
+		Name:       opCreateManagedPrefixList,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &CreateManagedPrefixListInput{}
+	}
+
+	output = &CreateManagedPrefixListOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// CreateManagedPrefixList API operation for Amazon Elastic Compute Cloud.
+//
+// Creates a managed prefix list. You can specify one or more entries for the
+// prefix list. Each entry consists of a CIDR block and an optional description.
+//
+// You must specify the maximum number of entries for the prefix list. The maximum
+// number of entries cannot be changed later.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation CreateManagedPrefixList for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/CreateManagedPrefixList
+func (c *EC2) CreateManagedPrefixList(input *CreateManagedPrefixListInput) (*CreateManagedPrefixListOutput, error) {
+	req, out := c.CreateManagedPrefixListRequest(input)
+	return out, req.Send()
+}
+
+// CreateManagedPrefixListWithContext is the same as CreateManagedPrefixList with the addition of
+// the ability to pass a context and additional request options.
+//
+// See CreateManagedPrefixList for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) CreateManagedPrefixListWithContext(ctx aws.Context, input *CreateManagedPrefixListInput, opts ...request.Option) (*CreateManagedPrefixListOutput, error) {
+	req, out := c.CreateManagedPrefixListRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -5361,7 +5460,6 @@ func (c *EC2) CreatePlacementGroupRequest(input *CreatePlacementGroupInput) (req
 
 	output = &CreatePlacementGroupOutput{}
 	req = c.newRequest(op, input, output)
-	req.Handlers.Unmarshal.Swap(ec2query.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
 	return
 }
 
@@ -5377,7 +5475,7 @@ func (c *EC2) CreatePlacementGroupRequest(input *CreatePlacementGroupInput) (req
 // instances in one partition do not share the same hardware with instances
 // in another partition.
 //
-// For more information, see Placement Groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
+// For more information, see Placement groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -6077,15 +6175,12 @@ func (c *EC2) CreateSubnetRequest(input *CreateSubnetInput) (req *request.Reques
 
 // CreateSubnet API operation for Amazon Elastic Compute Cloud.
 //
-// Creates a subnet in an existing VPC.
+// Creates a subnet in a specified VPC.
 //
-// When you create each subnet, you provide the VPC ID and IPv4 CIDR block for
-// the subnet. After you create a subnet, you can't change its CIDR block. The
-// size of the subnet's IPv4 CIDR block can be the same as a VPC's IPv4 CIDR
-// block, or a subset of a VPC's IPv4 CIDR block. If you create more than one
-// subnet in a VPC, the subnets' CIDR blocks must not overlap. The smallest
-// IPv4 subnet (and VPC) you can create uses a /28 netmask (16 IPv4 addresses),
-// and the largest uses a /16 netmask (65,536 IPv4 addresses).
+// You must specify an IPv4 CIDR block for the subnet. After you create a subnet,
+// you can't change its CIDR block. The allowed block size is between a /16
+// netmask (65,536 IP addresses) and /28 netmask (16 IP addresses). The CIDR
+// block must not overlap with the CIDR block of an existing subnet in the VPC.
 //
 // If you've associated an IPv6 CIDR block with your VPC, you can create a subnet
 // with an IPv6 CIDR block that uses a /64 prefix length.
@@ -6096,9 +6191,7 @@ func (c *EC2) CreateSubnetRequest(input *CreateSubnetInput) (req *request.Reques
 // If you add more than one subnet to a VPC, they're set up in a star topology
 // with a logical router in the middle.
 //
-// If you launch an instance in a VPC using an Amazon EBS-backed AMI, the IP
-// address doesn't change if you stop and restart the instance (unlike a similar
-// instance launched outside a VPC, which gets a new IP address when restarted).
+// When you stop an instance in a subnet, it retains its private IPv4 address.
 // It's therefore possible to have a subnet with no running instances (they're
 // all stopped), but no remaining IP addresses available.
 //
@@ -6178,9 +6271,10 @@ func (c *EC2) CreateTagsRequest(input *CreateTagsInput) (req *request.Request, o
 
 // CreateTags API operation for Amazon Elastic Compute Cloud.
 //
-// Adds or overwrites the specified tags for the specified Amazon EC2 resource
-// or resources. Each resource can have a maximum of 50 tags. Each tag consists
-// of a key and optional value. Tag keys must be unique per resource.
+// Adds or overwrites only the specified tags for the specified Amazon EC2 resource
+// or resources. When you specify an existing tag key, the value is overwritten
+// with the new value. Each resource can have a maximum of 50 tags. Each tag
+// consists of a key and optional value. Tag keys must be unique per resource.
 //
 // For more information about tags, see Tagging Your Resources (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html)
 // in the Amazon Elastic Compute Cloud User Guide. For more information about
@@ -7169,9 +7263,10 @@ func (c *EC2) CreateVpcRequest(input *CreateVpcInput) (req *request.Request, out
 // make your VPC, see Your VPC and Subnets (https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html)
 // in the Amazon Virtual Private Cloud User Guide.
 //
-// You can optionally request an Amazon-provided IPv6 CIDR block for the VPC.
-// The IPv6 CIDR block uses a /56 prefix length, and is allocated from Amazon's
-// pool of IPv6 addresses. You cannot choose the IPv6 range for your VPC.
+// You can optionally request an IPv6 CIDR block for the VPC. You can request
+// an Amazon-provided IPv6 CIDR block from Amazon's pool of IPv6 addresses,
+// or an IPv6 CIDR block from an IPv6 address pool that you provisioned through
+// bring your own IP addresses (BYOIP (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-byoip.html)).
 //
 // By default, each instance you launch in the VPC has the default DHCP options,
 // which include only a default DNS server that we provide (AmazonProvidedDNS).
@@ -8868,6 +8963,81 @@ func (c *EC2) DeleteLocalGatewayRouteTableVpcAssociationWithContext(ctx aws.Cont
 	return out, req.Send()
 }
 
+const opDeleteManagedPrefixList = "DeleteManagedPrefixList"
+
+// DeleteManagedPrefixListRequest generates a "aws/request.Request" representing the
+// client's request for the DeleteManagedPrefixList operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DeleteManagedPrefixList for more information on using the DeleteManagedPrefixList
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DeleteManagedPrefixListRequest method.
+//    req, resp := client.DeleteManagedPrefixListRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DeleteManagedPrefixList
+func (c *EC2) DeleteManagedPrefixListRequest(input *DeleteManagedPrefixListInput) (req *request.Request, output *DeleteManagedPrefixListOutput) {
+	op := &request.Operation{
+		Name:       opDeleteManagedPrefixList,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &DeleteManagedPrefixListInput{}
+	}
+
+	output = &DeleteManagedPrefixListOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DeleteManagedPrefixList API operation for Amazon Elastic Compute Cloud.
+//
+// Deletes the specified managed prefix list. You must first remove all references
+// to the prefix list in your resources.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation DeleteManagedPrefixList for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DeleteManagedPrefixList
+func (c *EC2) DeleteManagedPrefixList(input *DeleteManagedPrefixListInput) (*DeleteManagedPrefixListOutput, error) {
+	req, out := c.DeleteManagedPrefixListRequest(input)
+	return out, req.Send()
+}
+
+// DeleteManagedPrefixListWithContext is the same as DeleteManagedPrefixList with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DeleteManagedPrefixList for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DeleteManagedPrefixListWithContext(ctx aws.Context, input *DeleteManagedPrefixListInput, opts ...request.Option) (*DeleteManagedPrefixListOutput, error) {
+	req, out := c.DeleteManagedPrefixListRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opDeleteNatGateway = "DeleteNatGateway"
 
 // DeleteNatGatewayRequest generates a "aws/request.Request" representing the
@@ -9296,7 +9466,7 @@ func (c *EC2) DeletePlacementGroupRequest(input *DeletePlacementGroupInput) (req
 //
 // Deletes the specified placement group. You must terminate all instances in
 // the placement group before you can delete the placement group. For more information,
-// see Placement Groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
+// see Placement groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -11218,8 +11388,12 @@ func (c *EC2) DeleteVpnConnectionRequest(input *DeleteVpnConnectionInput) (req *
 // your VPN connection have been compromised, you can delete the VPN connection
 // and create a new one that has new keys, without needing to delete the VPC
 // or virtual private gateway. If you create a new VPN connection, you must
-// reconfigure the customer gateway using the new configuration information
+// reconfigure the customer gateway device using the new configuration information
 // returned with the new VPN connection ID.
+//
+// For certificate-based authentication, delete all AWS Certificate Manager
+// (ACM) private certificates used for the AWS-side tunnel endpoints for the
+// VPN connection before deleting the VPN connection.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -11372,11 +11546,10 @@ func (c *EC2) DeleteVpnGatewayRequest(input *DeleteVpnGatewayInput) (req *reques
 
 // DeleteVpnGateway API operation for Amazon Elastic Compute Cloud.
 //
-// Deletes the specified virtual private gateway. We recommend that before you
-// delete a virtual private gateway, you detach it from the VPC and delete the
-// VPN connection. Note that you don't need to delete the virtual private gateway
-// if you plan to delete and recreate the VPN connection between your VPC and
-// your network.
+// Deletes the specified virtual private gateway. You must first detach the
+// virtual private gateway from the VPC. Note that you don't need to delete
+// the virtual private gateway if you plan to delete and recreate the VPN connection
+// between your VPC and your network.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -11564,6 +11737,81 @@ func (c *EC2) DeregisterImage(input *DeregisterImageInput) (*DeregisterImageOutp
 // for more information on using Contexts.
 func (c *EC2) DeregisterImageWithContext(ctx aws.Context, input *DeregisterImageInput, opts ...request.Option) (*DeregisterImageOutput, error) {
 	req, out := c.DeregisterImageRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opDeregisterInstanceEventNotificationAttributes = "DeregisterInstanceEventNotificationAttributes"
+
+// DeregisterInstanceEventNotificationAttributesRequest generates a "aws/request.Request" representing the
+// client's request for the DeregisterInstanceEventNotificationAttributes operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DeregisterInstanceEventNotificationAttributes for more information on using the DeregisterInstanceEventNotificationAttributes
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DeregisterInstanceEventNotificationAttributesRequest method.
+//    req, resp := client.DeregisterInstanceEventNotificationAttributesRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DeregisterInstanceEventNotificationAttributes
+func (c *EC2) DeregisterInstanceEventNotificationAttributesRequest(input *DeregisterInstanceEventNotificationAttributesInput) (req *request.Request, output *DeregisterInstanceEventNotificationAttributesOutput) {
+	op := &request.Operation{
+		Name:       opDeregisterInstanceEventNotificationAttributes,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &DeregisterInstanceEventNotificationAttributesInput{}
+	}
+
+	output = &DeregisterInstanceEventNotificationAttributesOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DeregisterInstanceEventNotificationAttributes API operation for Amazon Elastic Compute Cloud.
+//
+// Deregisters tag keys to prevent tags that have the specified tag keys from
+// being included in scheduled event notifications for resources in the Region.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation DeregisterInstanceEventNotificationAttributes for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DeregisterInstanceEventNotificationAttributes
+func (c *EC2) DeregisterInstanceEventNotificationAttributes(input *DeregisterInstanceEventNotificationAttributesInput) (*DeregisterInstanceEventNotificationAttributesOutput, error) {
+	req, out := c.DeregisterInstanceEventNotificationAttributesRequest(input)
+	return out, req.Send()
+}
+
+// DeregisterInstanceEventNotificationAttributesWithContext is the same as DeregisterInstanceEventNotificationAttributes with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DeregisterInstanceEventNotificationAttributes for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DeregisterInstanceEventNotificationAttributesWithContext(ctx aws.Context, input *DeregisterInstanceEventNotificationAttributesInput, opts ...request.Option) (*DeregisterInstanceEventNotificationAttributesOutput, error) {
+	req, out := c.DeregisterInstanceEventNotificationAttributesRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -12192,7 +12440,7 @@ func (c *EC2) DescribeByoipCidrsRequest(input *DescribeByoipCidrsInput) (req *re
 // Describes the IP address ranges that were specified in calls to ProvisionByoipCidr.
 //
 // To describe the address pools that were created when you provisioned the
-// address ranges, use DescribePublicIpv4Pools.
+// address ranges, use DescribePublicIpv4Pools or DescribeIpv6Pools.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -13234,6 +13482,12 @@ func (c *EC2) DescribeCoipPoolsRequest(input *DescribeCoipPoolsInput) (req *requ
 		Name:       opDescribeCoipPools,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -13276,6 +13530,58 @@ func (c *EC2) DescribeCoipPoolsWithContext(ctx aws.Context, input *DescribeCoipP
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// DescribeCoipPoolsPages iterates over the pages of a DescribeCoipPools operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeCoipPools method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeCoipPools operation.
+//    pageNum := 0
+//    err := client.DescribeCoipPoolsPages(params,
+//        func(page *ec2.DescribeCoipPoolsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeCoipPoolsPages(input *DescribeCoipPoolsInput, fn func(*DescribeCoipPoolsOutput, bool) bool) error {
+	return c.DescribeCoipPoolsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeCoipPoolsPagesWithContext same as DescribeCoipPoolsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeCoipPoolsPagesWithContext(ctx aws.Context, input *DescribeCoipPoolsInput, fn func(*DescribeCoipPoolsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeCoipPoolsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeCoipPoolsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeCoipPoolsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opDescribeConversionTasks = "DescribeConversionTasks"
@@ -13826,7 +14132,7 @@ func (c *EC2) DescribeExportImageTasksRequest(input *DescribeExportImageTasksInp
 
 // DescribeExportImageTasks API operation for Amazon Elastic Compute Cloud.
 //
-// Describes the specified export image tasks or all your export image tasks.
+// Describes the specified export image tasks or all of your export image tasks.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -13952,7 +14258,7 @@ func (c *EC2) DescribeExportTasksRequest(input *DescribeExportTasksInput) (req *
 
 // DescribeExportTasks API operation for Amazon Elastic Compute Cloud.
 //
-// Describes the specified export instance tasks or all your export instance
+// Describes the specified export instance tasks or all of your export instance
 // tasks.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -16037,7 +16343,7 @@ func (c *EC2) DescribeInstanceCreditSpecificationsRequest(input *DescribeInstanc
 // all, the call fails. If you specify only instance IDs in an unaffected zone,
 // the call works normally.
 //
-// For more information, see Burstable Performance Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
+// For more information, see Burstable performance instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -16120,6 +16426,81 @@ func (c *EC2) DescribeInstanceCreditSpecificationsPagesWithContext(ctx aws.Conte
 	return p.Err()
 }
 
+const opDescribeInstanceEventNotificationAttributes = "DescribeInstanceEventNotificationAttributes"
+
+// DescribeInstanceEventNotificationAttributesRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeInstanceEventNotificationAttributes operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DescribeInstanceEventNotificationAttributes for more information on using the DescribeInstanceEventNotificationAttributes
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DescribeInstanceEventNotificationAttributesRequest method.
+//    req, resp := client.DescribeInstanceEventNotificationAttributesRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeInstanceEventNotificationAttributes
+func (c *EC2) DescribeInstanceEventNotificationAttributesRequest(input *DescribeInstanceEventNotificationAttributesInput) (req *request.Request, output *DescribeInstanceEventNotificationAttributesOutput) {
+	op := &request.Operation{
+		Name:       opDescribeInstanceEventNotificationAttributes,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &DescribeInstanceEventNotificationAttributesInput{}
+	}
+
+	output = &DescribeInstanceEventNotificationAttributesOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DescribeInstanceEventNotificationAttributes API operation for Amazon Elastic Compute Cloud.
+//
+// Describes the tag keys that are registered to appear in scheduled event notifications
+// for resources in the current Region.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation DescribeInstanceEventNotificationAttributes for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeInstanceEventNotificationAttributes
+func (c *EC2) DescribeInstanceEventNotificationAttributes(input *DescribeInstanceEventNotificationAttributesInput) (*DescribeInstanceEventNotificationAttributesOutput, error) {
+	req, out := c.DescribeInstanceEventNotificationAttributesRequest(input)
+	return out, req.Send()
+}
+
+// DescribeInstanceEventNotificationAttributesWithContext is the same as DescribeInstanceEventNotificationAttributes with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DescribeInstanceEventNotificationAttributes for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeInstanceEventNotificationAttributesWithContext(ctx aws.Context, input *DescribeInstanceEventNotificationAttributesInput, opts ...request.Option) (*DescribeInstanceEventNotificationAttributesOutput, error) {
+	req, out := c.DescribeInstanceEventNotificationAttributesRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opDescribeInstanceStatus = "DescribeInstanceStatus"
 
 // DescribeInstanceStatusRequest generates a "aws/request.Request" representing the
@@ -16178,18 +16559,18 @@ func (c *EC2) DescribeInstanceStatusRequest(input *DescribeInstanceStatusInput) 
 //
 //    * Status checks - Amazon EC2 performs status checks on running EC2 instances
 //    to identify hardware and software issues. For more information, see Status
-//    Checks for Your Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-system-instance-status-check.html)
-//    and Troubleshooting Instances with Failed Status Checks (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstances.html)
+//    checks for your instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-system-instance-status-check.html)
+//    and Troubleshooting instances with failed status checks (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstances.html)
 //    in the Amazon Elastic Compute Cloud User Guide.
 //
 //    * Scheduled events - Amazon EC2 can schedule events (such as reboot, stop,
 //    or terminate) for your instances related to hardware issues, software
-//    updates, or system maintenance. For more information, see Scheduled Events
-//    for Your Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-instances-status-check_sched.html)
+//    updates, or system maintenance. For more information, see Scheduled events
+//    for your instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-instances-status-check_sched.html)
 //    in the Amazon Elastic Compute Cloud User Guide.
 //
 //    * Instance state - You can manage your instances from the moment you launch
-//    them through their termination. For more information, see Instance Lifecycle
+//    them through their termination. For more information, see Instance lifecycle
 //    (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
 //    in the Amazon Elastic Compute Cloud User Guide.
 //
@@ -16304,6 +16685,12 @@ func (c *EC2) DescribeInstanceTypeOfferingsRequest(input *DescribeInstanceTypeOf
 		Name:       opDescribeInstanceTypeOfferings,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -16349,6 +16736,58 @@ func (c *EC2) DescribeInstanceTypeOfferingsWithContext(ctx aws.Context, input *D
 	return out, req.Send()
 }
 
+// DescribeInstanceTypeOfferingsPages iterates over the pages of a DescribeInstanceTypeOfferings operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeInstanceTypeOfferings method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeInstanceTypeOfferings operation.
+//    pageNum := 0
+//    err := client.DescribeInstanceTypeOfferingsPages(params,
+//        func(page *ec2.DescribeInstanceTypeOfferingsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeInstanceTypeOfferingsPages(input *DescribeInstanceTypeOfferingsInput, fn func(*DescribeInstanceTypeOfferingsOutput, bool) bool) error {
+	return c.DescribeInstanceTypeOfferingsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeInstanceTypeOfferingsPagesWithContext same as DescribeInstanceTypeOfferingsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeInstanceTypeOfferingsPagesWithContext(ctx aws.Context, input *DescribeInstanceTypeOfferingsInput, fn func(*DescribeInstanceTypeOfferingsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeInstanceTypeOfferingsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeInstanceTypeOfferingsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeInstanceTypeOfferingsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeInstanceTypes = "DescribeInstanceTypes"
 
 // DescribeInstanceTypesRequest generates a "aws/request.Request" representing the
@@ -16380,6 +16819,12 @@ func (c *EC2) DescribeInstanceTypesRequest(input *DescribeInstanceTypesInput) (r
 		Name:       opDescribeInstanceTypes,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -16393,7 +16838,7 @@ func (c *EC2) DescribeInstanceTypesRequest(input *DescribeInstanceTypesInput) (r
 
 // DescribeInstanceTypes API operation for Amazon Elastic Compute Cloud.
 //
-// Returns a list of all instance types offered in your current AWS Region.
+// Describes the details of the instance types that are offered in a location.
 // The results can be filtered by the attributes of the instance types.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -16422,6 +16867,58 @@ func (c *EC2) DescribeInstanceTypesWithContext(ctx aws.Context, input *DescribeI
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// DescribeInstanceTypesPages iterates over the pages of a DescribeInstanceTypes operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeInstanceTypes method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeInstanceTypes operation.
+//    pageNum := 0
+//    err := client.DescribeInstanceTypesPages(params,
+//        func(page *ec2.DescribeInstanceTypesOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeInstanceTypesPages(input *DescribeInstanceTypesInput, fn func(*DescribeInstanceTypesOutput, bool) bool) error {
+	return c.DescribeInstanceTypesPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeInstanceTypesPagesWithContext same as DescribeInstanceTypesPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeInstanceTypesPagesWithContext(ctx aws.Context, input *DescribeInstanceTypesInput, fn func(*DescribeInstanceTypesOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeInstanceTypesInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeInstanceTypesRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeInstanceTypesOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opDescribeInstances = "DescribeInstances"
@@ -16474,13 +16971,17 @@ func (c *EC2) DescribeInstancesRequest(input *DescribeInstancesInput) (req *requ
 
 // DescribeInstances API operation for Amazon Elastic Compute Cloud.
 //
-// Describes the specified instances or all of AWS account's instances.
+// Describes the specified instances or all instances.
 //
-// If you specify one or more instance IDs, Amazon EC2 returns information for
-// those instances. If you do not specify instance IDs, Amazon EC2 returns information
-// for all relevant instances. If you specify an instance ID that is not valid,
-// an error is returned. If you specify an instance that you do not own, it
-// is not included in the returned results.
+// If you specify instance IDs, the output includes information for only the
+// specified instances. If you specify filters, the output includes information
+// for only those instances that meet the filter criteria. If you do not specify
+// instance IDs or filters, the output includes information for all instances,
+// which can affect performance. We recommend that you use pagination to ensure
+// that the operation returns quickly and successfully.
+//
+// If you specify an instance ID that is not valid, an error is returned. If
+// you specify an instance that you do not own, it is not included in the output.
 //
 // Recently terminated instances might appear in the returned results. This
 // interval is usually less than one hour.
@@ -16696,6 +17197,138 @@ func (c *EC2) DescribeInternetGatewaysPagesWithContext(ctx aws.Context, input *D
 
 	for p.Next() {
 		if !fn(p.Page().(*DescribeInternetGatewaysOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
+const opDescribeIpv6Pools = "DescribeIpv6Pools"
+
+// DescribeIpv6PoolsRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeIpv6Pools operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DescribeIpv6Pools for more information on using the DescribeIpv6Pools
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DescribeIpv6PoolsRequest method.
+//    req, resp := client.DescribeIpv6PoolsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeIpv6Pools
+func (c *EC2) DescribeIpv6PoolsRequest(input *DescribeIpv6PoolsInput) (req *request.Request, output *DescribeIpv6PoolsOutput) {
+	op := &request.Operation{
+		Name:       opDescribeIpv6Pools,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &DescribeIpv6PoolsInput{}
+	}
+
+	output = &DescribeIpv6PoolsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DescribeIpv6Pools API operation for Amazon Elastic Compute Cloud.
+//
+// Describes your IPv6 address pools.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation DescribeIpv6Pools for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeIpv6Pools
+func (c *EC2) DescribeIpv6Pools(input *DescribeIpv6PoolsInput) (*DescribeIpv6PoolsOutput, error) {
+	req, out := c.DescribeIpv6PoolsRequest(input)
+	return out, req.Send()
+}
+
+// DescribeIpv6PoolsWithContext is the same as DescribeIpv6Pools with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DescribeIpv6Pools for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeIpv6PoolsWithContext(ctx aws.Context, input *DescribeIpv6PoolsInput, opts ...request.Option) (*DescribeIpv6PoolsOutput, error) {
+	req, out := c.DescribeIpv6PoolsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// DescribeIpv6PoolsPages iterates over the pages of a DescribeIpv6Pools operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeIpv6Pools method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeIpv6Pools operation.
+//    pageNum := 0
+//    err := client.DescribeIpv6PoolsPages(params,
+//        func(page *ec2.DescribeIpv6PoolsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeIpv6PoolsPages(input *DescribeIpv6PoolsInput, fn func(*DescribeIpv6PoolsOutput, bool) bool) error {
+	return c.DescribeIpv6PoolsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeIpv6PoolsPagesWithContext same as DescribeIpv6PoolsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeIpv6PoolsPagesWithContext(ctx aws.Context, input *DescribeIpv6PoolsInput, fn func(*DescribeIpv6PoolsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeIpv6PoolsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeIpv6PoolsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeIpv6PoolsOutput), !p.HasNextPage()) {
 			break
 		}
 	}
@@ -17076,6 +17709,12 @@ func (c *EC2) DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsReq
 		Name:       opDescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -17120,6 +17759,58 @@ func (c *EC2) DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsWit
 	return out, req.Send()
 }
 
+// DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPages iterates over the pages of a DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations operation.
+//    pageNum := 0
+//    err := client.DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPages(params,
+//        func(page *ec2.DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPages(input *DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsInput, fn func(*DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsOutput, bool) bool) error {
+	return c.DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPagesWithContext same as DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsPagesWithContext(ctx aws.Context, input *DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsInput, fn func(*DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeLocalGatewayRouteTableVpcAssociations = "DescribeLocalGatewayRouteTableVpcAssociations"
 
 // DescribeLocalGatewayRouteTableVpcAssociationsRequest generates a "aws/request.Request" representing the
@@ -17151,6 +17842,12 @@ func (c *EC2) DescribeLocalGatewayRouteTableVpcAssociationsRequest(input *Descri
 		Name:       opDescribeLocalGatewayRouteTableVpcAssociations,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -17195,6 +17892,58 @@ func (c *EC2) DescribeLocalGatewayRouteTableVpcAssociationsWithContext(ctx aws.C
 	return out, req.Send()
 }
 
+// DescribeLocalGatewayRouteTableVpcAssociationsPages iterates over the pages of a DescribeLocalGatewayRouteTableVpcAssociations operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeLocalGatewayRouteTableVpcAssociations method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeLocalGatewayRouteTableVpcAssociations operation.
+//    pageNum := 0
+//    err := client.DescribeLocalGatewayRouteTableVpcAssociationsPages(params,
+//        func(page *ec2.DescribeLocalGatewayRouteTableVpcAssociationsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeLocalGatewayRouteTableVpcAssociationsPages(input *DescribeLocalGatewayRouteTableVpcAssociationsInput, fn func(*DescribeLocalGatewayRouteTableVpcAssociationsOutput, bool) bool) error {
+	return c.DescribeLocalGatewayRouteTableVpcAssociationsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeLocalGatewayRouteTableVpcAssociationsPagesWithContext same as DescribeLocalGatewayRouteTableVpcAssociationsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeLocalGatewayRouteTableVpcAssociationsPagesWithContext(ctx aws.Context, input *DescribeLocalGatewayRouteTableVpcAssociationsInput, fn func(*DescribeLocalGatewayRouteTableVpcAssociationsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeLocalGatewayRouteTableVpcAssociationsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeLocalGatewayRouteTableVpcAssociationsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeLocalGatewayRouteTableVpcAssociationsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeLocalGatewayRouteTables = "DescribeLocalGatewayRouteTables"
 
 // DescribeLocalGatewayRouteTablesRequest generates a "aws/request.Request" representing the
@@ -17226,6 +17975,12 @@ func (c *EC2) DescribeLocalGatewayRouteTablesRequest(input *DescribeLocalGateway
 		Name:       opDescribeLocalGatewayRouteTables,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -17270,6 +18025,58 @@ func (c *EC2) DescribeLocalGatewayRouteTablesWithContext(ctx aws.Context, input 
 	return out, req.Send()
 }
 
+// DescribeLocalGatewayRouteTablesPages iterates over the pages of a DescribeLocalGatewayRouteTables operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeLocalGatewayRouteTables method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeLocalGatewayRouteTables operation.
+//    pageNum := 0
+//    err := client.DescribeLocalGatewayRouteTablesPages(params,
+//        func(page *ec2.DescribeLocalGatewayRouteTablesOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeLocalGatewayRouteTablesPages(input *DescribeLocalGatewayRouteTablesInput, fn func(*DescribeLocalGatewayRouteTablesOutput, bool) bool) error {
+	return c.DescribeLocalGatewayRouteTablesPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeLocalGatewayRouteTablesPagesWithContext same as DescribeLocalGatewayRouteTablesPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeLocalGatewayRouteTablesPagesWithContext(ctx aws.Context, input *DescribeLocalGatewayRouteTablesInput, fn func(*DescribeLocalGatewayRouteTablesOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeLocalGatewayRouteTablesInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeLocalGatewayRouteTablesRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeLocalGatewayRouteTablesOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeLocalGatewayVirtualInterfaceGroups = "DescribeLocalGatewayVirtualInterfaceGroups"
 
 // DescribeLocalGatewayVirtualInterfaceGroupsRequest generates a "aws/request.Request" representing the
@@ -17301,6 +18108,12 @@ func (c *EC2) DescribeLocalGatewayVirtualInterfaceGroupsRequest(input *DescribeL
 		Name:       opDescribeLocalGatewayVirtualInterfaceGroups,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -17344,6 +18157,58 @@ func (c *EC2) DescribeLocalGatewayVirtualInterfaceGroupsWithContext(ctx aws.Cont
 	return out, req.Send()
 }
 
+// DescribeLocalGatewayVirtualInterfaceGroupsPages iterates over the pages of a DescribeLocalGatewayVirtualInterfaceGroups operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeLocalGatewayVirtualInterfaceGroups method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeLocalGatewayVirtualInterfaceGroups operation.
+//    pageNum := 0
+//    err := client.DescribeLocalGatewayVirtualInterfaceGroupsPages(params,
+//        func(page *ec2.DescribeLocalGatewayVirtualInterfaceGroupsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeLocalGatewayVirtualInterfaceGroupsPages(input *DescribeLocalGatewayVirtualInterfaceGroupsInput, fn func(*DescribeLocalGatewayVirtualInterfaceGroupsOutput, bool) bool) error {
+	return c.DescribeLocalGatewayVirtualInterfaceGroupsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeLocalGatewayVirtualInterfaceGroupsPagesWithContext same as DescribeLocalGatewayVirtualInterfaceGroupsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeLocalGatewayVirtualInterfaceGroupsPagesWithContext(ctx aws.Context, input *DescribeLocalGatewayVirtualInterfaceGroupsInput, fn func(*DescribeLocalGatewayVirtualInterfaceGroupsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeLocalGatewayVirtualInterfaceGroupsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeLocalGatewayVirtualInterfaceGroupsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeLocalGatewayVirtualInterfaceGroupsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeLocalGatewayVirtualInterfaces = "DescribeLocalGatewayVirtualInterfaces"
 
 // DescribeLocalGatewayVirtualInterfacesRequest generates a "aws/request.Request" representing the
@@ -17375,6 +18240,12 @@ func (c *EC2) DescribeLocalGatewayVirtualInterfacesRequest(input *DescribeLocalG
 		Name:       opDescribeLocalGatewayVirtualInterfaces,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -17418,6 +18289,58 @@ func (c *EC2) DescribeLocalGatewayVirtualInterfacesWithContext(ctx aws.Context, 
 	return out, req.Send()
 }
 
+// DescribeLocalGatewayVirtualInterfacesPages iterates over the pages of a DescribeLocalGatewayVirtualInterfaces operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeLocalGatewayVirtualInterfaces method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeLocalGatewayVirtualInterfaces operation.
+//    pageNum := 0
+//    err := client.DescribeLocalGatewayVirtualInterfacesPages(params,
+//        func(page *ec2.DescribeLocalGatewayVirtualInterfacesOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeLocalGatewayVirtualInterfacesPages(input *DescribeLocalGatewayVirtualInterfacesInput, fn func(*DescribeLocalGatewayVirtualInterfacesOutput, bool) bool) error {
+	return c.DescribeLocalGatewayVirtualInterfacesPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeLocalGatewayVirtualInterfacesPagesWithContext same as DescribeLocalGatewayVirtualInterfacesPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeLocalGatewayVirtualInterfacesPagesWithContext(ctx aws.Context, input *DescribeLocalGatewayVirtualInterfacesInput, fn func(*DescribeLocalGatewayVirtualInterfacesOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeLocalGatewayVirtualInterfacesInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeLocalGatewayVirtualInterfacesRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeLocalGatewayVirtualInterfacesOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeLocalGateways = "DescribeLocalGateways"
 
 // DescribeLocalGatewaysRequest generates a "aws/request.Request" representing the
@@ -17449,6 +18372,12 @@ func (c *EC2) DescribeLocalGatewaysRequest(input *DescribeLocalGatewaysInput) (r
 		Name:       opDescribeLocalGateways,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -17491,6 +18420,192 @@ func (c *EC2) DescribeLocalGatewaysWithContext(ctx aws.Context, input *DescribeL
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// DescribeLocalGatewaysPages iterates over the pages of a DescribeLocalGateways operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeLocalGateways method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeLocalGateways operation.
+//    pageNum := 0
+//    err := client.DescribeLocalGatewaysPages(params,
+//        func(page *ec2.DescribeLocalGatewaysOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeLocalGatewaysPages(input *DescribeLocalGatewaysInput, fn func(*DescribeLocalGatewaysOutput, bool) bool) error {
+	return c.DescribeLocalGatewaysPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeLocalGatewaysPagesWithContext same as DescribeLocalGatewaysPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeLocalGatewaysPagesWithContext(ctx aws.Context, input *DescribeLocalGatewaysInput, fn func(*DescribeLocalGatewaysOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeLocalGatewaysInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeLocalGatewaysRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeLocalGatewaysOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
+const opDescribeManagedPrefixLists = "DescribeManagedPrefixLists"
+
+// DescribeManagedPrefixListsRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeManagedPrefixLists operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DescribeManagedPrefixLists for more information on using the DescribeManagedPrefixLists
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DescribeManagedPrefixListsRequest method.
+//    req, resp := client.DescribeManagedPrefixListsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeManagedPrefixLists
+func (c *EC2) DescribeManagedPrefixListsRequest(input *DescribeManagedPrefixListsInput) (req *request.Request, output *DescribeManagedPrefixListsOutput) {
+	op := &request.Operation{
+		Name:       opDescribeManagedPrefixLists,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &DescribeManagedPrefixListsInput{}
+	}
+
+	output = &DescribeManagedPrefixListsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DescribeManagedPrefixLists API operation for Amazon Elastic Compute Cloud.
+//
+// Describes your managed prefix lists and any AWS-managed prefix lists.
+//
+// To view the entries for your prefix list, use GetManagedPrefixListEntries.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation DescribeManagedPrefixLists for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeManagedPrefixLists
+func (c *EC2) DescribeManagedPrefixLists(input *DescribeManagedPrefixListsInput) (*DescribeManagedPrefixListsOutput, error) {
+	req, out := c.DescribeManagedPrefixListsRequest(input)
+	return out, req.Send()
+}
+
+// DescribeManagedPrefixListsWithContext is the same as DescribeManagedPrefixLists with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DescribeManagedPrefixLists for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeManagedPrefixListsWithContext(ctx aws.Context, input *DescribeManagedPrefixListsInput, opts ...request.Option) (*DescribeManagedPrefixListsOutput, error) {
+	req, out := c.DescribeManagedPrefixListsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// DescribeManagedPrefixListsPages iterates over the pages of a DescribeManagedPrefixLists operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeManagedPrefixLists method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeManagedPrefixLists operation.
+//    pageNum := 0
+//    err := client.DescribeManagedPrefixListsPages(params,
+//        func(page *ec2.DescribeManagedPrefixListsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeManagedPrefixListsPages(input *DescribeManagedPrefixListsInput, fn func(*DescribeManagedPrefixListsOutput, bool) bool) error {
+	return c.DescribeManagedPrefixListsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeManagedPrefixListsPagesWithContext same as DescribeManagedPrefixListsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeManagedPrefixListsPagesWithContext(ctx aws.Context, input *DescribeManagedPrefixListsInput, fn func(*DescribeManagedPrefixListsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeManagedPrefixListsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeManagedPrefixListsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeManagedPrefixListsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opDescribeMovingAddresses = "DescribeMovingAddresses"
@@ -18278,7 +19393,7 @@ func (c *EC2) DescribePlacementGroupsRequest(input *DescribePlacementGroupsInput
 // DescribePlacementGroups API operation for Amazon Elastic Compute Cloud.
 //
 // Describes the specified placement groups or all of your placement groups.
-// For more information, see Placement Groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
+// For more information, see Placement groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -18361,10 +19476,9 @@ func (c *EC2) DescribePrefixListsRequest(input *DescribePrefixListsInput) (req *
 //
 // Describes available AWS services in a prefix list format, which includes
 // the prefix list name and prefix list ID of the service and the IP address
-// range for the service. A prefix list ID is required for creating an outbound
-// security group rule that allows traffic from a VPC to access an AWS service
-// through a gateway VPC endpoint. Currently, the services that support this
-// action are Amazon S3 and Amazon DynamoDB.
+// range for the service.
+//
+// We recommend that you use DescribeManagedPrefixLists instead.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -20031,7 +21145,7 @@ func (c *EC2) DescribeSnapshotsRequest(input *DescribeSnapshotsInput) (req *requ
 //    * implicit: An AWS account has implicit create volume permissions for
 //    all snapshots it owns.
 //
-// The list of snapshots returned can be modified by specifying snapshot IDs,
+// The list of snapshots returned can be filtered by specifying snapshot IDs,
 // snapshot owners, or AWS accounts with create volume permissions. If no options
 // are specified, Amazon EC2 returns all snapshots for which you have create
 // volume permissions.
@@ -20051,12 +21165,14 @@ func (c *EC2) DescribeSnapshotsRequest(input *DescribeSnapshotsInput) (req *requ
 // (if you own the snapshots), self for snapshots for which you own or have
 // explicit permissions, or all for public snapshots.
 //
-// If you are describing a long list of snapshots, you can paginate the output
-// to make the list more manageable. The MaxResults parameter sets the maximum
-// number of results returned in a single page. If the list of results exceeds
-// your MaxResults value, then that number of results is returned along with
-// a NextToken value that can be passed to a subsequent DescribeSnapshots request
-// to retrieve the remaining results.
+// If you are describing a long list of snapshots, we recommend that you paginate
+// the output to make the list more manageable. The MaxResults parameter sets
+// the maximum number of results returned in a single page. If the list of results
+// exceeds your MaxResults value, then that number of results is returned along
+// with a NextToken value that can be passed to a subsequent DescribeSnapshots
+// request to retrieve the remaining results.
+//
+// To get the state of fast snapshot restores for a snapshot, use DescribeFastSnapshotRestores.
 //
 // For more information about EBS snapshots, see Amazon EBS Snapshots (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSSnapshots.html)
 // in the Amazon Elastic Compute Cloud User Guide.
@@ -20560,8 +21676,8 @@ func (c *EC2) DescribeSpotInstanceRequestsRequest(input *DescribeSpotInstanceReq
 // You can use DescribeSpotInstanceRequests to find a running Spot Instance
 // by examining the response. If the status of the Spot Instance is fulfilled,
 // the instance ID appears in the response and contains the identifier of the
-// instance. Alternatively, you can use DescribeInstances with a filter to look
-// for instances where the instance lifecycle is spot.
+// instance. Alternatively, you can use DescribeInstances (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances)
+// with a filter to look for instances where the instance lifecycle is spot.
 //
 // We recommend that you set MaxResults to a value between 5 and 1000 to limit
 // the number of results returned. This paginates the output, which makes the
@@ -21760,6 +22876,12 @@ func (c *EC2) DescribeTransitGatewayMulticastDomainsRequest(input *DescribeTrans
 		Name:       opDescribeTransitGatewayMulticastDomains,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -21803,6 +22925,58 @@ func (c *EC2) DescribeTransitGatewayMulticastDomainsWithContext(ctx aws.Context,
 	return out, req.Send()
 }
 
+// DescribeTransitGatewayMulticastDomainsPages iterates over the pages of a DescribeTransitGatewayMulticastDomains operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeTransitGatewayMulticastDomains method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeTransitGatewayMulticastDomains operation.
+//    pageNum := 0
+//    err := client.DescribeTransitGatewayMulticastDomainsPages(params,
+//        func(page *ec2.DescribeTransitGatewayMulticastDomainsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeTransitGatewayMulticastDomainsPages(input *DescribeTransitGatewayMulticastDomainsInput, fn func(*DescribeTransitGatewayMulticastDomainsOutput, bool) bool) error {
+	return c.DescribeTransitGatewayMulticastDomainsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeTransitGatewayMulticastDomainsPagesWithContext same as DescribeTransitGatewayMulticastDomainsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeTransitGatewayMulticastDomainsPagesWithContext(ctx aws.Context, input *DescribeTransitGatewayMulticastDomainsInput, fn func(*DescribeTransitGatewayMulticastDomainsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeTransitGatewayMulticastDomainsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeTransitGatewayMulticastDomainsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeTransitGatewayMulticastDomainsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeTransitGatewayPeeringAttachments = "DescribeTransitGatewayPeeringAttachments"
 
 // DescribeTransitGatewayPeeringAttachmentsRequest generates a "aws/request.Request" representing the
@@ -21834,6 +23008,12 @@ func (c *EC2) DescribeTransitGatewayPeeringAttachmentsRequest(input *DescribeTra
 		Name:       opDescribeTransitGatewayPeeringAttachments,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -21875,6 +23055,58 @@ func (c *EC2) DescribeTransitGatewayPeeringAttachmentsWithContext(ctx aws.Contex
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// DescribeTransitGatewayPeeringAttachmentsPages iterates over the pages of a DescribeTransitGatewayPeeringAttachments operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeTransitGatewayPeeringAttachments method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeTransitGatewayPeeringAttachments operation.
+//    pageNum := 0
+//    err := client.DescribeTransitGatewayPeeringAttachmentsPages(params,
+//        func(page *ec2.DescribeTransitGatewayPeeringAttachmentsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) DescribeTransitGatewayPeeringAttachmentsPages(input *DescribeTransitGatewayPeeringAttachmentsInput, fn func(*DescribeTransitGatewayPeeringAttachmentsOutput, bool) bool) error {
+	return c.DescribeTransitGatewayPeeringAttachmentsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeTransitGatewayPeeringAttachmentsPagesWithContext same as DescribeTransitGatewayPeeringAttachmentsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) DescribeTransitGatewayPeeringAttachmentsPagesWithContext(ctx aws.Context, input *DescribeTransitGatewayPeeringAttachmentsInput, fn func(*DescribeTransitGatewayPeeringAttachmentsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeTransitGatewayPeeringAttachmentsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeTransitGatewayPeeringAttachmentsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeTransitGatewayPeeringAttachmentsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opDescribeTransitGatewayRouteTables = "DescribeTransitGatewayRouteTables"
@@ -22573,12 +23805,12 @@ func (c *EC2) DescribeVolumesRequest(input *DescribeVolumesInput) (req *request.
 //
 // Describes the specified EBS volumes or all of your EBS volumes.
 //
-// If you are describing a long list of volumes, you can paginate the output
-// to make the list more manageable. The MaxResults parameter sets the maximum
-// number of results returned in a single page. If the list of results exceeds
-// your MaxResults value, then that number of results is returned along with
-// a NextToken value that can be passed to a subsequent DescribeVolumes request
-// to retrieve the remaining results.
+// If you are describing a long list of volumes, we recommend that you paginate
+// the output to make the list more manageable. The MaxResults parameter sets
+// the maximum number of results returned in a single page. If the list of results
+// exceeds your MaxResults value, then that number of results is returned along
+// with a NextToken value that can be passed to a subsequent DescribeVolumes
+// request to retrieve the remaining results.
 //
 // For more information about EBS volumes, see Amazon EBS Volumes (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumes.html)
 // in the Amazon Elastic Compute Cloud User Guide.
@@ -22713,19 +23945,17 @@ func (c *EC2) DescribeVolumesModificationsRequest(input *DescribeVolumesModifica
 
 // DescribeVolumesModifications API operation for Amazon Elastic Compute Cloud.
 //
-// Reports the current modification status of EBS volumes.
+// Describes the most recent volume modification request for the specified EBS
+// volumes.
 //
-// Current-generation EBS volumes support modification of attributes including
-// type, size, and (for io1 volumes) IOPS provisioning while either attached
-// to or detached from an instance. Following an action from the API or the
-// console to modify a volume, the status of the modification may be modifying,
-// optimizing, completed, or failed. If a volume has never been modified, then
-// certain elements of the returned VolumeModification objects are null.
+// If a volume has never been modified, some information in the output will
+// be null. If a volume has been modified more than once, the output includes
+// only the most recent modification request.
 //
 // You can also use CloudWatch Events to check the status of a modification
 // to an EBS volume. For information about CloudWatch Events, see the Amazon
 // CloudWatch Events User Guide (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/).
-// For more information, see Monitoring Volume Modifications" (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-expand-volume.html#monitoring_mods)
+// For more information, see Monitoring Volume Modifications (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-expand-volume.html#monitoring_mods)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -25081,6 +26311,8 @@ func (c *EC2) DisableVpcClassicLinkDnsSupportRequest(input *DisableVpcClassicLin
 // ClassicLink (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/vpc-classiclink.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
+// You must specify a VPC ID in the request.
+//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -25397,7 +26629,7 @@ func (c *EC2) DisassociateRouteTableRequest(input *DisassociateRouteTableInput) 
 
 // DisassociateRouteTable API operation for Amazon Elastic Compute Cloud.
 //
-// Disassociates a subnet from a route table.
+// Disassociates a subnet or gateway from a route table.
 //
 // After you perform this action, the subnet no longer uses the routes in the
 // route table. Instead, it uses the routes in the VPC's main route table. For
@@ -25877,6 +27109,9 @@ func (c *EC2) EnableFastSnapshotRestoresRequest(input *EnableFastSnapshotRestore
 // state. To get the current state of fast snapshot restores, use DescribeFastSnapshotRestores.
 // To disable fast snapshot restores, use DisableFastSnapshotRestores.
 //
+// For more information, see Amazon EBS Fast Snapshot Restore (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-fast-snapshot-restore.html)
+// in the Amazon Elastic Compute Cloud User Guide.
+//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -26264,6 +27499,8 @@ func (c *EC2) EnableVpcClassicLinkDnsSupportRequest(input *EnableVpcClassicLinkD
 // see ClassicLink (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/vpc-classiclink.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
+// You must specify a VPC ID in the request.
+//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -26568,6 +27805,10 @@ func (c *EC2) ExportTransitGatewayRoutesRequest(input *ExportTransitGatewayRoute
 // S3 bucket. By default, all routes are exported. Alternatively, you can filter
 // by CIDR range.
 //
+// The routes are saved to the specified bucket in a JSON file. For more information,
+// see Export Route Tables to Amazon S3 (https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html#tgw-export-route-tables)
+// in Transit Gateways.
+//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -26594,6 +27835,139 @@ func (c *EC2) ExportTransitGatewayRoutesWithContext(ctx aws.Context, input *Expo
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+const opGetAssociatedIpv6PoolCidrs = "GetAssociatedIpv6PoolCidrs"
+
+// GetAssociatedIpv6PoolCidrsRequest generates a "aws/request.Request" representing the
+// client's request for the GetAssociatedIpv6PoolCidrs operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetAssociatedIpv6PoolCidrs for more information on using the GetAssociatedIpv6PoolCidrs
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetAssociatedIpv6PoolCidrsRequest method.
+//    req, resp := client.GetAssociatedIpv6PoolCidrsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/GetAssociatedIpv6PoolCidrs
+func (c *EC2) GetAssociatedIpv6PoolCidrsRequest(input *GetAssociatedIpv6PoolCidrsInput) (req *request.Request, output *GetAssociatedIpv6PoolCidrsOutput) {
+	op := &request.Operation{
+		Name:       opGetAssociatedIpv6PoolCidrs,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &GetAssociatedIpv6PoolCidrsInput{}
+	}
+
+	output = &GetAssociatedIpv6PoolCidrsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetAssociatedIpv6PoolCidrs API operation for Amazon Elastic Compute Cloud.
+//
+// Gets information about the IPv6 CIDR block associations for a specified IPv6
+// address pool.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation GetAssociatedIpv6PoolCidrs for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/GetAssociatedIpv6PoolCidrs
+func (c *EC2) GetAssociatedIpv6PoolCidrs(input *GetAssociatedIpv6PoolCidrsInput) (*GetAssociatedIpv6PoolCidrsOutput, error) {
+	req, out := c.GetAssociatedIpv6PoolCidrsRequest(input)
+	return out, req.Send()
+}
+
+// GetAssociatedIpv6PoolCidrsWithContext is the same as GetAssociatedIpv6PoolCidrs with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetAssociatedIpv6PoolCidrs for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetAssociatedIpv6PoolCidrsWithContext(ctx aws.Context, input *GetAssociatedIpv6PoolCidrsInput, opts ...request.Option) (*GetAssociatedIpv6PoolCidrsOutput, error) {
+	req, out := c.GetAssociatedIpv6PoolCidrsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// GetAssociatedIpv6PoolCidrsPages iterates over the pages of a GetAssociatedIpv6PoolCidrs operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetAssociatedIpv6PoolCidrs method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetAssociatedIpv6PoolCidrs operation.
+//    pageNum := 0
+//    err := client.GetAssociatedIpv6PoolCidrsPages(params,
+//        func(page *ec2.GetAssociatedIpv6PoolCidrsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) GetAssociatedIpv6PoolCidrsPages(input *GetAssociatedIpv6PoolCidrsInput, fn func(*GetAssociatedIpv6PoolCidrsOutput, bool) bool) error {
+	return c.GetAssociatedIpv6PoolCidrsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetAssociatedIpv6PoolCidrsPagesWithContext same as GetAssociatedIpv6PoolCidrsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetAssociatedIpv6PoolCidrsPagesWithContext(ctx aws.Context, input *GetAssociatedIpv6PoolCidrsInput, fn func(*GetAssociatedIpv6PoolCidrsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetAssociatedIpv6PoolCidrsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetAssociatedIpv6PoolCidrsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*GetAssociatedIpv6PoolCidrsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opGetCapacityReservationUsage = "GetCapacityReservationUsage"
@@ -26961,7 +28335,7 @@ func (c *EC2) GetDefaultCreditSpecificationRequest(input *GetDefaultCreditSpecif
 // Describes the default credit option for CPU usage of a burstable performance
 // instance family.
 //
-// For more information, see Burstable Performance Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
+// For more information, see Burstable performance instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -27303,6 +28677,271 @@ func (c *EC2) GetLaunchTemplateDataWithContext(ctx aws.Context, input *GetLaunch
 	return out, req.Send()
 }
 
+const opGetManagedPrefixListAssociations = "GetManagedPrefixListAssociations"
+
+// GetManagedPrefixListAssociationsRequest generates a "aws/request.Request" representing the
+// client's request for the GetManagedPrefixListAssociations operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetManagedPrefixListAssociations for more information on using the GetManagedPrefixListAssociations
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetManagedPrefixListAssociationsRequest method.
+//    req, resp := client.GetManagedPrefixListAssociationsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/GetManagedPrefixListAssociations
+func (c *EC2) GetManagedPrefixListAssociationsRequest(input *GetManagedPrefixListAssociationsInput) (req *request.Request, output *GetManagedPrefixListAssociationsOutput) {
+	op := &request.Operation{
+		Name:       opGetManagedPrefixListAssociations,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &GetManagedPrefixListAssociationsInput{}
+	}
+
+	output = &GetManagedPrefixListAssociationsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetManagedPrefixListAssociations API operation for Amazon Elastic Compute Cloud.
+//
+// Gets information about the resources that are associated with the specified
+// managed prefix list.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation GetManagedPrefixListAssociations for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/GetManagedPrefixListAssociations
+func (c *EC2) GetManagedPrefixListAssociations(input *GetManagedPrefixListAssociationsInput) (*GetManagedPrefixListAssociationsOutput, error) {
+	req, out := c.GetManagedPrefixListAssociationsRequest(input)
+	return out, req.Send()
+}
+
+// GetManagedPrefixListAssociationsWithContext is the same as GetManagedPrefixListAssociations with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetManagedPrefixListAssociations for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetManagedPrefixListAssociationsWithContext(ctx aws.Context, input *GetManagedPrefixListAssociationsInput, opts ...request.Option) (*GetManagedPrefixListAssociationsOutput, error) {
+	req, out := c.GetManagedPrefixListAssociationsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// GetManagedPrefixListAssociationsPages iterates over the pages of a GetManagedPrefixListAssociations operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetManagedPrefixListAssociations method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetManagedPrefixListAssociations operation.
+//    pageNum := 0
+//    err := client.GetManagedPrefixListAssociationsPages(params,
+//        func(page *ec2.GetManagedPrefixListAssociationsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) GetManagedPrefixListAssociationsPages(input *GetManagedPrefixListAssociationsInput, fn func(*GetManagedPrefixListAssociationsOutput, bool) bool) error {
+	return c.GetManagedPrefixListAssociationsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetManagedPrefixListAssociationsPagesWithContext same as GetManagedPrefixListAssociationsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetManagedPrefixListAssociationsPagesWithContext(ctx aws.Context, input *GetManagedPrefixListAssociationsInput, fn func(*GetManagedPrefixListAssociationsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetManagedPrefixListAssociationsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetManagedPrefixListAssociationsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*GetManagedPrefixListAssociationsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
+const opGetManagedPrefixListEntries = "GetManagedPrefixListEntries"
+
+// GetManagedPrefixListEntriesRequest generates a "aws/request.Request" representing the
+// client's request for the GetManagedPrefixListEntries operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetManagedPrefixListEntries for more information on using the GetManagedPrefixListEntries
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetManagedPrefixListEntriesRequest method.
+//    req, resp := client.GetManagedPrefixListEntriesRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/GetManagedPrefixListEntries
+func (c *EC2) GetManagedPrefixListEntriesRequest(input *GetManagedPrefixListEntriesInput) (req *request.Request, output *GetManagedPrefixListEntriesOutput) {
+	op := &request.Operation{
+		Name:       opGetManagedPrefixListEntries,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &GetManagedPrefixListEntriesInput{}
+	}
+
+	output = &GetManagedPrefixListEntriesOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetManagedPrefixListEntries API operation for Amazon Elastic Compute Cloud.
+//
+// Gets information about the entries for a specified managed prefix list.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation GetManagedPrefixListEntries for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/GetManagedPrefixListEntries
+func (c *EC2) GetManagedPrefixListEntries(input *GetManagedPrefixListEntriesInput) (*GetManagedPrefixListEntriesOutput, error) {
+	req, out := c.GetManagedPrefixListEntriesRequest(input)
+	return out, req.Send()
+}
+
+// GetManagedPrefixListEntriesWithContext is the same as GetManagedPrefixListEntries with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetManagedPrefixListEntries for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetManagedPrefixListEntriesWithContext(ctx aws.Context, input *GetManagedPrefixListEntriesInput, opts ...request.Option) (*GetManagedPrefixListEntriesOutput, error) {
+	req, out := c.GetManagedPrefixListEntriesRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// GetManagedPrefixListEntriesPages iterates over the pages of a GetManagedPrefixListEntries operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetManagedPrefixListEntries method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetManagedPrefixListEntries operation.
+//    pageNum := 0
+//    err := client.GetManagedPrefixListEntriesPages(params,
+//        func(page *ec2.GetManagedPrefixListEntriesOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) GetManagedPrefixListEntriesPages(input *GetManagedPrefixListEntriesInput, fn func(*GetManagedPrefixListEntriesOutput, bool) bool) error {
+	return c.GetManagedPrefixListEntriesPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetManagedPrefixListEntriesPagesWithContext same as GetManagedPrefixListEntriesPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetManagedPrefixListEntriesPagesWithContext(ctx aws.Context, input *GetManagedPrefixListEntriesInput, fn func(*GetManagedPrefixListEntriesOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetManagedPrefixListEntriesInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetManagedPrefixListEntriesRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*GetManagedPrefixListEntriesOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opGetPasswordData = "GetPasswordData"
 
 // GetPasswordDataRequest generates a "aws/request.Request" representing the
@@ -27635,6 +29274,12 @@ func (c *EC2) GetTransitGatewayMulticastDomainAssociationsRequest(input *GetTran
 		Name:       opGetTransitGatewayMulticastDomainAssociations,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -27677,6 +29322,58 @@ func (c *EC2) GetTransitGatewayMulticastDomainAssociationsWithContext(ctx aws.Co
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// GetTransitGatewayMulticastDomainAssociationsPages iterates over the pages of a GetTransitGatewayMulticastDomainAssociations operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetTransitGatewayMulticastDomainAssociations method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetTransitGatewayMulticastDomainAssociations operation.
+//    pageNum := 0
+//    err := client.GetTransitGatewayMulticastDomainAssociationsPages(params,
+//        func(page *ec2.GetTransitGatewayMulticastDomainAssociationsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) GetTransitGatewayMulticastDomainAssociationsPages(input *GetTransitGatewayMulticastDomainAssociationsInput, fn func(*GetTransitGatewayMulticastDomainAssociationsOutput, bool) bool) error {
+	return c.GetTransitGatewayMulticastDomainAssociationsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetTransitGatewayMulticastDomainAssociationsPagesWithContext same as GetTransitGatewayMulticastDomainAssociationsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) GetTransitGatewayMulticastDomainAssociationsPagesWithContext(ctx aws.Context, input *GetTransitGatewayMulticastDomainAssociationsInput, fn func(*GetTransitGatewayMulticastDomainAssociationsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetTransitGatewayMulticastDomainAssociationsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetTransitGatewayMulticastDomainAssociationsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*GetTransitGatewayMulticastDomainAssociationsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opGetTransitGatewayRouteTableAssociations = "GetTransitGatewayRouteTableAssociations"
@@ -28413,6 +30110,83 @@ func (c *EC2) ImportVolumeWithContext(ctx aws.Context, input *ImportVolumeInput,
 	return out, req.Send()
 }
 
+const opModifyAvailabilityZoneGroup = "ModifyAvailabilityZoneGroup"
+
+// ModifyAvailabilityZoneGroupRequest generates a "aws/request.Request" representing the
+// client's request for the ModifyAvailabilityZoneGroup operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ModifyAvailabilityZoneGroup for more information on using the ModifyAvailabilityZoneGroup
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ModifyAvailabilityZoneGroupRequest method.
+//    req, resp := client.ModifyAvailabilityZoneGroupRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/ModifyAvailabilityZoneGroup
+func (c *EC2) ModifyAvailabilityZoneGroupRequest(input *ModifyAvailabilityZoneGroupInput) (req *request.Request, output *ModifyAvailabilityZoneGroupOutput) {
+	op := &request.Operation{
+		Name:       opModifyAvailabilityZoneGroup,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ModifyAvailabilityZoneGroupInput{}
+	}
+
+	output = &ModifyAvailabilityZoneGroupOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ModifyAvailabilityZoneGroup API operation for Amazon Elastic Compute Cloud.
+//
+// Enables or disables an Availability Zone group for your account.
+//
+// Use describe-availability-zones (https://docs.aws.amazon.com/AWSEC2ApiDocReef/build/server-root/AWSEC2/latest/APIReference/API_DescribeAvailabilityZones.html)
+// to view the value for GroupName.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation ModifyAvailabilityZoneGroup for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/ModifyAvailabilityZoneGroup
+func (c *EC2) ModifyAvailabilityZoneGroup(input *ModifyAvailabilityZoneGroupInput) (*ModifyAvailabilityZoneGroupOutput, error) {
+	req, out := c.ModifyAvailabilityZoneGroupRequest(input)
+	return out, req.Send()
+}
+
+// ModifyAvailabilityZoneGroupWithContext is the same as ModifyAvailabilityZoneGroup with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ModifyAvailabilityZoneGroup for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) ModifyAvailabilityZoneGroupWithContext(ctx aws.Context, input *ModifyAvailabilityZoneGroupInput, opts ...request.Option) (*ModifyAvailabilityZoneGroupOutput, error) {
+	req, out := c.ModifyAvailabilityZoneGroupRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opModifyCapacityReservation = "ModifyCapacityReservation"
 
 // ModifyCapacityReservationRequest generates a "aws/request.Request" representing the
@@ -28536,10 +30310,8 @@ func (c *EC2) ModifyClientVpnEndpointRequest(input *ModifyClientVpnEndpointInput
 
 // ModifyClientVpnEndpoint API operation for Amazon Elastic Compute Cloud.
 //
-// Modifies the specified Client VPN endpoint. You can only modify an endpoint's
-// server certificate information, client connection logging information, DNS
-// server, and description. Modifying the DNS server resets existing client
-// connections.
+// Modifies the specified Client VPN endpoint. Modifying the DNS server resets
+// existing client connections.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -28626,7 +30398,7 @@ func (c *EC2) ModifyDefaultCreditSpecificationRequest(input *ModifyDefaultCredit
 // can call GetDefaultCreditSpecification and check DefaultCreditSpecification
 // for updates.
 //
-// For more information, see Burstable Performance Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
+// For more information, see Burstable performance instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -29338,7 +31110,7 @@ func (c *EC2) ModifyInstanceAttributeRequest(input *ModifyInstanceAttributeInput
 // we recommend that you use the ModifyNetworkInterfaceAttribute action.
 //
 // To modify some attributes, the instance must be stopped. For more information,
-// see Modifying Attributes of a Stopped Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_ChangingAttributesWhileInstanceStopped.html)
+// see Modifying attributes of a stopped instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_ChangingAttributesWhileInstanceStopped.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -29493,7 +31265,7 @@ func (c *EC2) ModifyInstanceCreditSpecificationRequest(input *ModifyInstanceCred
 // Modifies the credit option for CPU usage on a running or stopped burstable
 // performance instance. The credit options are standard and unlimited.
 //
-// For more information, see Burstable Performance Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
+// For more information, see Burstable performance instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -29648,7 +31420,7 @@ func (c *EC2) ModifyInstanceMetadataOptionsRequest(input *ModifyInstanceMetadata
 // the API responds with a state of “pending”. After the parameter modifications
 // are successfully applied to the instance, the state of the modifications
 // changes from “pending” to “applied” in subsequent describe-instances
-// API calls. For more information, see Instance Metadata and User Data (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
+// API calls. For more information, see Instance metadata and user data (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -29844,6 +31616,86 @@ func (c *EC2) ModifyLaunchTemplate(input *ModifyLaunchTemplateInput) (*ModifyLau
 // for more information on using Contexts.
 func (c *EC2) ModifyLaunchTemplateWithContext(ctx aws.Context, input *ModifyLaunchTemplateInput, opts ...request.Option) (*ModifyLaunchTemplateOutput, error) {
 	req, out := c.ModifyLaunchTemplateRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opModifyManagedPrefixList = "ModifyManagedPrefixList"
+
+// ModifyManagedPrefixListRequest generates a "aws/request.Request" representing the
+// client's request for the ModifyManagedPrefixList operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ModifyManagedPrefixList for more information on using the ModifyManagedPrefixList
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ModifyManagedPrefixListRequest method.
+//    req, resp := client.ModifyManagedPrefixListRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/ModifyManagedPrefixList
+func (c *EC2) ModifyManagedPrefixListRequest(input *ModifyManagedPrefixListInput) (req *request.Request, output *ModifyManagedPrefixListOutput) {
+	op := &request.Operation{
+		Name:       opModifyManagedPrefixList,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ModifyManagedPrefixListInput{}
+	}
+
+	output = &ModifyManagedPrefixListOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ModifyManagedPrefixList API operation for Amazon Elastic Compute Cloud.
+//
+// Modifies the specified managed prefix list.
+//
+// Adding or removing entries in a prefix list creates a new version of the
+// prefix list. Changing the name of the prefix list does not affect the version.
+//
+// If you specify a current version number that does not match the true current
+// version number, the request fails.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation ModifyManagedPrefixList for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/ModifyManagedPrefixList
+func (c *EC2) ModifyManagedPrefixList(input *ModifyManagedPrefixListInput) (*ModifyManagedPrefixListOutput, error) {
+	req, out := c.ModifyManagedPrefixListRequest(input)
+	return out, req.Send()
+}
+
+// ModifyManagedPrefixListWithContext is the same as ModifyManagedPrefixList with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ModifyManagedPrefixList for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) ModifyManagedPrefixListWithContext(ctx aws.Context, input *ModifyManagedPrefixListInput, opts ...request.Option) (*ModifyManagedPrefixListOutput, error) {
+	req, out := c.ModifyManagedPrefixListRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -31384,8 +33236,9 @@ func (c *EC2) ModifyVpnConnectionRequest(input *ModifyVpnConnectionInput) (req *
 
 // ModifyVpnConnection API operation for Amazon Elastic Compute Cloud.
 //
-// Modifies the target gateway of an AWS Site-to-Site VPN connection. The following
-// migration options are available:
+// Modifies the customer gateway or the target gateway of an AWS Site-to-Site
+// VPN connection. To modify the target gateway, the following migration options
+// are available:
 //
 //    * An existing virtual private gateway to a new virtual private gateway
 //
@@ -31421,9 +33274,9 @@ func (c *EC2) ModifyVpnConnectionRequest(input *ModifyVpnConnectionInput) (req *
 // gateway route table.
 //
 // After you perform this operation, the AWS VPN endpoint's IP addresses on
-// the AWS side and the tunnel options remain intact. Your s2slong; connection
-// will be temporarily unavailable for approximately 10 minutes while we provision
-// the new endpoints
+// the AWS side and the tunnel options remain intact. Your AWS Site-to-Site
+// VPN connection will be temporarily unavailable for a brief period while we
+// provision the new endpoints.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -31650,7 +33503,7 @@ func (c *EC2) MonitorInstancesRequest(input *MonitorInstancesInput) (req *reques
 // MonitorInstances API operation for Amazon Elastic Compute Cloud.
 //
 // Enables detailed monitoring for a running instance. Otherwise, basic monitoring
-// is enabled. For more information, see Monitoring Your Instances and Volumes
+// is enabled. For more information, see Monitoring your instances and volumes
 // (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
@@ -31808,9 +33661,10 @@ func (c *EC2) ProvisionByoipCidrRequest(input *ProvisionByoipCidrInput) (req *re
 
 // ProvisionByoipCidr API operation for Amazon Elastic Compute Cloud.
 //
-// Provisions an address range for use with your AWS resources through bring
-// your own IP addresses (BYOIP) and creates a corresponding address pool. After
-// the address range is provisioned, it is ready to be advertised using AdvertiseByoipCidr.
+// Provisions an IPv4 or IPv6 address range for use with your AWS resources
+// through bring your own IP addresses (BYOIP) and creates a corresponding address
+// pool. After the address range is provisioned, it is ready to be advertised
+// using AdvertiseByoipCidr.
 //
 // AWS verifies that you own the address range and are authorized to advertise
 // it. You must ensure that the address range is registered to you and that
@@ -31823,8 +33677,8 @@ func (c *EC2) ProvisionByoipCidrRequest(input *ProvisionByoipCidrInput) (req *re
 // immediately, but the address range is not ready to use until its status changes
 // from pending-provision to provisioned. To monitor the status of an address
 // range, use DescribeByoipCidrs. To allocate an Elastic IP address from your
-// address pool, use AllocateAddress with either the specific address from the
-// address pool or the ID of the address pool.
+// IPv4 address pool, use AllocateAddress with either the specific address from
+// the address pool or the ID of the address pool.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -32153,8 +34007,8 @@ func (c *EC2) RebootInstancesRequest(input *RebootInstancesInput) (req *request.
 // If an instance does not cleanly shut down within four minutes, Amazon EC2
 // performs a hard reboot.
 //
-// For more information about troubleshooting, see Getting Console Output and
-// Rebooting Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-console.html)
+// For more information about troubleshooting, see Getting console output and
+// rebooting instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-console.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -32250,20 +34104,23 @@ func (c *EC2) RegisterImageRequest(input *RegisterImageInput) (req *request.Requ
 // and SUSE Linux Enterprise Server (SLES), use the EC2 billing product code
 // associated with an AMI to verify the subscription status for package updates.
 // To create a new AMI for operating systems that require a billing product
-// code, do the following:
+// code, instead of registering the AMI, do the following to preserve the billing
+// product code association:
 //
 // Launch an instance from an existing AMI with that billing product code.
 //
 // Customize the instance.
 //
-// Create a new AMI from the instance using CreateImage to preserve the billing
-// product code association.
+// Create an AMI from the instance using CreateImage.
 //
 // If you purchase a Reserved Instance to apply to an On-Demand Instance that
 // was launched from an AMI with a billing product code, make sure that the
 // Reserved Instance has the matching billing product code. If you purchase
 // a Reserved Instance without the matching billing product code, the Reserved
-// Instance will not be applied to the On-Demand Instance.
+// Instance will not be applied to the On-Demand Instance. For information about
+// how to obtain the platform details and billing information of an AMI, see
+// Obtaining Billing Information (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-billing-info.html)
+// in the Amazon Elastic Compute Cloud User Guide.
 //
 // If needed, you can deregister an AMI at any time. Any modifications you make
 // to an AMI backed by an instance store volume invalidates its registration.
@@ -32293,6 +34150,83 @@ func (c *EC2) RegisterImage(input *RegisterImageInput) (*RegisterImageOutput, er
 // for more information on using Contexts.
 func (c *EC2) RegisterImageWithContext(ctx aws.Context, input *RegisterImageInput, opts ...request.Option) (*RegisterImageOutput, error) {
 	req, out := c.RegisterImageRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opRegisterInstanceEventNotificationAttributes = "RegisterInstanceEventNotificationAttributes"
+
+// RegisterInstanceEventNotificationAttributesRequest generates a "aws/request.Request" representing the
+// client's request for the RegisterInstanceEventNotificationAttributes operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See RegisterInstanceEventNotificationAttributes for more information on using the RegisterInstanceEventNotificationAttributes
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the RegisterInstanceEventNotificationAttributesRequest method.
+//    req, resp := client.RegisterInstanceEventNotificationAttributesRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/RegisterInstanceEventNotificationAttributes
+func (c *EC2) RegisterInstanceEventNotificationAttributesRequest(input *RegisterInstanceEventNotificationAttributesInput) (req *request.Request, output *RegisterInstanceEventNotificationAttributesOutput) {
+	op := &request.Operation{
+		Name:       opRegisterInstanceEventNotificationAttributes,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &RegisterInstanceEventNotificationAttributesInput{}
+	}
+
+	output = &RegisterInstanceEventNotificationAttributesOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// RegisterInstanceEventNotificationAttributes API operation for Amazon Elastic Compute Cloud.
+//
+// Registers a set of tag keys to include in scheduled event notifications for
+// your resources.
+//
+// To remove tags, use .
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation RegisterInstanceEventNotificationAttributes for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/RegisterInstanceEventNotificationAttributes
+func (c *EC2) RegisterInstanceEventNotificationAttributes(input *RegisterInstanceEventNotificationAttributesInput) (*RegisterInstanceEventNotificationAttributesOutput, error) {
+	req, out := c.RegisterInstanceEventNotificationAttributesRequest(input)
+	return out, req.Send()
+}
+
+// RegisterInstanceEventNotificationAttributesWithContext is the same as RegisterInstanceEventNotificationAttributes with the addition of
+// the ability to pass a context and additional request options.
+//
+// See RegisterInstanceEventNotificationAttributes for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) RegisterInstanceEventNotificationAttributesWithContext(ctx aws.Context, input *RegisterInstanceEventNotificationAttributesInput, opts ...request.Option) (*RegisterInstanceEventNotificationAttributesOutput, error) {
+	req, out := c.RegisterInstanceEventNotificationAttributesRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -33559,9 +35493,9 @@ func (c *EC2) RequestSpotFleetRequest(input *RequestSpotFleetInput) (req *reques
 // ensuring that the Spot Instances in your Spot Fleet are in different Spot
 // pools, you can improve the availability of your fleet.
 //
-// You can specify tags for the Spot Instances. You cannot tag other resource
-// types in a Spot Fleet request because only the instance resource type is
-// supported.
+// You can specify tags for the Spot Fleet request and instances launched by
+// the fleet. You cannot tag other resource types in a Spot Fleet request because
+// only the spot-fleet-request and instance resource types are supported.
 //
 // For more information, see Spot Fleet Requests (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet-requests.html)
 // in the Amazon EC2 User Guide for Linux Instances.
@@ -34218,6 +36152,81 @@ func (c *EC2) RestoreAddressToClassicWithContext(ctx aws.Context, input *Restore
 	return out, req.Send()
 }
 
+const opRestoreManagedPrefixListVersion = "RestoreManagedPrefixListVersion"
+
+// RestoreManagedPrefixListVersionRequest generates a "aws/request.Request" representing the
+// client's request for the RestoreManagedPrefixListVersion operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See RestoreManagedPrefixListVersion for more information on using the RestoreManagedPrefixListVersion
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the RestoreManagedPrefixListVersionRequest method.
+//    req, resp := client.RestoreManagedPrefixListVersionRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/RestoreManagedPrefixListVersion
+func (c *EC2) RestoreManagedPrefixListVersionRequest(input *RestoreManagedPrefixListVersionInput) (req *request.Request, output *RestoreManagedPrefixListVersionOutput) {
+	op := &request.Operation{
+		Name:       opRestoreManagedPrefixListVersion,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &RestoreManagedPrefixListVersionInput{}
+	}
+
+	output = &RestoreManagedPrefixListVersionOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// RestoreManagedPrefixListVersion API operation for Amazon Elastic Compute Cloud.
+//
+// Restores the entries from a previous version of a managed prefix list to
+// a new version of the prefix list.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Elastic Compute Cloud's
+// API operation RestoreManagedPrefixListVersion for usage and error information.
+// See also, https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/RestoreManagedPrefixListVersion
+func (c *EC2) RestoreManagedPrefixListVersion(input *RestoreManagedPrefixListVersionInput) (*RestoreManagedPrefixListVersionOutput, error) {
+	req, out := c.RestoreManagedPrefixListVersionRequest(input)
+	return out, req.Send()
+}
+
+// RestoreManagedPrefixListVersionWithContext is the same as RestoreManagedPrefixListVersion with the addition of
+// the ability to pass a context and additional request options.
+//
+// See RestoreManagedPrefixListVersion for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) RestoreManagedPrefixListVersionWithContext(ctx aws.Context, input *RestoreManagedPrefixListVersionInput, opts ...request.Option) (*RestoreManagedPrefixListVersionOutput, error) {
+	req, out := c.RestoreManagedPrefixListVersionRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opRevokeClientVpnIngress = "RevokeClientVpnIngress"
 
 // RevokeClientVpnIngressRequest generates a "aws/request.Request" representing the
@@ -34528,17 +36537,17 @@ func (c *EC2) RunInstancesRequest(input *RunInstancesInput) (req *request.Reques
 //
 //    * Some instance types must be launched into a VPC. If you do not have
 //    a default VPC, or if you do not specify a subnet ID, the request fails.
-//    For more information, see Instance Types Available Only in a VPC (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-vpc.html#vpc-only-instance-types).
+//    For more information, see Instance types available only in a VPC (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-vpc.html#vpc-only-instance-types).
 //
 //    * [EC2-VPC] All instances have a network interface with a primary private
 //    IPv4 address. If you don't specify this address, we choose one from the
 //    IPv4 range of your subnet.
 //
 //    * Not all instance types support IPv6 addresses. For more information,
-//    see Instance Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
+//    see Instance types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
 //
 //    * If you don't specify a security group ID, we use the default security
-//    group. For more information, see Security Groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html).
+//    group. For more information, see Security groups (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html).
 //
 //    * If any of the AMIs have a product code attached for which the user has
 //    not subscribed, the request fails.
@@ -34555,17 +36564,17 @@ func (c *EC2) RunInstancesRequest(input *RunInstancesInput) (req *request.Reques
 // An instance is ready for you to use when it's in the running state. You can
 // check the state of your instance using DescribeInstances. You can tag instances
 // and EBS volumes during launch, after launch, or both. For more information,
-// see CreateTags and Tagging Your Amazon EC2 Resources (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html).
+// see CreateTags and Tagging your Amazon EC2 resources (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html).
 //
 // Linux instances have access to the public key of the key pair at boot. You
 // can use this key to provide secure access to the instance. Amazon EC2 public
 // images use this feature to provide secure access without passwords. For more
-// information, see Key Pairs (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
+// information, see Key pairs (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
-// For troubleshooting, see What To Do If An Instance Immediately Terminates
+// For troubleshooting, see What to do if an instance immediately terminates
 // (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_InstanceStraightToTerminated.html),
-// and Troubleshooting Connecting to Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html)
+// and Troubleshooting connecting to your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -34711,6 +36720,12 @@ func (c *EC2) SearchLocalGatewayRoutesRequest(input *SearchLocalGatewayRoutesInp
 		Name:       opSearchLocalGatewayRoutes,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -34754,6 +36769,58 @@ func (c *EC2) SearchLocalGatewayRoutesWithContext(ctx aws.Context, input *Search
 	return out, req.Send()
 }
 
+// SearchLocalGatewayRoutesPages iterates over the pages of a SearchLocalGatewayRoutes operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See SearchLocalGatewayRoutes method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a SearchLocalGatewayRoutes operation.
+//    pageNum := 0
+//    err := client.SearchLocalGatewayRoutesPages(params,
+//        func(page *ec2.SearchLocalGatewayRoutesOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) SearchLocalGatewayRoutesPages(input *SearchLocalGatewayRoutesInput, fn func(*SearchLocalGatewayRoutesOutput, bool) bool) error {
+	return c.SearchLocalGatewayRoutesPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// SearchLocalGatewayRoutesPagesWithContext same as SearchLocalGatewayRoutesPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) SearchLocalGatewayRoutesPagesWithContext(ctx aws.Context, input *SearchLocalGatewayRoutesInput, fn func(*SearchLocalGatewayRoutesOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *SearchLocalGatewayRoutesInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.SearchLocalGatewayRoutesRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*SearchLocalGatewayRoutesOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opSearchTransitGatewayMulticastGroups = "SearchTransitGatewayMulticastGroups"
 
 // SearchTransitGatewayMulticastGroupsRequest generates a "aws/request.Request" representing the
@@ -34785,6 +36852,12 @@ func (c *EC2) SearchTransitGatewayMulticastGroupsRequest(input *SearchTransitGat
 		Name:       opSearchTransitGatewayMulticastGroups,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -34827,6 +36900,58 @@ func (c *EC2) SearchTransitGatewayMulticastGroupsWithContext(ctx aws.Context, in
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// SearchTransitGatewayMulticastGroupsPages iterates over the pages of a SearchTransitGatewayMulticastGroups operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See SearchTransitGatewayMulticastGroups method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a SearchTransitGatewayMulticastGroups operation.
+//    pageNum := 0
+//    err := client.SearchTransitGatewayMulticastGroupsPages(params,
+//        func(page *ec2.SearchTransitGatewayMulticastGroupsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *EC2) SearchTransitGatewayMulticastGroupsPages(input *SearchTransitGatewayMulticastGroupsInput, fn func(*SearchTransitGatewayMulticastGroupsOutput, bool) bool) error {
+	return c.SearchTransitGatewayMulticastGroupsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// SearchTransitGatewayMulticastGroupsPagesWithContext same as SearchTransitGatewayMulticastGroupsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *EC2) SearchTransitGatewayMulticastGroupsPagesWithContext(ctx aws.Context, input *SearchTransitGatewayMulticastGroupsInput, fn func(*SearchTransitGatewayMulticastGroupsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *SearchTransitGatewayMulticastGroupsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.SearchTransitGatewayMulticastGroupsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*SearchTransitGatewayMulticastGroupsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
 }
 
 const opSearchTransitGatewayRoutes = "SearchTransitGatewayRoutes"
@@ -34962,8 +37087,8 @@ func (c *EC2) SendDiagnosticInterruptRequest(input *SendDiagnosticInterruptInput
 // system is configured to perform the required diagnostic tasks.
 //
 // For more information about configuring your operating system to generate
-// a crash dump when a kernel panic or stop error occurs, see Send a Diagnostic
-// Interrupt (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/diagnostic-interrupt.html)
+// a crash dump when a kernel panic or stop error occurs, see Send a diagnostic
+// interrupt (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/diagnostic-interrupt.html)
 // (Linux instances) or Send a Diagnostic Interrupt (https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/diagnostic-interrupt.html)
 // (Windows instances).
 //
@@ -35060,7 +37185,7 @@ func (c *EC2) StartInstancesRequest(input *StartInstancesInput) (req *request.Re
 // Performing this operation on an instance that uses an instance store as its
 // root device returns an error.
 //
-// For more information, see Stopping Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html)
+// For more information, see Stopping instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -35223,7 +37348,7 @@ func (c *EC2) StopInstancesRequest(input *StopInstancesInput) (req *request.Requ
 // You can use the Stop action to hibernate an instance if the instance is enabled
 // for hibernation (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html#enabling-hibernation)
 // and it meets the hibernation prerequisites (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html#hibernating-prerequisites).
-// For more information, see Hibernate Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
+// For more information, see Hibernate your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // We don't charge usage for a stopped instance, or data transfer fees; however,
@@ -35236,9 +37361,10 @@ func (c *EC2) StopInstancesRequest(input *StopInstancesInput) (req *request.Requ
 // your Linux instance, Amazon EC2 charges a one-minute minimum for instance
 // usage, and thereafter charges per second for instance usage.
 //
-// You can't start, stop, or hibernate Spot Instances, and you can't stop or
-// hibernate instance store-backed instances. For information about using hibernation
-// for Spot Instances, see Hibernating Interrupted Spot Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-interruptions.html#hibernate-spot-instances)
+// You can't stop or hibernate instance store-backed instances. You can't use
+// the Stop action to hibernate Spot Instances, but you can specify that Amazon
+// EC2 should hibernate Spot Instances when they are interrupted. For more information,
+// see Hibernating interrupted Spot Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-interruptions.html#hibernate-spot-instances)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // When you stop or hibernate an instance, we shut it down. You can restart
@@ -35254,13 +37380,13 @@ func (c *EC2) StopInstancesRequest(input *StopInstancesInput) (req *request.Requ
 // an instance, the root device and any other devices attached during the instance
 // launch are automatically deleted. For more information about the differences
 // between rebooting, stopping, hibernating, and terminating instances, see
-// Instance Lifecycle (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
+// Instance lifecycle (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // When you stop an instance, we attempt to shut it down forcibly after a short
 // while. If your instance appears stuck in the stopping state after a period
 // of time, there may be an issue with the underlying host computer. For more
-// information, see Troubleshooting Stopping Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesStopping.html)
+// information, see Troubleshooting stopping your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesStopping.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -35430,11 +37556,11 @@ func (c *EC2) TerminateInstancesRequest(input *TerminateInstancesInput) (req *re
 // an instance, any attached EBS volumes with the DeleteOnTermination block
 // device mapping parameter set to true are automatically deleted. For more
 // information about the differences between stopping and terminating instances,
-// see Instance Lifecycle (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
+// see Instance lifecycle (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
-// For more information about troubleshooting, see Troubleshooting Terminating
-// Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesShuttingDown.html)
+// For more information about troubleshooting, see Troubleshooting terminating
+// your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesShuttingDown.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -35659,7 +37785,7 @@ func (c *EC2) UnmonitorInstancesRequest(input *UnmonitorInstancesInput) (req *re
 // UnmonitorInstances API operation for Amazon Elastic Compute Cloud.
 //
 // Disables detailed monitoring for a running instance. For more information,
-// see Monitoring Your Instances and Volumes (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch.html)
+// see Monitoring your instances and volumes (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -35894,8 +38020,7 @@ func (c *EC2) WithdrawByoipCidrRequest(input *WithdrawByoipCidrInput) (req *requ
 
 // WithdrawByoipCidr API operation for Amazon Elastic Compute Cloud.
 //
-// Stops advertising an IPv4 address range that is provisioned as an address
-// pool.
+// Stops advertising an address range that is provisioned as an address pool.
 //
 // You can perform this operation at most once every 10 seconds, even if you
 // specify different address ranges each time.
@@ -36429,6 +38554,56 @@ func (s *ActiveInstance) SetSpotInstanceRequestId(v string) *ActiveInstance {
 	return s
 }
 
+// An entry for a prefix list.
+type AddPrefixListEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The CIDR block.
+	//
+	// Cidr is a required field
+	Cidr *string `type:"string" required:"true"`
+
+	// A description for the entry.
+	//
+	// Constraints: Up to 255 characters in length.
+	Description *string `type:"string"`
+}
+
+// String returns the string representation
+func (s AddPrefixListEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s AddPrefixListEntry) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *AddPrefixListEntry) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "AddPrefixListEntry"}
+	if s.Cidr == nil {
+		invalidParams.Add(request.NewErrParamRequired("Cidr"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetCidr sets the Cidr field's value.
+func (s *AddPrefixListEntry) SetCidr(v string) *AddPrefixListEntry {
+	s.Cidr = &v
+	return s
+}
+
+// SetDescription sets the Description field's value.
+func (s *AddPrefixListEntry) SetDescription(v string) *AddPrefixListEntry {
+	s.Description = &v
+	return s
+}
+
 // Describes an Elastic IP address.
 type Address struct {
 	_ struct{} `type:"structure"`
@@ -36566,8 +38741,8 @@ func (s *Address) SetTags(v []*Tag) *Address {
 type AdvertiseByoipCidrInput struct {
 	_ struct{} `type:"structure"`
 
-	// The IPv4 address range, in CIDR notation. This must be the exact range that
-	// you provisioned. You can't advertise only a portion of the provisioned range.
+	// The address range, in CIDR notation. This must be the exact range that you
+	// provisioned. You can't advertise only a portion of the provisioned range.
 	//
 	// Cidr is a required field
 	Cidr *string `type:"string" required:"true"`
@@ -36663,7 +38838,11 @@ type AllocateAddressInput struct {
 	// The location from which the IP address is advertised. Use this parameter
 	// to limit the address to this location.
 	//
-	// Use DescribeVpcs (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html)
+	// A network border group is a unique set of Availability Zones or Local Zones
+	// from where AWS advertises IP addresses and limits the addresses to the group.
+	// IP addresses cannot move between network border groups.
+	//
+	// Use DescribeAvailabilityZones (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeAvailabilityZones.html)
 	// to view the network border groups.
 	//
 	// You cannot use a network border group with EC2 Classic. If you attempt this
@@ -38051,6 +40230,12 @@ type AssociateVpcCidrBlockInput struct {
 	// An IPv4 CIDR block to associate with the VPC.
 	CidrBlock *string `type:"string"`
 
+	// An IPv6 CIDR block from the IPv6 address pool. You must also specify Ipv6Pool
+	// in the request.
+	//
+	// To let Amazon choose the IPv6 CIDR block for you, omit this parameter.
+	Ipv6CidrBlock *string `type:"string"`
+
 	// The name of the location from which we advertise the IPV6 CIDR block. Use
 	// this parameter to limit the CiDR block to this location.
 	//
@@ -38058,6 +40243,9 @@ type AssociateVpcCidrBlockInput struct {
 	//
 	// You can have one IPv6 CIDR block association per network border group.
 	Ipv6CidrBlockNetworkBorderGroup *string `type:"string"`
+
+	// The ID of an IPv6 address pool from which to allocate the IPv6 CIDR block.
+	Ipv6Pool *string `type:"string"`
 
 	// The ID of the VPC.
 	//
@@ -38100,9 +40288,21 @@ func (s *AssociateVpcCidrBlockInput) SetCidrBlock(v string) *AssociateVpcCidrBlo
 	return s
 }
 
+// SetIpv6CidrBlock sets the Ipv6CidrBlock field's value.
+func (s *AssociateVpcCidrBlockInput) SetIpv6CidrBlock(v string) *AssociateVpcCidrBlockInput {
+	s.Ipv6CidrBlock = &v
+	return s
+}
+
 // SetIpv6CidrBlockNetworkBorderGroup sets the Ipv6CidrBlockNetworkBorderGroup field's value.
 func (s *AssociateVpcCidrBlockInput) SetIpv6CidrBlockNetworkBorderGroup(v string) *AssociateVpcCidrBlockInput {
 	s.Ipv6CidrBlockNetworkBorderGroup = &v
+	return s
+}
+
+// SetIpv6Pool sets the Ipv6Pool field's value.
+func (s *AssociateVpcCidrBlockInput) SetIpv6Pool(v string) *AssociateVpcCidrBlockInput {
+	s.Ipv6Pool = &v
 	return s
 }
 
@@ -38793,7 +40993,8 @@ func (s *AuthorizationRule) SetStatus(v *ClientVpnAuthorizationRuleStatus) *Auth
 type AuthorizeClientVpnIngressInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Active Directory group to grant access.
+	// The ID of the group to grant access to, for example, the Active Directory
+	// group or identity provider (IdP) group.
 	AccessGroupId *string `type:"string"`
 
 	// Indicates whether to grant access to all clients. Use true to grant all clients
@@ -39669,7 +41870,7 @@ func (s *BundleTaskError) SetMessage(v string) *BundleTaskError {
 type ByoipCidr struct {
 	_ struct{} `type:"structure"`
 
-	// The public IPv4 address range, in CIDR notation.
+	// The address range, in CIDR notation.
 	Cidr *string `locationName:"cidr" type:"string"`
 
 	// The description of the address range.
@@ -41276,15 +43477,17 @@ func (s *ClientData) SetUploadStart(v time.Time) *ClientData {
 	return s
 }
 
-// Describes the authentication methods used by a Client VPN endpoint. Client
-// VPN supports Active Directory and mutual authentication. For more information,
-// see Authentication (https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/authentication-authrization.html#client-authentication)
+// Describes the authentication methods used by a Client VPN endpoint. For more
+// information, see Authentication (https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/authentication-authrization.html#client-authentication)
 // in the AWS Client VPN Administrator Guide.
 type ClientVpnAuthentication struct {
 	_ struct{} `type:"structure"`
 
 	// Information about the Active Directory, if applicable.
 	ActiveDirectory *DirectoryServiceAuthentication `locationName:"activeDirectory" type:"structure"`
+
+	// Information about the IAM SAML identity provider, if applicable.
+	FederatedAuthentication *FederatedAuthentication `locationName:"federatedAuthentication" type:"structure"`
 
 	// Information about the authentication certificates, if applicable.
 	MutualAuthentication *CertificateAuthentication `locationName:"mutualAuthentication" type:"structure"`
@@ -41309,6 +43512,12 @@ func (s *ClientVpnAuthentication) SetActiveDirectory(v *DirectoryServiceAuthenti
 	return s
 }
 
+// SetFederatedAuthentication sets the FederatedAuthentication field's value.
+func (s *ClientVpnAuthentication) SetFederatedAuthentication(v *FederatedAuthentication) *ClientVpnAuthentication {
+	s.FederatedAuthentication = v
+	return s
+}
+
 // SetMutualAuthentication sets the MutualAuthentication field's value.
 func (s *ClientVpnAuthentication) SetMutualAuthentication(v *CertificateAuthentication) *ClientVpnAuthentication {
 	s.MutualAuthentication = v
@@ -41322,8 +43531,7 @@ func (s *ClientVpnAuthentication) SetType(v string) *ClientVpnAuthentication {
 }
 
 // Describes the authentication method to be used by a Client VPN endpoint.
-// Client VPN supports Active Directory and mutual authentication. For more
-// information, see Authentication (https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/authentication-authrization.html#client-authentication)
+// For more information, see Authentication (https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/authentication-authrization.html#client-authentication)
 // in the AWS Client VPN Administrator Guide.
 type ClientVpnAuthenticationRequest struct {
 	_ struct{} `type:"structure"`
@@ -41332,13 +43540,15 @@ type ClientVpnAuthenticationRequest struct {
 	// provide this information if Type is directory-service-authentication.
 	ActiveDirectory *DirectoryServiceAuthenticationRequest `type:"structure"`
 
+	// Information about the IAM SAML identity provider to be used, if applicable.
+	// You must provide this information if Type is federated-authentication.
+	FederatedAuthentication *FederatedAuthenticationRequest `type:"structure"`
+
 	// Information about the authentication certificates to be used, if applicable.
 	// You must provide this information if Type is certificate-authentication.
 	MutualAuthentication *CertificateAuthenticationRequest `type:"structure"`
 
-	// The type of client authentication to be used. Specify certificate-authentication
-	// to use certificate-based authentication, or directory-service-authentication
-	// to use Active Directory authentication.
+	// The type of client authentication to be used.
 	Type *string `type:"string" enum:"ClientVpnAuthenticationType"`
 }
 
@@ -41355,6 +43565,12 @@ func (s ClientVpnAuthenticationRequest) GoString() string {
 // SetActiveDirectory sets the ActiveDirectory field's value.
 func (s *ClientVpnAuthenticationRequest) SetActiveDirectory(v *DirectoryServiceAuthenticationRequest) *ClientVpnAuthenticationRequest {
 	s.ActiveDirectory = v
+	return s
+}
+
+// SetFederatedAuthentication sets the FederatedAuthentication field's value.
+func (s *ClientVpnAuthenticationRequest) SetFederatedAuthentication(v *FederatedAuthenticationRequest) *ClientVpnAuthenticationRequest {
+	s.FederatedAuthentication = v
 	return s
 }
 
@@ -41609,6 +43825,9 @@ type ClientVpnEndpoint struct {
 	// Information about the DNS servers to be used for DNS resolution.
 	DnsServers []*string `locationName:"dnsServer" locationNameList:"item" type:"list"`
 
+	// The IDs of the security groups for the target network.
+	SecurityGroupIds []*string `locationName:"securityGroupIdSet" locationNameList:"item" type:"list"`
+
 	// The ARN of the server certificate.
 	ServerCertificateArn *string `locationName:"serverCertificateArn" type:"string"`
 
@@ -41627,6 +43846,12 @@ type ClientVpnEndpoint struct {
 
 	// The transport protocol used by the Client VPN endpoint.
 	TransportProtocol *string `locationName:"transportProtocol" type:"string" enum:"TransportProtocol"`
+
+	// The ID of the VPC.
+	VpcId *string `locationName:"vpcId" type:"string"`
+
+	// The port number for the Client VPN endpoint.
+	VpnPort *int64 `locationName:"vpnPort" type:"integer"`
 
 	// The protocol used by the VPN session.
 	VpnProtocol *string `locationName:"vpnProtocol" type:"string" enum:"VpnProtocol"`
@@ -41702,6 +43927,12 @@ func (s *ClientVpnEndpoint) SetDnsServers(v []*string) *ClientVpnEndpoint {
 	return s
 }
 
+// SetSecurityGroupIds sets the SecurityGroupIds field's value.
+func (s *ClientVpnEndpoint) SetSecurityGroupIds(v []*string) *ClientVpnEndpoint {
+	s.SecurityGroupIds = v
+	return s
+}
+
 // SetServerCertificateArn sets the ServerCertificateArn field's value.
 func (s *ClientVpnEndpoint) SetServerCertificateArn(v string) *ClientVpnEndpoint {
 	s.ServerCertificateArn = &v
@@ -41729,6 +43960,18 @@ func (s *ClientVpnEndpoint) SetTags(v []*Tag) *ClientVpnEndpoint {
 // SetTransportProtocol sets the TransportProtocol field's value.
 func (s *ClientVpnEndpoint) SetTransportProtocol(v string) *ClientVpnEndpoint {
 	s.TransportProtocol = &v
+	return s
+}
+
+// SetVpcId sets the VpcId field's value.
+func (s *ClientVpnEndpoint) SetVpcId(v string) *ClientVpnEndpoint {
+	s.VpcId = &v
+	return s
+}
+
+// SetVpnPort sets the VpnPort field's value.
+func (s *ClientVpnEndpoint) SetVpnPort(v int64) *ClientVpnEndpoint {
+	s.VpnPort = &v
 	return s
 }
 
@@ -43183,6 +45426,10 @@ type CreateClientVpnEndpointInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
 
+	// The IDs of one or more security groups to apply to the target network. You
+	// must also specify the ID of the VPC that contains the security groups.
+	SecurityGroupIds []*string `locationName:"SecurityGroupId" locationNameList:"item" type:"list"`
+
 	// The ARN of the server certificate. For more information, see the AWS Certificate
 	// Manager User Guide (https://docs.aws.amazon.com/acm/latest/userguide/).
 	//
@@ -43205,6 +45452,18 @@ type CreateClientVpnEndpointInput struct {
 	//
 	// Default value: udp
 	TransportProtocol *string `type:"string" enum:"TransportProtocol"`
+
+	// The ID of the VPC to associate with the Client VPN endpoint. If no security
+	// group IDs are specified in the request, the default security group for the
+	// VPC is applied.
+	VpcId *string `type:"string"`
+
+	// The port number to assign to the Client VPN endpoint for TCP and UDP traffic.
+	//
+	// Valid Values: 443 | 1194
+	//
+	// Default Value: 443
+	VpnPort *int64 `type:"integer"`
 }
 
 // String returns the string representation
@@ -43281,6 +45540,12 @@ func (s *CreateClientVpnEndpointInput) SetDryRun(v bool) *CreateClientVpnEndpoin
 	return s
 }
 
+// SetSecurityGroupIds sets the SecurityGroupIds field's value.
+func (s *CreateClientVpnEndpointInput) SetSecurityGroupIds(v []*string) *CreateClientVpnEndpointInput {
+	s.SecurityGroupIds = v
+	return s
+}
+
 // SetServerCertificateArn sets the ServerCertificateArn field's value.
 func (s *CreateClientVpnEndpointInput) SetServerCertificateArn(v string) *CreateClientVpnEndpointInput {
 	s.ServerCertificateArn = &v
@@ -43302,6 +45567,18 @@ func (s *CreateClientVpnEndpointInput) SetTagSpecifications(v []*TagSpecificatio
 // SetTransportProtocol sets the TransportProtocol field's value.
 func (s *CreateClientVpnEndpointInput) SetTransportProtocol(v string) *CreateClientVpnEndpointInput {
 	s.TransportProtocol = &v
+	return s
+}
+
+// SetVpcId sets the VpcId field's value.
+func (s *CreateClientVpnEndpointInput) SetVpcId(v string) *CreateClientVpnEndpointInput {
+	s.VpcId = &v
+	return s
+}
+
+// SetVpnPort sets the VpnPort field's value.
+func (s *CreateClientVpnEndpointInput) SetVpnPort(v int64) *CreateClientVpnEndpointInput {
+	s.VpnPort = &v
 	return s
 }
 
@@ -43733,6 +46010,9 @@ type CreateDhcpOptionsInput struct {
 	// the required permissions, the error response is DryRunOperation. Otherwise,
 	// it is UnauthorizedOperation.
 	DryRun *bool `locationName:"dryRun" type:"boolean"`
+
+	// The tags to assign to the DHCP option.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -43767,6 +46047,12 @@ func (s *CreateDhcpOptionsInput) SetDhcpConfigurations(v []*NewDhcpConfiguration
 // SetDryRun sets the DryRun field's value.
 func (s *CreateDhcpOptionsInput) SetDryRun(v bool) *CreateDhcpOptionsInput {
 	s.DryRun = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateDhcpOptionsInput) SetTagSpecifications(v []*TagSpecification) *CreateDhcpOptionsInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -43806,6 +46092,9 @@ type CreateEgressOnlyInternetGatewayInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
 
+	// The tags to assign to the egress-only internet gateway.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// The ID of the VPC for which to create the egress-only internet gateway.
 	//
 	// VpcId is a required field
@@ -43844,6 +46133,12 @@ func (s *CreateEgressOnlyInternetGatewayInput) SetClientToken(v string) *CreateE
 // SetDryRun sets the DryRun field's value.
 func (s *CreateEgressOnlyInternetGatewayInput) SetDryRun(v bool) *CreateEgressOnlyInternetGatewayInput {
 	s.DryRun = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateEgressOnlyInternetGatewayInput) SetTagSpecifications(v []*TagSpecification) *CreateEgressOnlyInternetGatewayInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -44290,8 +46585,6 @@ type CreateFlowLogsInput struct {
 	//
 	// Specify the fields using the ${field-id} format, separated by spaces. For
 	// the AWS CLI, use single quotation marks (' ') to surround the parameter value.
-	//
-	// Only applicable to flow logs that are published to an Amazon S3 bucket.
 	LogFormat *string `type:"string"`
 
 	// The name of a new or existing CloudWatch Logs log group where Amazon EC2
@@ -44300,6 +46593,17 @@ type CreateFlowLogsInput struct {
 	// If you specify LogDestinationType as s3, do not specify DeliverLogsPermissionArn
 	// or LogGroupName.
 	LogGroupName *string `type:"string"`
+
+	// The maximum interval of time during which a flow of packets is captured and
+	// aggregated into a flow log record. You can specify 60 seconds (1 minute)
+	// or 600 seconds (10 minutes).
+	//
+	// When a network interface is attached to a Nitro-based instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#ec2-nitro-instances),
+	// the aggregation interval is always 60 seconds or less, regardless of the
+	// value that you specify.
+	//
+	// Default: 600
+	MaxAggregationInterval *int64 `type:"integer"`
 
 	// The ID of the subnet, network interface, or VPC for which you want to create
 	// a flow log.
@@ -44314,6 +46618,9 @@ type CreateFlowLogsInput struct {
 	//
 	// ResourceType is a required field
 	ResourceType *string `type:"string" required:"true" enum:"FlowLogsResourceType"`
+
+	// The tags to apply to the flow logs.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 
 	// The type of traffic to log. You can log traffic that the resource accepts
 	// or rejects, or all traffic.
@@ -44393,6 +46700,12 @@ func (s *CreateFlowLogsInput) SetLogGroupName(v string) *CreateFlowLogsInput {
 	return s
 }
 
+// SetMaxAggregationInterval sets the MaxAggregationInterval field's value.
+func (s *CreateFlowLogsInput) SetMaxAggregationInterval(v int64) *CreateFlowLogsInput {
+	s.MaxAggregationInterval = &v
+	return s
+}
+
 // SetResourceIds sets the ResourceIds field's value.
 func (s *CreateFlowLogsInput) SetResourceIds(v []*string) *CreateFlowLogsInput {
 	s.ResourceIds = v
@@ -44402,6 +46715,12 @@ func (s *CreateFlowLogsInput) SetResourceIds(v []*string) *CreateFlowLogsInput {
 // SetResourceType sets the ResourceType field's value.
 func (s *CreateFlowLogsInput) SetResourceType(v string) *CreateFlowLogsInput {
 	s.ResourceType = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateFlowLogsInput) SetTagSpecifications(v []*TagSpecification) *CreateFlowLogsInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -44709,7 +47028,7 @@ type CreateInstanceExportTaskInput struct {
 	_ struct{} `type:"structure"`
 
 	// A description for the conversion task or the resource being exported. The
-	// maximum length is 255 bytes.
+	// maximum length is 255 characters.
 	Description *string `locationName:"description" type:"string"`
 
 	// The format and location for an instance export task.
@@ -44719,6 +47038,9 @@ type CreateInstanceExportTaskInput struct {
 	//
 	// InstanceId is a required field
 	InstanceId *string `locationName:"instanceId" type:"string" required:"true"`
+
+	// The tags to apply to the instance export task during creation.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 
 	// The target virtualization environment.
 	TargetEnvironment *string `locationName:"targetEnvironment" type:"string" enum:"ExportEnvironment"`
@@ -44765,6 +47087,12 @@ func (s *CreateInstanceExportTaskInput) SetInstanceId(v string) *CreateInstanceE
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateInstanceExportTaskInput) SetTagSpecifications(v []*TagSpecification) *CreateInstanceExportTaskInput {
+	s.TagSpecifications = v
+	return s
+}
+
 // SetTargetEnvironment sets the TargetEnvironment field's value.
 func (s *CreateInstanceExportTaskInput) SetTargetEnvironment(v string) *CreateInstanceExportTaskInput {
 	s.TargetEnvironment = &v
@@ -44802,6 +47130,9 @@ type CreateInternetGatewayInput struct {
 	// the required permissions, the error response is DryRunOperation. Otherwise,
 	// it is UnauthorizedOperation.
 	DryRun *bool `locationName:"dryRun" type:"boolean"`
+
+	// The tags to assign to the internet gateway.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -44817,6 +47148,12 @@ func (s CreateInternetGatewayInput) GoString() string {
 // SetDryRun sets the DryRun field's value.
 func (s *CreateInternetGatewayInput) SetDryRun(v bool) *CreateInternetGatewayInput {
 	s.DryRun = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateInternetGatewayInput) SetTagSpecifications(v []*TagSpecification) *CreateInternetGatewayInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -44858,6 +47195,9 @@ type CreateKeyPairInput struct {
 	//
 	// KeyName is a required field
 	KeyName *string `type:"string" required:"true"`
+
+	// The tags to apply to the new key pair.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -44895,6 +47235,12 @@ func (s *CreateKeyPairInput) SetKeyName(v string) *CreateKeyPairInput {
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateKeyPairInput) SetTagSpecifications(v []*TagSpecification) *CreateKeyPairInput {
+	s.TagSpecifications = v
+	return s
+}
+
 // Describes a key pair.
 type CreateKeyPairOutput struct {
 	_ struct{} `type:"structure"`
@@ -44910,6 +47256,9 @@ type CreateKeyPairOutput struct {
 
 	// The ID of the key pair.
 	KeyPairId *string `locationName:"keyPairId" type:"string"`
+
+	// Any tags applied to the key pair.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -44943,6 +47292,12 @@ func (s *CreateKeyPairOutput) SetKeyName(v string) *CreateKeyPairOutput {
 // SetKeyPairId sets the KeyPairId field's value.
 func (s *CreateKeyPairOutput) SetKeyPairId(v string) *CreateKeyPairOutput {
 	s.KeyPairId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateKeyPairOutput) SetTags(v []*Tag) *CreateKeyPairOutput {
+	s.Tags = v
 	return s
 }
 
@@ -45053,6 +47408,11 @@ type CreateLaunchTemplateOutput struct {
 
 	// Information about the launch template.
 	LaunchTemplate *LaunchTemplate `locationName:"launchTemplate" type:"structure"`
+
+	// If the launch template contains parameters or parameter combinations that
+	// are not valid, an error code and an error message are returned for each issue
+	// that's found.
+	Warning *ValidationWarning `locationName:"warning" type:"structure"`
 }
 
 // String returns the string representation
@@ -45068,6 +47428,12 @@ func (s CreateLaunchTemplateOutput) GoString() string {
 // SetLaunchTemplate sets the LaunchTemplate field's value.
 func (s *CreateLaunchTemplateOutput) SetLaunchTemplate(v *LaunchTemplate) *CreateLaunchTemplateOutput {
 	s.LaunchTemplate = v
+	return s
+}
+
+// SetWarning sets the Warning field's value.
+func (s *CreateLaunchTemplateOutput) SetWarning(v *ValidationWarning) *CreateLaunchTemplateOutput {
+	s.Warning = v
 	return s
 }
 
@@ -45188,6 +47554,11 @@ type CreateLaunchTemplateVersionOutput struct {
 
 	// Information about the launch template version.
 	LaunchTemplateVersion *LaunchTemplateVersion `locationName:"launchTemplateVersion" type:"structure"`
+
+	// If the new version of the launch template contains parameters or parameter
+	// combinations that are not valid, an error code and an error message are returned
+	// for each issue that's found.
+	Warning *ValidationWarning `locationName:"warning" type:"structure"`
 }
 
 // String returns the string representation
@@ -45203,6 +47574,12 @@ func (s CreateLaunchTemplateVersionOutput) GoString() string {
 // SetLaunchTemplateVersion sets the LaunchTemplateVersion field's value.
 func (s *CreateLaunchTemplateVersionOutput) SetLaunchTemplateVersion(v *LaunchTemplateVersion) *CreateLaunchTemplateVersionOutput {
 	s.LaunchTemplateVersion = v
+	return s
+}
+
+// SetWarning sets the Warning field's value.
+func (s *CreateLaunchTemplateVersionOutput) SetWarning(v *ValidationWarning) *CreateLaunchTemplateVersionOutput {
+	s.Warning = v
 	return s
 }
 
@@ -45322,6 +47699,9 @@ type CreateLocalGatewayRouteTableVpcAssociationInput struct {
 	// LocalGatewayRouteTableId is a required field
 	LocalGatewayRouteTableId *string `type:"string" required:"true"`
 
+	// The tags to assign to the local gateway route table VPC association.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// The ID of the VPC.
 	//
 	// VpcId is a required field
@@ -45366,6 +47746,12 @@ func (s *CreateLocalGatewayRouteTableVpcAssociationInput) SetLocalGatewayRouteTa
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateLocalGatewayRouteTableVpcAssociationInput) SetTagSpecifications(v []*TagSpecification) *CreateLocalGatewayRouteTableVpcAssociationInput {
+	s.TagSpecifications = v
+	return s
+}
+
 // SetVpcId sets the VpcId field's value.
 func (s *CreateLocalGatewayRouteTableVpcAssociationInput) SetVpcId(v string) *CreateLocalGatewayRouteTableVpcAssociationInput {
 	s.VpcId = &v
@@ -45395,6 +47781,151 @@ func (s *CreateLocalGatewayRouteTableVpcAssociationOutput) SetLocalGatewayRouteT
 	return s
 }
 
+type CreateManagedPrefixListInput struct {
+	_ struct{} `type:"structure"`
+
+	// The IP address type.
+	//
+	// Valid Values: IPv4 | IPv6
+	//
+	// AddressFamily is a required field
+	AddressFamily *string `type:"string" required:"true"`
+
+	// Unique, case-sensitive identifier you provide to ensure the idempotency of
+	// the request. For more information, see Ensuring Idempotency (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
+	//
+	// Constraints: Up to 255 UTF-8 characters in length.
+	ClientToken *string `type:"string" idempotencyToken:"true"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// One or more entries for the prefix list.
+	Entries []*AddPrefixListEntry `locationName:"Entry" type:"list"`
+
+	// The maximum number of entries for the prefix list.
+	//
+	// MaxEntries is a required field
+	MaxEntries *int64 `type:"integer" required:"true"`
+
+	// A name for the prefix list.
+	//
+	// Constraints: Up to 255 characters in length. The name cannot start with com.amazonaws.
+	//
+	// PrefixListName is a required field
+	PrefixListName *string `type:"string" required:"true"`
+
+	// The tags to apply to the prefix list during creation.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s CreateManagedPrefixListInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateManagedPrefixListInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CreateManagedPrefixListInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CreateManagedPrefixListInput"}
+	if s.AddressFamily == nil {
+		invalidParams.Add(request.NewErrParamRequired("AddressFamily"))
+	}
+	if s.MaxEntries == nil {
+		invalidParams.Add(request.NewErrParamRequired("MaxEntries"))
+	}
+	if s.PrefixListName == nil {
+		invalidParams.Add(request.NewErrParamRequired("PrefixListName"))
+	}
+	if s.Entries != nil {
+		for i, v := range s.Entries {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Entries", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAddressFamily sets the AddressFamily field's value.
+func (s *CreateManagedPrefixListInput) SetAddressFamily(v string) *CreateManagedPrefixListInput {
+	s.AddressFamily = &v
+	return s
+}
+
+// SetClientToken sets the ClientToken field's value.
+func (s *CreateManagedPrefixListInput) SetClientToken(v string) *CreateManagedPrefixListInput {
+	s.ClientToken = &v
+	return s
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *CreateManagedPrefixListInput) SetDryRun(v bool) *CreateManagedPrefixListInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetEntries sets the Entries field's value.
+func (s *CreateManagedPrefixListInput) SetEntries(v []*AddPrefixListEntry) *CreateManagedPrefixListInput {
+	s.Entries = v
+	return s
+}
+
+// SetMaxEntries sets the MaxEntries field's value.
+func (s *CreateManagedPrefixListInput) SetMaxEntries(v int64) *CreateManagedPrefixListInput {
+	s.MaxEntries = &v
+	return s
+}
+
+// SetPrefixListName sets the PrefixListName field's value.
+func (s *CreateManagedPrefixListInput) SetPrefixListName(v string) *CreateManagedPrefixListInput {
+	s.PrefixListName = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateManagedPrefixListInput) SetTagSpecifications(v []*TagSpecification) *CreateManagedPrefixListInput {
+	s.TagSpecifications = v
+	return s
+}
+
+type CreateManagedPrefixListOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the prefix list.
+	PrefixList *ManagedPrefixList `locationName:"prefixList" type:"structure"`
+}
+
+// String returns the string representation
+func (s CreateManagedPrefixListOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateManagedPrefixListOutput) GoString() string {
+	return s.String()
+}
+
+// SetPrefixList sets the PrefixList field's value.
+func (s *CreateManagedPrefixListOutput) SetPrefixList(v *ManagedPrefixList) *CreateManagedPrefixListOutput {
+	s.PrefixList = v
+	return s
+}
+
 type CreateNatGatewayInput struct {
 	_ struct{} `type:"structure"`
 
@@ -45409,12 +47940,21 @@ type CreateNatGatewayInput struct {
 	// of the request. For more information, see How to Ensure Idempotency (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
 	//
 	// Constraint: Maximum 64 ASCII characters.
-	ClientToken *string `type:"string"`
+	ClientToken *string `type:"string" idempotencyToken:"true"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
 
 	// The subnet in which to create the NAT gateway.
 	//
 	// SubnetId is a required field
 	SubnetId *string `type:"string" required:"true"`
+
+	// The tags to assign to the NAT gateway.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -45455,9 +47995,21 @@ func (s *CreateNatGatewayInput) SetClientToken(v string) *CreateNatGatewayInput 
 	return s
 }
 
+// SetDryRun sets the DryRun field's value.
+func (s *CreateNatGatewayInput) SetDryRun(v bool) *CreateNatGatewayInput {
+	s.DryRun = &v
+	return s
+}
+
 // SetSubnetId sets the SubnetId field's value.
 func (s *CreateNatGatewayInput) SetSubnetId(v string) *CreateNatGatewayInput {
 	s.SubnetId = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateNatGatewayInput) SetTagSpecifications(v []*TagSpecification) *CreateNatGatewayInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -45498,6 +48050,8 @@ type CreateNetworkAclEntryInput struct {
 	_ struct{} `type:"structure"`
 
 	// The IPv4 network range to allow or deny, in CIDR notation (for example 172.16.0.0/24).
+	// We modify the specified CIDR block to its canonical form; for example, if
+	// you specify 100.68.0.18/18, we modify it to 100.68.0.0/18.
 	CidrBlock *string `locationName:"cidrBlock" type:"string"`
 
 	// Checks whether you have the required permissions for the action, without
@@ -45672,6 +48226,9 @@ type CreateNetworkAclInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `locationName:"dryRun" type:"boolean"`
 
+	// The tags to assign to the network ACL.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// The ID of the VPC.
 	//
 	// VpcId is a required field
@@ -45704,6 +48261,12 @@ func (s *CreateNetworkAclInput) Validate() error {
 // SetDryRun sets the DryRun field's value.
 func (s *CreateNetworkAclInput) SetDryRun(v bool) *CreateNetworkAclInput {
 	s.DryRun = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateNetworkAclInput) SetTagSpecifications(v []*TagSpecification) *CreateNetworkAclInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -45793,6 +48356,9 @@ type CreateNetworkInterfaceInput struct {
 	//
 	// SubnetId is a required field
 	SubnetId *string `locationName:"subnetId" type:"string" required:"true"`
+
+	// The tags to apply to the new network interface.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -45875,6 +48441,12 @@ func (s *CreateNetworkInterfaceInput) SetSecondaryPrivateIpAddressCount(v int64)
 // SetSubnetId sets the SubnetId field's value.
 func (s *CreateNetworkInterfaceInput) SetSubnetId(v string) *CreateNetworkInterfaceInput {
 	s.SubnetId = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateNetworkInterfaceInput) SetTagSpecifications(v []*TagSpecification) *CreateNetworkInterfaceInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -46029,6 +48601,9 @@ type CreatePlacementGroupInput struct {
 
 	// The placement strategy.
 	Strategy *string `locationName:"strategy" type:"string" enum:"PlacementStrategy"`
+
+	// The tags to apply to the new placement group.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -46065,8 +48640,17 @@ func (s *CreatePlacementGroupInput) SetStrategy(v string) *CreatePlacementGroupI
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreatePlacementGroupInput) SetTagSpecifications(v []*TagSpecification) *CreatePlacementGroupInput {
+	s.TagSpecifications = v
+	return s
+}
+
 type CreatePlacementGroupOutput struct {
 	_ struct{} `type:"structure"`
+
+	// Describes a placement group.
+	PlacementGroup *PlacementGroup `locationName:"placementGroup" type:"structure"`
 }
 
 // String returns the string representation
@@ -46077,6 +48661,12 @@ func (s CreatePlacementGroupOutput) String() string {
 // GoString returns the string representation
 func (s CreatePlacementGroupOutput) GoString() string {
 	return s.String()
+}
+
+// SetPlacementGroup sets the PlacementGroup field's value.
+func (s *CreatePlacementGroupOutput) SetPlacementGroup(v *PlacementGroup) *CreatePlacementGroupOutput {
+	s.PlacementGroup = v
+	return s
 }
 
 // Contains the parameters for CreateReservedInstancesListing.
@@ -46194,12 +48784,17 @@ type CreateRouteInput struct {
 	_ struct{} `type:"structure"`
 
 	// The IPv4 CIDR address block used for the destination match. Routing decisions
-	// are based on the most specific match.
+	// are based on the most specific match. We modify the specified CIDR block
+	// to its canonical form; for example, if you specify 100.68.0.18/18, we modify
+	// it to 100.68.0.0/18.
 	DestinationCidrBlock *string `locationName:"destinationCidrBlock" type:"string"`
 
 	// The IPv6 CIDR block used for the destination match. Routing decisions are
 	// based on the most specific match.
 	DestinationIpv6CidrBlock *string `locationName:"destinationIpv6CidrBlock" type:"string"`
+
+	// The ID of a prefix list used for the destination match.
+	DestinationPrefixListId *string `type:"string"`
 
 	// Checks whether you have the required permissions for the action, without
 	// actually making the request, and provides an error response. If you have
@@ -46271,6 +48866,12 @@ func (s *CreateRouteInput) SetDestinationCidrBlock(v string) *CreateRouteInput {
 // SetDestinationIpv6CidrBlock sets the DestinationIpv6CidrBlock field's value.
 func (s *CreateRouteInput) SetDestinationIpv6CidrBlock(v string) *CreateRouteInput {
 	s.DestinationIpv6CidrBlock = &v
+	return s
+}
+
+// SetDestinationPrefixListId sets the DestinationPrefixListId field's value.
+func (s *CreateRouteInput) SetDestinationPrefixListId(v string) *CreateRouteInput {
+	s.DestinationPrefixListId = &v
 	return s
 }
 
@@ -46461,6 +49062,9 @@ type CreateSecurityGroupInput struct {
 	// GroupName is a required field
 	GroupName *string `type:"string" required:"true"`
 
+	// The tags to assign to the security group.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// [EC2-VPC] The ID of the VPC. Required for EC2-VPC.
 	VpcId *string `type:"string"`
 }
@@ -46509,6 +49113,12 @@ func (s *CreateSecurityGroupInput) SetGroupName(v string) *CreateSecurityGroupIn
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateSecurityGroupInput) SetTagSpecifications(v []*TagSpecification) *CreateSecurityGroupInput {
+	s.TagSpecifications = v
+	return s
+}
+
 // SetVpcId sets the VpcId field's value.
 func (s *CreateSecurityGroupInput) SetVpcId(v string) *CreateSecurityGroupInput {
 	s.VpcId = &v
@@ -46520,6 +49130,9 @@ type CreateSecurityGroupOutput struct {
 
 	// The ID of the security group.
 	GroupId *string `locationName:"groupId" type:"string"`
+
+	// The tags assigned to the security group.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -46535,6 +49148,12 @@ func (s CreateSecurityGroupOutput) GoString() string {
 // SetGroupId sets the GroupId field's value.
 func (s *CreateSecurityGroupOutput) SetGroupId(v string) *CreateSecurityGroupOutput {
 	s.GroupId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateSecurityGroupOutput) SetTags(v []*Tag) *CreateSecurityGroupOutput {
+	s.Tags = v
 	return s
 }
 
@@ -46802,12 +49421,17 @@ type CreateSubnetInput struct {
 	// for example us-west-2-lax-1a. For information about the Regions that support
 	// Local Zones, see Available Regions (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions)
 	// in the Amazon Elastic Compute Cloud User Guide.
+	//
+	// To create a subnet in an Outpost, set this value to the Availability Zone
+	// for the Outpost and specify the Outpost ARN.
 	AvailabilityZone *string `type:"string"`
 
 	// The AZ ID or the Local Zone ID of the subnet.
 	AvailabilityZoneId *string `type:"string"`
 
 	// The IPv4 network range for the subnet, in CIDR notation. For example, 10.0.0.0/24.
+	// We modify the specified CIDR block to its canonical form; for example, if
+	// you specify 100.68.0.18/18, we modify it to 100.68.0.0/18.
 	//
 	// CidrBlock is a required field
 	CidrBlock *string `type:"string" required:"true"`
@@ -46822,8 +49446,12 @@ type CreateSubnetInput struct {
 	// must use a /64 prefix length.
 	Ipv6CidrBlock *string `type:"string"`
 
-	// The Amazon Resource Name (ARN) of the Outpost.
+	// The Amazon Resource Name (ARN) of the Outpost. If you specify an Outpost
+	// ARN, you must also specify the Availability Zone of the Outpost subnet.
 	OutpostArn *string `type:"string"`
+
+	// The tags to assign to the subnet.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 
 	// The ID of the VPC.
 	//
@@ -46890,6 +49518,12 @@ func (s *CreateSubnetInput) SetIpv6CidrBlock(v string) *CreateSubnetInput {
 // SetOutpostArn sets the OutpostArn field's value.
 func (s *CreateSubnetInput) SetOutpostArn(v string) *CreateSubnetInput {
 	s.OutpostArn = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateSubnetInput) SetTagSpecifications(v []*TagSpecification) *CreateSubnetInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -48267,10 +50901,18 @@ type CreateVolumeInput struct {
 	// fails.
 	KmsKeyId *string `type:"string"`
 
+	// Specifies whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach,
+	// you can attach the volume to up to 16 Nitro-based instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#ec2-nitro-instances)
+	// in the same Availability Zone. For more information, see Amazon EBS Multi-Attach
+	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes-multi.html)
+	// in the Amazon Elastic Compute Cloud User Guide.
+	MultiAttachEnabled *bool `type:"boolean"`
+
 	// The Amazon Resource Name (ARN) of the Outpost.
 	OutpostArn *string `type:"string"`
 
-	// The size of the volume, in GiBs.
+	// The size of the volume, in GiBs. You must specify either a snapshot ID or
+	// a volume size.
 	//
 	// Constraints: 1-16,384 for gp2, 4-16,384 for io1, 500-16,384 for st1, 500-16,384
 	// for sc1, and 1-1,024 for standard. If you specify a snapshot, the volume
@@ -48278,13 +50920,10 @@ type CreateVolumeInput struct {
 	//
 	// Default: If you're creating the volume from a snapshot and don't specify
 	// a volume size, the default is the snapshot size.
-	//
-	// At least one of Size or SnapshotId is required.
 	Size *int64 `type:"integer"`
 
-	// The snapshot from which to create the volume.
-	//
-	// At least one of Size or SnapshotId are required.
+	// The snapshot from which to create the volume. You must specify either a snapshot
+	// ID or a volume size.
 	SnapshotId *string `type:"string"`
 
 	// The tags to apply to the volume during creation.
@@ -48348,6 +50987,12 @@ func (s *CreateVolumeInput) SetIops(v int64) *CreateVolumeInput {
 // SetKmsKeyId sets the KmsKeyId field's value.
 func (s *CreateVolumeInput) SetKmsKeyId(v string) *CreateVolumeInput {
 	s.KmsKeyId = &v
+	return s
+}
+
+// SetMultiAttachEnabled sets the MultiAttachEnabled field's value.
+func (s *CreateVolumeInput) SetMultiAttachEnabled(v bool) *CreateVolumeInput {
+	s.MultiAttachEnabled = &v
 	return s
 }
 
@@ -48625,6 +51270,9 @@ type CreateVpcEndpointInput struct {
 	// endpoint network interface.
 	SubnetIds []*string `locationName:"SubnetId" locationNameList:"item" type:"list"`
 
+	// The tags to associate with the endpoint.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// The type of endpoint.
 	//
 	// Default: Gateway
@@ -48710,6 +51358,12 @@ func (s *CreateVpcEndpointInput) SetSubnetIds(v []*string) *CreateVpcEndpointInp
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateVpcEndpointInput) SetTagSpecifications(v []*TagSpecification) *CreateVpcEndpointInput {
+	s.TagSpecifications = v
+	return s
+}
+
 // SetVpcEndpointType sets the VpcEndpointType field's value.
 func (s *CreateVpcEndpointInput) SetVpcEndpointType(v string) *CreateVpcEndpointInput {
 	s.VpcEndpointType = &v
@@ -48781,6 +51435,9 @@ type CreateVpcEndpointServiceConfigurationInput struct {
 
 	// The private DNS name to assign to the VPC endpoint service.
 	PrivateDnsName *string `type:"string"`
+
+	// The tags to associate with the service.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -48836,6 +51493,12 @@ func (s *CreateVpcEndpointServiceConfigurationInput) SetPrivateDnsName(v string)
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateVpcEndpointServiceConfigurationInput) SetTagSpecifications(v []*TagSpecification) *CreateVpcEndpointServiceConfigurationInput {
+	s.TagSpecifications = v
+	return s
+}
+
 type CreateVpcEndpointServiceConfigurationOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -48878,6 +51541,8 @@ type CreateVpcInput struct {
 	AmazonProvidedIpv6CidrBlock *bool `locationName:"amazonProvidedIpv6CidrBlock" type:"boolean"`
 
 	// The IPv4 network range for the VPC, in CIDR notation. For example, 10.0.0.0/16.
+	// We modify the specified CIDR block to its canonical form; for example, if
+	// you specify 100.68.0.18/18, we modify it to 100.68.0.0/18.
 	//
 	// CidrBlock is a required field
 	CidrBlock *string `type:"string" required:"true"`
@@ -48900,11 +51565,23 @@ type CreateVpcInput struct {
 	// Default: default
 	InstanceTenancy *string `locationName:"instanceTenancy" type:"string" enum:"Tenancy"`
 
+	// The IPv6 CIDR block from the IPv6 address pool. You must also specify Ipv6Pool
+	// in the request.
+	//
+	// To let Amazon choose the IPv6 CIDR block for you, omit this parameter.
+	Ipv6CidrBlock *string `type:"string"`
+
 	// The name of the location from which we advertise the IPV6 CIDR block. Use
 	// this parameter to limit the address to this location.
 	//
 	// You must set AmazonProvidedIpv6CidrBlock to true to use this parameter.
 	Ipv6CidrBlockNetworkBorderGroup *string `type:"string"`
+
+	// The ID of an IPv6 address pool from which to allocate the IPv6 CIDR block.
+	Ipv6Pool *string `type:"string"`
+
+	// The tags to assign to the VPC.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -48954,9 +51631,27 @@ func (s *CreateVpcInput) SetInstanceTenancy(v string) *CreateVpcInput {
 	return s
 }
 
+// SetIpv6CidrBlock sets the Ipv6CidrBlock field's value.
+func (s *CreateVpcInput) SetIpv6CidrBlock(v string) *CreateVpcInput {
+	s.Ipv6CidrBlock = &v
+	return s
+}
+
 // SetIpv6CidrBlockNetworkBorderGroup sets the Ipv6CidrBlockNetworkBorderGroup field's value.
 func (s *CreateVpcInput) SetIpv6CidrBlockNetworkBorderGroup(v string) *CreateVpcInput {
 	s.Ipv6CidrBlockNetworkBorderGroup = &v
+	return s
+}
+
+// SetIpv6Pool sets the Ipv6Pool field's value.
+func (s *CreateVpcInput) SetIpv6Pool(v string) *CreateVpcInput {
+	s.Ipv6Pool = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *CreateVpcInput) SetTagSpecifications(v []*TagSpecification) *CreateVpcInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -50308,9 +53003,10 @@ type DeleteKeyPairInput struct {
 	DryRun *bool `locationName:"dryRun" type:"boolean"`
 
 	// The name of the key pair.
-	//
-	// KeyName is a required field
-	KeyName *string `type:"string" required:"true"`
+	KeyName *string `type:"string"`
+
+	// The ID of the key pair.
+	KeyPairId *string `type:"string"`
 }
 
 // String returns the string representation
@@ -50323,19 +53019,6 @@ func (s DeleteKeyPairInput) GoString() string {
 	return s.String()
 }
 
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteKeyPairInput) Validate() error {
-	invalidParams := request.ErrInvalidParams{Context: "DeleteKeyPairInput"}
-	if s.KeyName == nil {
-		invalidParams.Add(request.NewErrParamRequired("KeyName"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
 // SetDryRun sets the DryRun field's value.
 func (s *DeleteKeyPairInput) SetDryRun(v bool) *DeleteKeyPairInput {
 	s.DryRun = &v
@@ -50345,6 +53028,12 @@ func (s *DeleteKeyPairInput) SetDryRun(v bool) *DeleteKeyPairInput {
 // SetKeyName sets the KeyName field's value.
 func (s *DeleteKeyPairInput) SetKeyName(v string) *DeleteKeyPairInput {
 	s.KeyName = &v
+	return s
+}
+
+// SetKeyPairId sets the KeyPairId field's value.
+func (s *DeleteKeyPairInput) SetKeyPairId(v string) *DeleteKeyPairInput {
+	s.KeyPairId = &v
 	return s
 }
 
@@ -50802,8 +53491,87 @@ func (s *DeleteLocalGatewayRouteTableVpcAssociationOutput) SetLocalGatewayRouteT
 	return s
 }
 
+type DeleteManagedPrefixListInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The ID of the prefix list.
+	//
+	// PrefixListId is a required field
+	PrefixListId *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s DeleteManagedPrefixListInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeleteManagedPrefixListInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DeleteManagedPrefixListInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DeleteManagedPrefixListInput"}
+	if s.PrefixListId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PrefixListId"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DeleteManagedPrefixListInput) SetDryRun(v bool) *DeleteManagedPrefixListInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetPrefixListId sets the PrefixListId field's value.
+func (s *DeleteManagedPrefixListInput) SetPrefixListId(v string) *DeleteManagedPrefixListInput {
+	s.PrefixListId = &v
+	return s
+}
+
+type DeleteManagedPrefixListOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the prefix list.
+	PrefixList *ManagedPrefixList `locationName:"prefixList" type:"structure"`
+}
+
+// String returns the string representation
+func (s DeleteManagedPrefixListOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeleteManagedPrefixListOutput) GoString() string {
+	return s.String()
+}
+
+// SetPrefixList sets the PrefixList field's value.
+func (s *DeleteManagedPrefixListOutput) SetPrefixList(v *ManagedPrefixList) *DeleteManagedPrefixListOutput {
+	s.PrefixList = v
+	return s
+}
+
 type DeleteNatGatewayInput struct {
 	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
 
 	// The ID of the NAT gateway.
 	//
@@ -50832,6 +53600,12 @@ func (s *DeleteNatGatewayInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DeleteNatGatewayInput) SetDryRun(v bool) *DeleteNatGatewayInput {
+	s.DryRun = &v
+	return s
 }
 
 // SetNatGatewayId sets the NatGatewayId field's value.
@@ -51363,6 +54137,9 @@ type DeleteRouteInput struct {
 	// for the route exactly.
 	DestinationIpv6CidrBlock *string `locationName:"destinationIpv6CidrBlock" type:"string"`
 
+	// The ID of the prefix list for the route.
+	DestinationPrefixListId *string `type:"string"`
+
 	// Checks whether you have the required permissions for the action, without
 	// actually making the request, and provides an error response. If you have
 	// the required permissions, the error response is DryRunOperation. Otherwise,
@@ -51407,6 +54184,12 @@ func (s *DeleteRouteInput) SetDestinationCidrBlock(v string) *DeleteRouteInput {
 // SetDestinationIpv6CidrBlock sets the DestinationIpv6CidrBlock field's value.
 func (s *DeleteRouteInput) SetDestinationIpv6CidrBlock(v string) *DeleteRouteInput {
 	s.DestinationIpv6CidrBlock = &v
+	return s
+}
+
+// SetDestinationPrefixListId sets the DestinationPrefixListId field's value.
+func (s *DeleteRouteInput) SetDestinationPrefixListId(v string) *DeleteRouteInput {
+	s.DestinationPrefixListId = &v
 	return s
 }
 
@@ -53177,8 +55960,8 @@ func (s DeleteVpnGatewayOutput) GoString() string {
 type DeprovisionByoipCidrInput struct {
 	_ struct{} `type:"structure"`
 
-	// The public IPv4 address range, in CIDR notation. The prefix must be the same
-	// prefix that you specified when you provisioned the address range.
+	// The address range, in CIDR notation. The prefix must be the same prefix that
+	// you specified when you provisioned the address range.
 	//
 	// Cidr is a required field
 	Cidr *string `type:"string" required:"true"`
@@ -53311,6 +56094,101 @@ func (s DeregisterImageOutput) String() string {
 // GoString returns the string representation
 func (s DeregisterImageOutput) GoString() string {
 	return s.String()
+}
+
+type DeregisterInstanceEventNotificationAttributesInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// Information about the tag keys to deregister.
+	InstanceTagAttribute *DeregisterInstanceTagAttributeRequest `type:"structure"`
+}
+
+// String returns the string representation
+func (s DeregisterInstanceEventNotificationAttributesInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeregisterInstanceEventNotificationAttributesInput) GoString() string {
+	return s.String()
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DeregisterInstanceEventNotificationAttributesInput) SetDryRun(v bool) *DeregisterInstanceEventNotificationAttributesInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetInstanceTagAttribute sets the InstanceTagAttribute field's value.
+func (s *DeregisterInstanceEventNotificationAttributesInput) SetInstanceTagAttribute(v *DeregisterInstanceTagAttributeRequest) *DeregisterInstanceEventNotificationAttributesInput {
+	s.InstanceTagAttribute = v
+	return s
+}
+
+type DeregisterInstanceEventNotificationAttributesOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The resulting set of tag keys.
+	InstanceTagAttribute *InstanceTagNotificationAttribute `locationName:"instanceTagAttribute" type:"structure"`
+}
+
+// String returns the string representation
+func (s DeregisterInstanceEventNotificationAttributesOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeregisterInstanceEventNotificationAttributesOutput) GoString() string {
+	return s.String()
+}
+
+// SetInstanceTagAttribute sets the InstanceTagAttribute field's value.
+func (s *DeregisterInstanceEventNotificationAttributesOutput) SetInstanceTagAttribute(v *InstanceTagNotificationAttribute) *DeregisterInstanceEventNotificationAttributesOutput {
+	s.InstanceTagAttribute = v
+	return s
+}
+
+// Information about the tag keys to deregister for the current Region. You
+// can either specify individual tag keys or deregister all tag keys in the
+// current Region. You must specify either IncludeAllTagsOfInstance or InstanceTagKeys
+// in the request
+type DeregisterInstanceTagAttributeRequest struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether to deregister all tag keys in the current Region. Specify
+	// false to deregister all tag keys.
+	IncludeAllTagsOfInstance *bool `type:"boolean"`
+
+	// Information about the tag keys to deregister.
+	InstanceTagKeys []*string `locationName:"InstanceTagKey" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s DeregisterInstanceTagAttributeRequest) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeregisterInstanceTagAttributeRequest) GoString() string {
+	return s.String()
+}
+
+// SetIncludeAllTagsOfInstance sets the IncludeAllTagsOfInstance field's value.
+func (s *DeregisterInstanceTagAttributeRequest) SetIncludeAllTagsOfInstance(v bool) *DeregisterInstanceTagAttributeRequest {
+	s.IncludeAllTagsOfInstance = &v
+	return s
+}
+
+// SetInstanceTagKeys sets the InstanceTagKeys field's value.
+func (s *DeregisterInstanceTagAttributeRequest) SetInstanceTagKeys(v []*string) *DeregisterInstanceTagAttributeRequest {
+	s.InstanceTagKeys = v
+	return s
 }
 
 type DeregisterTransitGatewayMulticastGroupMembersInput struct {
@@ -54002,6 +56880,57 @@ type DescribeCapacityReservationsInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters.
+	//
+	//    * instance-type - The type of instance for which the Capacity Reservation
+	//    reserves capacity.
+	//
+	//    * owner-id - The ID of the AWS account that owns the Capacity Reservation.
+	//
+	//    * availability-zone-id - The Availability Zone ID of the Capacity Reservation.
+	//
+	//    * instance-platform - The type of operating system for which the Capacity
+	//    Reservation reserves capacity.
+	//
+	//    * availability-zone - The Availability Zone ID of the Capacity Reservation.
+	//
+	//    * tenancy - Indicates the tenancy of the Capacity Reservation. A Capacity
+	//    Reservation can have one of the following tenancy settings: default -
+	//    The Capacity Reservation is created on hardware that is shared with other
+	//    AWS accounts. dedicated - The Capacity Reservation is created on single-tenant
+	//    hardware that is dedicated to a single AWS account.
+	//
+	//    * state - The current state of the Capacity Reservation. A Capacity Reservation
+	//    can be in one of the following states: active- The Capacity Reservation
+	//    is active and the capacity is available for your use. expired - The Capacity
+	//    Reservation expired automatically at the date and time specified in your
+	//    request. The reserved capacity is no longer available for your use. cancelled
+	//    - The Capacity Reservation was manually cancelled. The reserved capacity
+	//    is no longer available for your use. pending - The Capacity Reservation
+	//    request was successful but the capacity provisioning is still pending.
+	//    failed - The Capacity Reservation request has failed. A request might
+	//    fail due to invalid request parameters, capacity constraints, or instance
+	//    limit constraints. Failed requests are retained for 60 minutes.
+	//
+	//    * end-date - The date and time at which the Capacity Reservation expires.
+	//    When a Capacity Reservation expires, the reserved capacity is released
+	//    and you can no longer launch instances into it. The Capacity Reservation's
+	//    state changes to expired when it reaches its end date and time.
+	//
+	//    * end-date-type - Indicates the way in which the Capacity Reservation
+	//    ends. A Capacity Reservation can have one of the following end types:
+	//    unlimited - The Capacity Reservation remains active until you explicitly
+	//    cancel it. limited - The Capacity Reservation expires automatically at
+	//    a specified date and time.
+	//
+	//    * instance-match-criteria - Indicates the type of instance launches that
+	//    the Capacity Reservation accepts. The options include: open - The Capacity
+	//    Reservation accepts all instances that have matching attributes (instance
+	//    type, platform, and Availability Zone). Instances that have matching attributes
+	//    launch into the Capacity Reservation automatically without specifying
+	//    any additional parameters. targeted - The Capacity Reservation only accepts
+	//    instances that have matching attributes (instance type, platform, and
+	//    Availability Zone), and explicitly target the Capacity Reservation. This
+	//    ensures that only permitted instances can use the reserved capacity.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.
@@ -54243,6 +57172,14 @@ type DescribeClientVpnAuthorizationRulesInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters. Filter names and values are case-sensitive.
+	//
+	//    * description - The description of the authorization rule.
+	//
+	//    * destination-cidr - The CIDR of the network to which the authorization
+	//    rule applies.
+	//
+	//    * group-id - The ID of the Active Directory group to which the authorization
+	//    rule grants access.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.
@@ -54358,6 +57295,11 @@ type DescribeClientVpnConnectionsInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters. Filter names and values are case-sensitive.
+	//
+	//    * connection-id - The ID of the connection.
+	//
+	//    * username - For Active Directory client authentication, the user name
+	//    of the client who established the client connection.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.
@@ -54471,6 +57413,10 @@ type DescribeClientVpnEndpointsInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters. Filter names and values are case-sensitive.
+	//
+	//    * endpoint-id - The ID of the Client VPN endpoint.
+	//
+	//    * transport-protocol - The transport protocol (tcp | udp).
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.
@@ -54583,6 +57529,13 @@ type DescribeClientVpnRoutesInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters. Filter names and values are case-sensitive.
+	//
+	//    * destination-cidr - The CIDR of the route destination.
+	//
+	//    * origin - How the route was associated with the Client VPN endpoint (associate
+	//    | add-route).
+	//
+	//    * target-subnet - The ID of the subnet through which traffic is routed.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.
@@ -54701,6 +57654,12 @@ type DescribeClientVpnTargetNetworksInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters. Filter names and values are case-sensitive.
+	//
+	//    * association-id - The ID of the association.
+	//
+	//    * target-network-id - The ID of the subnet specified as the target network.
+	//
+	//    * vpc-id - The ID of the VPC in which the target network is located.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.
@@ -55571,6 +58530,7 @@ type DescribeExportTasksInput struct {
 	// The export task IDs.
 	ExportTaskIds []*string `locationName:"exportTaskId" locationNameList:"ExportTaskId" type:"list"`
 
+	// the filters for the export tasks.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 }
 
@@ -55641,10 +58601,11 @@ type DescribeFastSnapshotRestoreSuccessItem struct {
 	// The time at which fast snapshot restores entered the optimizing state.
 	OptimizingTime *time.Time `locationName:"optimizingTime" type:"timestamp"`
 
-	// The alias of the snapshot owner.
+	// The AWS owner alias that enabled fast snapshot restores on the snapshot.
+	// This is intended for future use.
 	OwnerAlias *string `locationName:"ownerAlias" type:"string"`
 
-	// The ID of the AWS account that owns the snapshot.
+	// The ID of the AWS account that enabled fast snapshot restores on the snapshot.
 	OwnerId *string `locationName:"ownerId" type:"string"`
 
 	// The ID of the snapshot.
@@ -55752,7 +58713,8 @@ type DescribeFastSnapshotRestoresInput struct {
 	//
 	//    * availability-zone: The Availability Zone of the snapshot.
 	//
-	//    * owner-id: The ID of the AWS account that owns the snapshot.
+	//    * owner-id: The ID of the AWS account that enabled fast snapshot restore
+	//    on the snapshot.
 	//
 	//    * snapshot-id: The ID of the snapshot.
 	//
@@ -56367,6 +59329,16 @@ type DescribeFlowLogsInput struct {
 	//    * resource-id - The ID of the VPC, subnet, or network interface.
 	//
 	//    * traffic-type - The type of traffic (ACCEPT | REJECT | ALL).
+	//
+	//    * tag:<key> - The key/value combination of a tag assigned to the resource.
+	//    Use the tag key in the filter name and the tag value as the filter value.
+	//    For example, to find all resources that have a tag with the key Owner
+	//    and the value TeamA, specify tag:Owner for the filter name and TeamA for
+	//    the filter value.
+	//
+	//    * tag-key - The key of a tag assigned to the resource. Use this filter
+	//    to find all resources assigned a tag with a specific key, regardless of
+	//    the tag value.
 	Filter []*Filter `locationNameList:"Filter" type:"list"`
 
 	// One or more flow log IDs.
@@ -57041,8 +60013,7 @@ type DescribeIamInstanceProfileAssociationsInput struct {
 	//
 	//    * instance-id - The ID of the instance.
 	//
-	//    * state - The state of the association (associating | associated | disassociating
-	//    | disassociated).
+	//    * state - The state of the association (associating | associated | disassociating).
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return in a single call. To retrieve the
@@ -58121,6 +61092,55 @@ func (s *DescribeInstanceCreditSpecificationsOutput) SetNextToken(v string) *Des
 	return s
 }
 
+type DescribeInstanceEventNotificationAttributesInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s DescribeInstanceEventNotificationAttributesInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeInstanceEventNotificationAttributesInput) GoString() string {
+	return s.String()
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DescribeInstanceEventNotificationAttributesInput) SetDryRun(v bool) *DescribeInstanceEventNotificationAttributesInput {
+	s.DryRun = &v
+	return s
+}
+
+type DescribeInstanceEventNotificationAttributesOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the registered tag keys.
+	InstanceTagAttribute *InstanceTagNotificationAttribute `locationName:"instanceTagAttribute" type:"structure"`
+}
+
+// String returns the string representation
+func (s DescribeInstanceEventNotificationAttributesOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeInstanceEventNotificationAttributesOutput) GoString() string {
+	return s.String()
+}
+
+// SetInstanceTagAttribute sets the InstanceTagAttribute field's value.
+func (s *DescribeInstanceEventNotificationAttributesOutput) SetInstanceTagAttribute(v *InstanceTagNotificationAttribute) *DescribeInstanceEventNotificationAttributesOutput {
+	s.InstanceTagAttribute = v
+	return s
+}
+
 type DescribeInstanceStatusInput struct {
 	_ struct{} `type:"structure"`
 
@@ -58414,11 +61434,32 @@ type DescribeInstanceTypesInput struct {
 	//    * current-generation - Indicates whether this instance type is the latest
 	//    generation instance type of an instance family. (true | false)
 	//
+	//    * ebs-info.ebs-optimized-info.baseline-bandwidth-in-mbps - The baseline
+	//    bandwidth performance for an EBS-optimized instance type, in Mbps.
+	//
+	//    * ebs-info.ebs-optimized-info.baseline-throughput-in-mbps - The baseline
+	//    throughput performance for an EBS-optimized instance type, in MBps.
+	//
+	//    * ebs-info.ebs-optimized-info.baseline-iops - The baseline input/output
+	//    storage operations per second for an EBS-optimized instance type.
+	//
+	//    * ebs-info.ebs-optimized-info.maximum-bandwidth-in-mbps - The maximum
+	//    bandwidth performance for an EBS-optimized instance type, in Mbps.
+	//
+	//    * ebs-info.ebs-optimized-info.maximum-throughput-in-mbps - The maximum
+	//    throughput performance for an EBS-optimized instance type, in MBps.
+	//
+	//    * ebs-info.ebs-optimized-info.maximum-iops - The maximum input/output
+	//    storage operations per second for an EBS-optimized instance type.
+	//
 	//    * ebs-info.ebs-optimized-support - Indicates whether the instance type
-	//    is EBS-optimized. (true | false)
+	//    is EBS-optimized. (supported | unsupported | default)
 	//
 	//    * ebs-info.encryption-support - Indicates whether EBS encryption is supported.
-	//    (true | false)
+	//    (supported | unsupported)
+	//
+	//    * ebs-info.nvme-support - Indicates whether non-volatile memory express
+	//    (NVMe) is supported or required. (required | supported | unsupported)
 	//
 	//    * free-tier-eligible - Indicates whether the instance type is eligible
 	//    to use in the free tier. (true | false)
@@ -58447,6 +61488,9 @@ type DescribeInstanceTypesInput struct {
 	//    * network-info.ena-support - Indicates whether Elastic Network Adapter
 	//    (ENA) is supported or required. (required | supported | unsupported)
 	//
+	//    * network-info.efa-supported - Indicates whether the instance type supports
+	//    Elastic Fabric Adapter (EFA). (true | false)
+	//
 	//    * network-info.ipv4-addresses-per-interface - The maximum number of private
 	//    IPv4 addresses per network interface.
 	//
@@ -58468,7 +61512,7 @@ type DescribeInstanceTypesInput struct {
 	//    type.
 	//
 	//    * vcpu-info.default-threads-per-core - The default number of threads per
-	//    cores for the instance type.
+	//    core for the instance type.
 	//
 	//    * vcpu-info.default-vcpus - The default number of vCPUs for the instance
 	//    type.
@@ -58624,7 +61668,8 @@ type DescribeInstancesInput struct {
 	//    * host-id - The ID of the Dedicated Host on which the instance is running,
 	//    if applicable.
 	//
-	//    * hypervisor - The hypervisor type of the instance (ovm | xen).
+	//    * hypervisor - The hypervisor type of the instance (ovm | xen). The value
+	//    xen is used for both Xen and Nitro hypervisors.
 	//
 	//    * iam-instance-profile.arn - The instance profile associated with the
 	//    instance. Specified as an ARN.
@@ -59049,6 +62094,125 @@ func (s *DescribeInternetGatewaysOutput) SetNextToken(v string) *DescribeInterne
 	return s
 }
 
+type DescribeIpv6PoolsInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// One or more filters.
+	//
+	//    * tag:<key> - The key/value combination of a tag assigned to the resource.
+	//    Use the tag key in the filter name and the tag value as the filter value.
+	//    For example, to find all resources that have a tag with the key Owner
+	//    and the value TeamA, specify tag:Owner for the filter name and TeamA for
+	//    the filter value.
+	//
+	//    * tag-key - The key of a tag assigned to the resource. Use this filter
+	//    to find all resources assigned a tag with a specific key, regardless of
+	//    the tag value.
+	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
+
+	// The maximum number of results to return with a single call. To retrieve the
+	// remaining results, make another call with the returned nextToken value.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// The token for the next page of results.
+	NextToken *string `type:"string"`
+
+	// The IDs of the IPv6 address pools.
+	PoolIds []*string `locationName:"PoolId" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s DescribeIpv6PoolsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeIpv6PoolsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DescribeIpv6PoolsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DescribeIpv6PoolsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DescribeIpv6PoolsInput) SetDryRun(v bool) *DescribeIpv6PoolsInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetFilters sets the Filters field's value.
+func (s *DescribeIpv6PoolsInput) SetFilters(v []*Filter) *DescribeIpv6PoolsInput {
+	s.Filters = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *DescribeIpv6PoolsInput) SetMaxResults(v int64) *DescribeIpv6PoolsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeIpv6PoolsInput) SetNextToken(v string) *DescribeIpv6PoolsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPoolIds sets the PoolIds field's value.
+func (s *DescribeIpv6PoolsInput) SetPoolIds(v []*string) *DescribeIpv6PoolsInput {
+	s.PoolIds = v
+	return s
+}
+
+type DescribeIpv6PoolsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the IPv6 address pools.
+	Ipv6Pools []*Ipv6Pool `locationName:"ipv6PoolSet" locationNameList:"item" type:"list"`
+
+	// The token to use to retrieve the next page of results. This value is null
+	// when there are no more results to return.
+	NextToken *string `locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s DescribeIpv6PoolsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeIpv6PoolsOutput) GoString() string {
+	return s.String()
+}
+
+// SetIpv6Pools sets the Ipv6Pools field's value.
+func (s *DescribeIpv6PoolsOutput) SetIpv6Pools(v []*Ipv6Pool) *DescribeIpv6PoolsOutput {
+	s.Ipv6Pools = v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeIpv6PoolsOutput) SetNextToken(v string) *DescribeIpv6PoolsOutput {
+	s.NextToken = &v
+	return s
+}
+
 type DescribeKeyPairsInput struct {
 	_ struct{} `type:"structure"`
 
@@ -59060,9 +62224,21 @@ type DescribeKeyPairsInput struct {
 
 	// The filters.
 	//
+	//    * key-pair-id - The ID of the key pair.
+	//
 	//    * fingerprint - The fingerprint of the key pair.
 	//
 	//    * key-name - The name of the key pair.
+	//
+	//    * tag-key - The key of a tag assigned to the resource. Use this filter
+	//    to find all resources assigned a tag with a specific key, regardless of
+	//    the tag value.
+	//
+	//    * tag:<key> - The key/value combination of a tag assigned to the resource.
+	//    Use the tag key in the filter name and the tag value as the filter value.
+	//    For example, to find all resources that have a tag with the key Owner
+	//    and the value TeamA, specify tag:Owner for the filter name and TeamA for
+	//    the filter value.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The key pair names.
@@ -59440,6 +62616,18 @@ type DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsInput struct
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters.
+	//
+	//    * local-gateway-id - The ID of a local gateway.
+	//
+	//    * local-gateway-route-table-id - The ID of the local gateway route table.
+	//
+	//    * local-gateway-route-table-virtual-interface-group-association-id - The
+	//    ID of the association.
+	//
+	//    * local-gateway-route-table-virtual-interface-group-id - The ID of the
+	//    virtual interface group.
+	//
+	//    * state - The state of the association.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The IDs of the associations.
@@ -59549,6 +62737,16 @@ type DescribeLocalGatewayRouteTableVpcAssociationsInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters.
+	//
+	//    * local-gateway-id - The ID of a local gateway.
+	//
+	//    * local-gateway-route-table-id - The ID of the local gateway route table.
+	//
+	//    * local-gateway-route-table-vpc-association-id - The ID of the association.
+	//
+	//    * state - The state of the association.
+	//
+	//    * vpc-id - The ID of the VPC.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The IDs of the associations.
@@ -59658,6 +62856,14 @@ type DescribeLocalGatewayRouteTablesInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters.
+	//
+	//    * local-gateway-id - The ID of a local gateway.
+	//
+	//    * local-gateway-route-table-id - The ID of a local gateway route table.
+	//
+	//    * outpost-arn - The Amazon Resource Name (ARN) of the Outpost.
+	//
+	//    * state - The state of the local gateway route table.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The IDs of the local gateway route tables.
@@ -59767,6 +62973,13 @@ type DescribeLocalGatewayVirtualInterfaceGroupsInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters.
+	//
+	//    * local-gateway-id - The ID of a local gateway.
+	//
+	//    * local-gateway-virtual-interface-id - The ID of the virtual interface.
+	//
+	//    * local-gateway-virtual-interface-group-id - The ID of the virtual interface
+	//    group.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The IDs of the virtual interface groups.
@@ -59987,7 +63200,21 @@ type DescribeLocalGatewaysInput struct {
 	// One or more filters.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
-	// The IDs of the local gateways.
+	// One or more filters.
+	//
+	//    * local-gateway-id - The ID of a local gateway.
+	//
+	//    * local-gateway-route-table-id - The ID of the local gateway route table.
+	//
+	//    * local-gateway-route-table-virtual-interface-group-association-id - The
+	//    ID of the association.
+	//
+	//    * local-gateway-route-table-virtual-interface-group-id - The ID of the
+	//    virtual interface group.
+	//
+	//    * outpost-arn - The Amazon Resource Name (ARN) of the Outpost.
+	//
+	//    * state - The state of the association.
 	LocalGatewayIds []*string `locationName:"LocalGatewayId" locationNameList:"item" type:"list"`
 
 	// The maximum number of results to return with a single call. To retrieve the
@@ -60081,6 +63308,121 @@ func (s *DescribeLocalGatewaysOutput) SetLocalGateways(v []*LocalGateway) *Descr
 // SetNextToken sets the NextToken field's value.
 func (s *DescribeLocalGatewaysOutput) SetNextToken(v string) *DescribeLocalGatewaysOutput {
 	s.NextToken = &v
+	return s
+}
+
+type DescribeManagedPrefixListsInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// One or more filters.
+	//
+	//    * owner-id - The ID of the prefix list owner.
+	//
+	//    * prefix-list-id - The ID of the prefix list.
+	//
+	//    * prefix-list-name - The name of the prefix list.
+	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
+
+	// The maximum number of results to return with a single call. To retrieve the
+	// remaining results, make another call with the returned nextToken value.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// The token for the next page of results.
+	NextToken *string `type:"string"`
+
+	// One or more prefix list IDs.
+	PrefixListIds []*string `locationName:"PrefixListId" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s DescribeManagedPrefixListsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeManagedPrefixListsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DescribeManagedPrefixListsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DescribeManagedPrefixListsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DescribeManagedPrefixListsInput) SetDryRun(v bool) *DescribeManagedPrefixListsInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetFilters sets the Filters field's value.
+func (s *DescribeManagedPrefixListsInput) SetFilters(v []*Filter) *DescribeManagedPrefixListsInput {
+	s.Filters = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *DescribeManagedPrefixListsInput) SetMaxResults(v int64) *DescribeManagedPrefixListsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeManagedPrefixListsInput) SetNextToken(v string) *DescribeManagedPrefixListsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPrefixListIds sets the PrefixListIds field's value.
+func (s *DescribeManagedPrefixListsInput) SetPrefixListIds(v []*string) *DescribeManagedPrefixListsInput {
+	s.PrefixListIds = v
+	return s
+}
+
+type DescribeManagedPrefixListsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The token to use to retrieve the next page of results. This value is null
+	// when there are no more results to return.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// Information about the prefix lists.
+	PrefixLists []*ManagedPrefixList `locationName:"prefixListSet" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s DescribeManagedPrefixListsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeManagedPrefixListsOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeManagedPrefixListsOutput) SetNextToken(v string) *DescribeManagedPrefixListsOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPrefixLists sets the PrefixLists field's value.
+func (s *DescribeManagedPrefixListsOutput) SetPrefixLists(v []*ManagedPrefixList) *DescribeManagedPrefixListsOutput {
+	s.PrefixLists = v
 	return s
 }
 
@@ -60203,6 +63545,12 @@ func (s *DescribeMovingAddressesOutput) SetNextToken(v string) *DescribeMovingAd
 type DescribeNatGatewaysInput struct {
 	_ struct{} `type:"structure"`
 
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
 	// One or more filters.
 	//
 	//    * nat-gateway-id - The ID of the NAT gateway.
@@ -60257,6 +63605,12 @@ func (s *DescribeNatGatewaysInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DescribeNatGatewaysInput) SetDryRun(v bool) *DescribeNatGatewaysInput {
+	s.DryRun = &v
+	return s
 }
 
 // SetFilter sets the Filter field's value.
@@ -60762,9 +64116,6 @@ type DescribeNetworkInterfacesInput struct {
 	//    * attachment.instance-owner-id - The owner ID of the instance to which
 	//    the network interface is attached.
 	//
-	//    * attachment.nat-gateway-id - The ID of the NAT gateway to which the network
-	//    interface is attached.
-	//
 	//    * attachment.status - The status of the attachment (attaching | attached
 	//    | detaching | detached).
 	//
@@ -60942,6 +64293,16 @@ type DescribePlacementGroupsInput struct {
 	//    | deleted).
 	//
 	//    * strategy - The strategy of the placement group (cluster | spread | partition).
+	//
+	//    * tag:<key> - The key/value combination of a tag assigned to the resource.
+	//    Use the tag key in the filter name and the tag value as the filter value.
+	//    For example, to find all resources that have a tag with the key Owner
+	//    and the value TeamA, specify tag:Owner for the filter name and TeamA for
+	//    the filter value.
+	//
+	//    * tag-key - The key of a tag assigned to the resource. Use this filter
+	//    to find all resources that have a tag with a specific key, regardless
+	//    of the tag value.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The IDs of the placement groups.
@@ -61219,6 +64580,19 @@ func (s *DescribePrincipalIdFormatOutput) SetPrincipals(v []*PrincipalIdFormat) 
 type DescribePublicIpv4PoolsInput struct {
 	_ struct{} `type:"structure"`
 
+	// One or more filters.
+	//
+	//    * tag:<key> - The key/value combination of a tag assigned to the resource.
+	//    Use the tag key in the filter name and the tag value as the filter value.
+	//    For example, to find all resources that have a tag with the key Owner
+	//    and the value TeamA, specify tag:Owner for the filter name and TeamA for
+	//    the filter value.
+	//
+	//    * tag-key - The key of a tag assigned to the resource. Use this filter
+	//    to find all resources assigned a tag with a specific key, regardless of
+	//    the tag value.
+	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
+
 	// The maximum number of results to return with a single call. To retrieve the
 	// remaining results, make another call with the returned nextToken value.
 	MaxResults *int64 `min:"1" type:"integer"`
@@ -61251,6 +64625,12 @@ func (s *DescribePublicIpv4PoolsInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetFilters sets the Filters field's value.
+func (s *DescribePublicIpv4PoolsInput) SetFilters(v []*Filter) *DescribePublicIpv4PoolsInput {
+	s.Filters = v
+	return s
 }
 
 // SetMaxResults sets the MaxResults field's value.
@@ -62515,8 +65895,8 @@ type DescribeSecurityGroupsInput struct {
 	//    * egress.ip-permission.ipv6-cidr - An IPv6 CIDR block for an outbound
 	//    security group rule.
 	//
-	//    * egress.ip-permission.prefix-list-id - The ID (prefix) of the AWS service
-	//    to which a security group rule allows outbound access.
+	//    * egress.ip-permission.prefix-list-id - The ID of a prefix list to which
+	//    a security group rule allows outbound access.
 	//
 	//    * egress.ip-permission.protocol - The IP protocol for an outbound security
 	//    group rule (tcp | udp | icmp or a protocol number).
@@ -62546,8 +65926,8 @@ type DescribeSecurityGroupsInput struct {
 	//    * ip-permission.ipv6-cidr - An IPv6 CIDR block for an inbound security
 	//    group rule.
 	//
-	//    * ip-permission.prefix-list-id - The ID (prefix) of the AWS service from
-	//    which a security group rule allows inbound access.
+	//    * ip-permission.prefix-list-id - The ID of a prefix list from which a
+	//    security group rule allows inbound access.
 	//
 	//    * ip-permission.protocol - The IP protocol for an inbound security group
 	//    rule (tcp | udp | icmp or a protocol number).
@@ -62810,12 +66190,12 @@ type DescribeSnapshotsInput struct {
 	//
 	//    * encrypted - Indicates whether the snapshot is encrypted (true | false)
 	//
-	//    * owner-alias - Value from an Amazon-maintained list (amazon | self |
-	//    all | aws-marketplace | microsoft) of snapshot owners. Not to be confused
-	//    with the user-configured AWS account alias, which is set from the IAM
-	//    console.
+	//    * owner-alias - The owner alias, from an Amazon-maintained list (amazon).
+	//    This is not the user-configured AWS account alias set using the IAM console.
+	//    We recommend that you use the related parameter instead of this filter.
 	//
-	//    * owner-id - The ID of the AWS account that owns the snapshot.
+	//    * owner-id - The AWS account ID of the owner. We recommend that you use
+	//    the related parameter instead of this filter.
 	//
 	//    * progress - The progress of the snapshot, as a percentage (for example,
 	//    80%).
@@ -62859,7 +66239,8 @@ type DescribeSnapshotsInput struct {
 	// to return.
 	NextToken *string `type:"string"`
 
-	// Describes the snapshots owned by these owners.
+	// Scopes the results to snapshots with the specified owners. You can specify
+	// a combination of AWS account IDs, self, and amazon.
 	OwnerIds []*string `locationName:"Owner" locationNameList:"Owner" type:"list"`
 
 	// The IDs of the AWS accounts that can create volumes from the snapshot.
@@ -64018,10 +67399,11 @@ type DescribeTagsInput struct {
 	//    * resource-id - The ID of the resource.
 	//
 	//    * resource-type - The resource type (customer-gateway | dedicated-host
-	//    | dhcp-options | elastic-ip | fleet | fpga-image | image | instance |
-	//    host-reservation | internet-gateway | launch-template | natgateway | network-acl
-	//    | network-interface | reserved-instances | route-table | security-group
-	//    | snapshot | spot-instances-request | subnet | volume | vpc | vpc-peering-connection
+	//    | dhcp-options | elastic-ip | fleet | fpga-image | host-reservation |
+	//    image | instance | internet-gateway | key-pair | launch-template | natgateway
+	//    | network-acl | network-interface | placement-group | reserved-instances
+	//    | route-table | security-group | snapshot | spot-instances-request | subnet
+	//    | volume | vpc | vpc-endpoint | vpc-endpoint-service | vpc-peering-connection
 	//    | vpn-connection | vpn-gateway).
 	//
 	//    * tag:<key> - The key/value combination of the tag. For example, specify
@@ -64726,7 +68108,20 @@ type DescribeTransitGatewayPeeringAttachmentsInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
 
-	// One or more filters.
+	// One or more filters. The possible values are:
+	//
+	//    * transit-gateway-attachment-id - The ID of the transit gateway attachment.
+	//
+	//    * local-owner-id - The ID of your AWS account.
+	//
+	//    * remote-owner-id - The ID of the AWS account in the remote Region that
+	//    owns the transit gateway.
+	//
+	//    * state - The state of the peering attachment (available | deleted | deleting
+	//    | failed | modifying | pendingAcceptance | pending | rollingBack | rejected
+	//    | rejecting).
+	//
+	//    * transit-gateway-id - The ID of the transit gateway.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return with a single call. To retrieve the
@@ -65484,6 +68879,12 @@ type DescribeVolumesInput struct {
 	//
 	//    * encrypted - Indicates whether the volume is encrypted (true | false)
 	//
+	//    * multi-attach-enabled - Indicates whether the volume is enabled for Multi-Attach
+	//    (true | false)
+	//
+	//    * fast-restored - Indicates whether the volume was created from a snapshot
+	//    that is enabled for fast snapshot restore (true | false).
+	//
 	//    * size - The size of the volume, in GiB.
 	//
 	//    * snapshot-id - The snapshot from which the volume was created.
@@ -65578,9 +68979,34 @@ type DescribeVolumesModificationsInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
 
-	// The filters. Supported filters: volume-id, modification-state, target-size,
-	// target-iops, target-volume-type, original-size, original-iops, original-volume-type,
-	// start-time.
+	// The filters.
+	//
+	//    * modification-state - The current modification state (modifying | optimizing
+	//    | completed | failed).
+	//
+	//    * original-iops - The original IOPS rate of the volume.
+	//
+	//    * original-size - The original size of the volume, in GiB.
+	//
+	//    * original-volume-type - The original volume type of the volume (standard
+	//    | io1 | gp2 | sc1 | st1).
+	//
+	//    * originalMultiAttachEnabled - Indicates whether Multi-Attach support
+	//    was enabled (true | false).
+	//
+	//    * start-time - The modification start time.
+	//
+	//    * target-iops - The target IOPS rate of the volume.
+	//
+	//    * target-size - The target size of the volume, in GiB.
+	//
+	//    * target-volume-type - The target volume type of the volume (standard
+	//    | io1 | gp2 | sc1 | st1).
+	//
+	//    * targetMultiAttachEnabled - Indicates whether Multi-Attach support is
+	//    to be enabled (true | false).
+	//
+	//    * volume-id - The ID of the volume.
 	Filters []*Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results (up to a limit of 500) to be returned in a
@@ -65590,7 +69016,7 @@ type DescribeVolumesModificationsInput struct {
 	// The nextToken value returned by a previous paginated request.
 	NextToken *string `type:"string"`
 
-	// The IDs of the volumes for which in-progress modifications will be described.
+	// The IDs of the volumes.
 	VolumeIds []*string `locationName:"VolumeId" locationNameList:"VolumeId" type:"list"`
 }
 
@@ -66844,6 +70270,9 @@ type DescribeVpcsInput struct {
 	//    * ipv6-cidr-block-association.ipv6-cidr-block - An IPv6 CIDR block associated
 	//    with the VPC.
 	//
+	//    * ipv6-cidr-block-association.ipv6-pool - The ID of the IPv6 address pool
+	//    from which the IPv6 CIDR block is allocated.
+	//
 	//    * ipv6-cidr-block-association.association-id - The association ID for
 	//    an IPv6 CIDR block associated with the VPC.
 	//
@@ -67452,7 +70881,8 @@ type DetachVolumeInput struct {
 	// and repair procedures.
 	Force *bool `type:"boolean"`
 
-	// The ID of the instance.
+	// The ID of the instance. If you are detaching a Multi-Attach enabled volume,
+	// you must specify an instance ID.
 	InstanceId *string `type:"string"`
 
 	// The ID of the volume.
@@ -67897,10 +71327,11 @@ type DisableFastSnapshotRestoreSuccessItem struct {
 	// The time at which fast snapshot restores entered the optimizing state.
 	OptimizingTime *time.Time `locationName:"optimizingTime" type:"timestamp"`
 
-	// The alias of the snapshot owner.
+	// The AWS owner alias that enabled fast snapshot restores on the snapshot.
+	// This is intended for future use.
 	OwnerAlias *string `locationName:"ownerAlias" type:"string"`
 
-	// The ID of the AWS account that owns the snapshot.
+	// The ID of the AWS account that enabled fast snapshot restores on the snapshot.
 	OwnerId *string `locationName:"ownerId" type:"string"`
 
 	// The ID of the snapshot.
@@ -68184,6 +71615,12 @@ func (s *DisableTransitGatewayRouteTablePropagationOutput) SetPropagation(v *Tra
 type DisableVgwRoutePropagationInput struct {
 	_ struct{} `type:"structure"`
 
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
 	// The ID of the virtual private gateway.
 	//
 	// GatewayId is a required field
@@ -68219,6 +71656,12 @@ func (s *DisableVgwRoutePropagationInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *DisableVgwRoutePropagationInput) SetDryRun(v bool) *DisableVgwRoutePropagationInput {
+	s.DryRun = &v
+	return s
 }
 
 // SetGatewayId sets the GatewayId field's value.
@@ -68585,7 +72028,7 @@ type DisassociateRouteTableInput struct {
 	_ struct{} `type:"structure"`
 
 	// The association ID representing the current association between the route
-	// table and subnet.
+	// table and subnet or gateway.
 	//
 	// AssociationId is a required field
 	AssociationId *string `locationName:"associationId" type:"string" required:"true"`
@@ -69301,7 +72744,7 @@ type EbsBlockDevice struct {
 	_ struct{} `type:"structure"`
 
 	// Indicates whether the EBS volume is deleted on instance termination. For
-	// more information, see Preserving Amazon EBS Volumes on Instance Termination
+	// more information, see Preserving Amazon EBS volumes on instance termination
 	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html#preserving-volumes-on-termination)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	DeleteOnTermination *bool `locationName:"deleteOnTermination" type:"boolean"`
@@ -69316,14 +72759,16 @@ type EbsBlockDevice struct {
 	// In no case can you remove encryption from an encrypted volume.
 	//
 	// Encrypted volumes can only be attached to instances that support Amazon EBS
-	// encryption. For more information, see Supported Instance Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#EBSEncryption_supported_instances).
+	// encryption. For more information, see Supported instance types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#EBSEncryption_supported_instances).
+	//
+	// This parameter is not returned by .
 	Encrypted *bool `locationName:"encrypted" type:"boolean"`
 
 	// The number of I/O operations per second (IOPS) that the volume supports.
 	// For io1 volumes, this represents the number of IOPS that are provisioned
 	// for the volume. For gp2 volumes, this represents the baseline performance
 	// of the volume and the rate at which the volume accumulates I/O credits for
-	// bursting. For more information, see Amazon EBS Volume Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
+	// bursting. For more information, see Amazon EBS volume types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	//
 	// Constraints: Range is 100-16,000 IOPS for gp2 volumes and 100 to 64,000IOPS
@@ -69425,6 +72870,9 @@ func (s *EbsBlockDevice) SetVolumeType(v string) *EbsBlockDevice {
 type EbsInfo struct {
 	_ struct{} `type:"structure"`
 
+	// Describes the optimized EBS performance for the instance type.
+	EbsOptimizedInfo *EbsOptimizedInfo `locationName:"ebsOptimizedInfo" type:"structure"`
+
 	// Indicates that the instance type is Amazon EBS-optimized. For more information,
 	// see Amazon EBS-Optimized Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSOptimized.html)
 	// in Amazon EC2 User Guide for Linux Instances.
@@ -69432,6 +72880,9 @@ type EbsInfo struct {
 
 	// Indicates whether Amazon EBS encryption is supported.
 	EncryptionSupport *string `locationName:"encryptionSupport" type:"string" enum:"EbsEncryptionSupport"`
+
+	// Indicates whether non-volatile memory express (NVMe) is supported.
+	NvmeSupport *string `locationName:"nvmeSupport" type:"string" enum:"EbsNvmeSupport"`
 }
 
 // String returns the string representation
@@ -69444,6 +72895,12 @@ func (s EbsInfo) GoString() string {
 	return s.String()
 }
 
+// SetEbsOptimizedInfo sets the EbsOptimizedInfo field's value.
+func (s *EbsInfo) SetEbsOptimizedInfo(v *EbsOptimizedInfo) *EbsInfo {
+	s.EbsOptimizedInfo = v
+	return s
+}
+
 // SetEbsOptimizedSupport sets the EbsOptimizedSupport field's value.
 func (s *EbsInfo) SetEbsOptimizedSupport(v string) *EbsInfo {
 	s.EbsOptimizedSupport = &v
@@ -69453,6 +72910,12 @@ func (s *EbsInfo) SetEbsOptimizedSupport(v string) *EbsInfo {
 // SetEncryptionSupport sets the EncryptionSupport field's value.
 func (s *EbsInfo) SetEncryptionSupport(v string) *EbsInfo {
 	s.EncryptionSupport = &v
+	return s
+}
+
+// SetNvmeSupport sets the NvmeSupport field's value.
+func (s *EbsInfo) SetNvmeSupport(v string) *EbsInfo {
+	s.NvmeSupport = &v
 	return s
 }
 
@@ -69538,6 +73001,81 @@ func (s *EbsInstanceBlockDeviceSpecification) SetDeleteOnTermination(v bool) *Eb
 // SetVolumeId sets the VolumeId field's value.
 func (s *EbsInstanceBlockDeviceSpecification) SetVolumeId(v string) *EbsInstanceBlockDeviceSpecification {
 	s.VolumeId = &v
+	return s
+}
+
+// Describes the optimized EBS performance for supported instance types.
+type EbsOptimizedInfo struct {
+	_ struct{} `type:"structure"`
+
+	// The baseline bandwidth performance for an EBS-optimized instance type, in
+	// Mbps.
+	BaselineBandwidthInMbps *int64 `locationName:"baselineBandwidthInMbps" type:"integer"`
+
+	// The baseline input/output storage operations per seconds for an EBS-optimized
+	// instance type.
+	BaselineIops *int64 `locationName:"baselineIops" type:"integer"`
+
+	// The baseline throughput performance for an EBS-optimized instance type, in
+	// MBps.
+	BaselineThroughputInMBps *float64 `locationName:"baselineThroughputInMBps" type:"double"`
+
+	// The maximum bandwidth performance for an EBS-optimized instance type, in
+	// Mbps.
+	MaximumBandwidthInMbps *int64 `locationName:"maximumBandwidthInMbps" type:"integer"`
+
+	// The maximum input/output storage operations per second for an EBS-optimized
+	// instance type.
+	MaximumIops *int64 `locationName:"maximumIops" type:"integer"`
+
+	// The maximum throughput performance for an EBS-optimized instance type, in
+	// MBps.
+	MaximumThroughputInMBps *float64 `locationName:"maximumThroughputInMBps" type:"double"`
+}
+
+// String returns the string representation
+func (s EbsOptimizedInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s EbsOptimizedInfo) GoString() string {
+	return s.String()
+}
+
+// SetBaselineBandwidthInMbps sets the BaselineBandwidthInMbps field's value.
+func (s *EbsOptimizedInfo) SetBaselineBandwidthInMbps(v int64) *EbsOptimizedInfo {
+	s.BaselineBandwidthInMbps = &v
+	return s
+}
+
+// SetBaselineIops sets the BaselineIops field's value.
+func (s *EbsOptimizedInfo) SetBaselineIops(v int64) *EbsOptimizedInfo {
+	s.BaselineIops = &v
+	return s
+}
+
+// SetBaselineThroughputInMBps sets the BaselineThroughputInMBps field's value.
+func (s *EbsOptimizedInfo) SetBaselineThroughputInMBps(v float64) *EbsOptimizedInfo {
+	s.BaselineThroughputInMBps = &v
+	return s
+}
+
+// SetMaximumBandwidthInMbps sets the MaximumBandwidthInMbps field's value.
+func (s *EbsOptimizedInfo) SetMaximumBandwidthInMbps(v int64) *EbsOptimizedInfo {
+	s.MaximumBandwidthInMbps = &v
+	return s
+}
+
+// SetMaximumIops sets the MaximumIops field's value.
+func (s *EbsOptimizedInfo) SetMaximumIops(v int64) *EbsOptimizedInfo {
+	s.MaximumIops = &v
+	return s
+}
+
+// SetMaximumThroughputInMBps sets the MaximumThroughputInMBps field's value.
+func (s *EbsOptimizedInfo) SetMaximumThroughputInMBps(v float64) *EbsOptimizedInfo {
+	s.MaximumThroughputInMBps = &v
 	return s
 }
 
@@ -69813,7 +73351,7 @@ type ElasticInferenceAccelerator struct {
 	Count *int64 `min:"1" type:"integer"`
 
 	// The type of elastic inference accelerator. The possible values are eia1.medium,
-	// eia1.large, and eia1.xlarge.
+	// eia1.large, eia1.xlarge, eia2.medium, eia2.large, and eia2.xlarge.
 	//
 	// Type is a required field
 	Type *string `type:"string" required:"true"`
@@ -70081,10 +73619,11 @@ type EnableFastSnapshotRestoreSuccessItem struct {
 	// The time at which fast snapshot restores entered the optimizing state.
 	OptimizingTime *time.Time `locationName:"optimizingTime" type:"timestamp"`
 
-	// The alias of the snapshot owner.
+	// The AWS owner alias that enabled fast snapshot restores on the snapshot.
+	// This is intended for future use.
 	OwnerAlias *string `locationName:"ownerAlias" type:"string"`
 
-	// The ID of the AWS account that owns the snapshot.
+	// The ID of the AWS account that enabled fast snapshot restores on the snapshot.
 	OwnerId *string `locationName:"ownerId" type:"string"`
 
 	// The ID of the snapshot.
@@ -70369,6 +73908,12 @@ func (s *EnableTransitGatewayRouteTablePropagationOutput) SetPropagation(v *Tran
 type EnableVgwRoutePropagationInput struct {
 	_ struct{} `type:"structure"`
 
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
 	// The ID of the virtual private gateway that is attached to a VPC. The virtual
 	// private gateway must be attached to the same VPC that the routing tables
 	// are associated with.
@@ -70407,6 +73952,12 @@ func (s *EnableVgwRoutePropagationInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *EnableVgwRoutePropagationInput) SetDryRun(v bool) *EnableVgwRoutePropagationInput {
+	s.DryRun = &v
+	return s
 }
 
 // SetGatewayId sets the GatewayId field's value.
@@ -70884,7 +74435,7 @@ type ExportImageInput struct {
 	// Token to enable idempotency for export image requests.
 	ClientToken *string `type:"string" idempotencyToken:"true"`
 
-	// A description of the image being exported. The maximum length is 255 bytes.
+	// A description of the image being exported. The maximum length is 255 characters.
 	Description *string `type:"string"`
 
 	// The disk image format.
@@ -70904,15 +74455,18 @@ type ExportImageInput struct {
 	ImageId *string `type:"string" required:"true"`
 
 	// The name of the role that grants VM Import/Export permission to export images
-	// to your S3 bucket. If this parameter is not specified, the default role is
-	// named 'vmimport'.
+	// to your Amazon S3 bucket. If this parameter is not specified, the default
+	// role is named 'vmimport'.
 	RoleName *string `type:"string"`
 
-	// Information about the destination S3 bucket. The bucket must exist and grant
-	// WRITE and READ_ACP permissions to the AWS account vm-import-export@amazon.com.
+	// Information about the destination Amazon S3 bucket. The bucket must exist
+	// and grant WRITE and READ_ACP permissions to the AWS account vm-import-export@amazon.com.
 	//
 	// S3ExportLocation is a required field
 	S3ExportLocation *ExportTaskS3LocationRequest `type:"structure" required:"true"`
+
+	// The tags to apply to the image being exported.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -70991,6 +74545,12 @@ func (s *ExportImageInput) SetS3ExportLocation(v *ExportTaskS3LocationRequest) *
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *ExportImageInput) SetTagSpecifications(v []*TagSpecification) *ExportImageInput {
+	s.TagSpecifications = v
+	return s
+}
+
 type ExportImageOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -71010,10 +74570,10 @@ type ExportImageOutput struct {
 	Progress *string `locationName:"progress" type:"string"`
 
 	// The name of the role that grants VM Import/Export permission to export images
-	// to your S3 bucket.
+	// to your Amazon S3 bucket.
 	RoleName *string `locationName:"roleName" type:"string"`
 
-	// Information about the destination S3 bucket.
+	// Information about the destination Amazon S3 bucket.
 	S3ExportLocation *ExportTaskS3Location `locationName:"s3ExportLocation" type:"structure"`
 
 	// The status of the export image task. The possible values are active, completed,
@@ -71022,6 +74582,9 @@ type ExportImageOutput struct {
 
 	// The status message for the export image task.
 	StatusMessage *string `locationName:"statusMessage" type:"string"`
+
+	// Any tags assigned to the image being exported.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -71088,6 +74651,12 @@ func (s *ExportImageOutput) SetStatusMessage(v string) *ExportImageOutput {
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *ExportImageOutput) SetTags(v []*Tag) *ExportImageOutput {
+	s.Tags = v
+	return s
+}
+
 // Describes an export image task.
 type ExportImageTask struct {
 	_ struct{} `type:"structure"`
@@ -71104,7 +74673,7 @@ type ExportImageTask struct {
 	// The percent complete of the export image task.
 	Progress *string `locationName:"progress" type:"string"`
 
-	// Information about the destination S3 bucket.
+	// Information about the destination Amazon S3 bucket.
 	S3ExportLocation *ExportTaskS3Location `locationName:"s3ExportLocation" type:"structure"`
 
 	// The status of the export image task. The possible values are active, completed,
@@ -71113,6 +74682,9 @@ type ExportImageTask struct {
 
 	// The status message for the export image task.
 	StatusMessage *string `locationName:"statusMessage" type:"string"`
+
+	// Any tags assigned to the image being exported.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -71167,6 +74739,12 @@ func (s *ExportImageTask) SetStatusMessage(v string) *ExportImageTask {
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *ExportImageTask) SetTags(v []*Tag) *ExportImageTask {
+	s.Tags = v
+	return s
+}
+
 // Describes an instance export task.
 type ExportTask struct {
 	_ struct{} `type:"structure"`
@@ -71189,6 +74767,7 @@ type ExportTask struct {
 	// The status message related to the export task.
 	StatusMessage *string `locationName:"statusMessage" type:"string"`
 
+	// The tags for the export task.
 	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
@@ -71248,7 +74827,7 @@ func (s *ExportTask) SetTags(v []*Tag) *ExportTask {
 type ExportTaskS3Location struct {
 	_ struct{} `type:"structure"`
 
-	// The destination S3 bucket.
+	// The destination Amazon S3 bucket.
 	S3Bucket *string `locationName:"s3Bucket" type:"string"`
 
 	// The prefix (logical hierarchy) in the bucket.
@@ -71281,7 +74860,7 @@ func (s *ExportTaskS3Location) SetS3Prefix(v string) *ExportTaskS3Location {
 type ExportTaskS3LocationRequest struct {
 	_ struct{} `type:"structure"`
 
-	// The destination S3 bucket.
+	// The destination Amazon S3 bucket.
 	//
 	// S3Bucket is a required field
 	S3Bucket *string `type:"string" required:"true"`
@@ -71336,8 +74915,8 @@ type ExportToS3Task struct {
 	// The format for the exported image.
 	DiskImageFormat *string `locationName:"diskImageFormat" type:"string" enum:"DiskImageFormat"`
 
-	// The S3 bucket for the destination image. The destination bucket must exist
-	// and grant WRITE and READ_ACP permissions to the AWS account vm-import-export@amazon.com.
+	// The Amazon S3 bucket for the destination image. The destination bucket must
+	// exist and grant WRITE and READ_ACP permissions to the AWS account vm-import-export@amazon.com.
 	S3Bucket *string `locationName:"s3Bucket" type:"string"`
 
 	// The encryption key for your S3 bucket.
@@ -71389,12 +74968,12 @@ type ExportToS3TaskSpecification struct {
 	// The format for the exported image.
 	DiskImageFormat *string `locationName:"diskImageFormat" type:"string" enum:"DiskImageFormat"`
 
-	// The S3 bucket for the destination image. The destination bucket must exist
-	// and grant WRITE and READ_ACP permissions to the AWS account vm-import-export@amazon.com.
+	// The Amazon S3 bucket for the destination image. The destination bucket must
+	// exist and grant WRITE and READ_ACP permissions to the AWS account vm-import-export@amazon.com.
 	S3Bucket *string `locationName:"s3Bucket" type:"string"`
 
-	// The image is written to a single object in the S3 bucket at the S3 key s3prefix
-	// + exportTaskId + '.' + diskImageFormat.
+	// The image is written to a single object in the Amazon S3 bucket at the S3
+	// key s3prefix + exportTaskId + '.' + diskImageFormat.
 	S3Prefix *string `locationName:"s3Prefix" type:"string"`
 }
 
@@ -71584,6 +75163,54 @@ func (s *FailedQueuedPurchaseDeletion) SetError(v *DeleteQueuedReservedInstances
 // SetReservedInstancesId sets the ReservedInstancesId field's value.
 func (s *FailedQueuedPurchaseDeletion) SetReservedInstancesId(v string) *FailedQueuedPurchaseDeletion {
 	s.ReservedInstancesId = &v
+	return s
+}
+
+// Describes the IAM SAML identity provider used for federated authentication.
+type FederatedAuthentication struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the IAM SAML identity provider.
+	SamlProviderArn *string `locationName:"samlProviderArn" type:"string"`
+}
+
+// String returns the string representation
+func (s FederatedAuthentication) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FederatedAuthentication) GoString() string {
+	return s.String()
+}
+
+// SetSamlProviderArn sets the SamlProviderArn field's value.
+func (s *FederatedAuthentication) SetSamlProviderArn(v string) *FederatedAuthentication {
+	s.SamlProviderArn = &v
+	return s
+}
+
+// The IAM SAML identity provider used for federated authentication.
+type FederatedAuthenticationRequest struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the IAM SAML identity provider.
+	SAMLProviderArn *string `type:"string"`
+}
+
+// String returns the string representation
+func (s FederatedAuthenticationRequest) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FederatedAuthenticationRequest) GoString() string {
+	return s.String()
+}
+
+// SetSAMLProviderArn sets the SAMLProviderArn field's value.
+func (s *FederatedAuthenticationRequest) SetSAMLProviderArn(v string) *FederatedAuthenticationRequest {
+	s.SAMLProviderArn = &v
 	return s
 }
 
@@ -72057,7 +75684,9 @@ type FleetLaunchTemplateOverridesRequest struct {
 	// override has the lowest priority.
 	Priority *float64 `type:"double"`
 
-	// The ID of the subnet in which to launch the instances.
+	// The IDs of the subnets in which to launch the instances. Separate multiple
+	// subnet IDs using commas (for example, subnet-1234abcdeexample1, subnet-0987cdef6example2).
+	// A request of type instant can have only one subnet ID.
 	SubnetId *string `type:"string"`
 
 	// The number of units provided by the specified instance type.
@@ -72116,19 +75745,30 @@ func (s *FleetLaunchTemplateOverridesRequest) SetWeightedCapacity(v float64) *Fl
 	return s
 }
 
-// Describes a launch template.
+// Describes the Amazon EC2 launch template and the launch template version
+// that can be used by a Spot Fleet request to configure Amazon EC2 instances.
+// For information about launch templates, see Launching an instance from a
+// launch template (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html)
+// in the Amazon EC2 User Guide for Linux Instances.
 type FleetLaunchTemplateSpecification struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the launch template. You must specify either a template ID or a
-	// template name.
+	// The ID of the launch template. If you specify the template ID, you can't
+	// specify the template name.
 	LaunchTemplateId *string `locationName:"launchTemplateId" type:"string"`
 
-	// The name of the launch template. You must specify either a template name
-	// or a template ID.
+	// The name of the launch template. If you specify the template name, you can't
+	// specify the template ID.
 	LaunchTemplateName *string `locationName:"launchTemplateName" min:"3" type:"string"`
 
-	// The version number of the launch template. You must specify a version number.
+	// The launch template version number, $Latest, or $Default. You must specify
+	// a value, otherwise the request fails.
+	//
+	// If the value is $Latest, Amazon EC2 uses the latest version of the launch
+	// template.
+	//
+	// If the value is $Default, Amazon EC2 uses the default version of the launch
+	// template.
 	Version *string `locationName:"version" type:"string"`
 }
 
@@ -72173,19 +75813,30 @@ func (s *FleetLaunchTemplateSpecification) SetVersion(v string) *FleetLaunchTemp
 	return s
 }
 
-// The launch template to use. You must specify either the launch template ID
-// or launch template name in the request.
+// Describes the Amazon EC2 launch template and the launch template version
+// that can be used by an EC2 Fleet to configure Amazon EC2 instances. For information
+// about launch templates, see Launching an instance from a launch template
+// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html)
+// in the Amazon Elastic Compute Cloud User Guide.
 type FleetLaunchTemplateSpecificationRequest struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the launch template.
+	// The ID of the launch template. If you specify the template ID, you can't
+	// specify the template name.
 	LaunchTemplateId *string `type:"string"`
 
-	// The name of the launch template.
+	// The name of the launch template. If you specify the template name, you can't
+	// specify the template ID.
 	LaunchTemplateName *string `min:"3" type:"string"`
 
-	// The version number of the launch template. Note: This is a required parameter
-	// and will be updated soon.
+	// The launch template version number, $Latest, or $Default. You must specify
+	// a value, otherwise the request fails.
+	//
+	// If the value is $Latest, Amazon EC2 uses the latest version of the launch
+	// template.
+	//
+	// If the value is $Default, Amazon EC2 uses the default version of the launch
+	// template.
 	Version *string `type:"string"`
 }
 
@@ -72275,8 +75926,21 @@ type FlowLog struct {
 	// The name of the flow log group.
 	LogGroupName *string `locationName:"logGroupName" type:"string"`
 
+	// The maximum interval of time, in seconds, during which a flow of packets
+	// is captured and aggregated into a flow log record.
+	//
+	// When a network interface is attached to a Nitro-based instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#ec2-nitro-instances),
+	// the aggregation interval is always 60 seconds (1 minute) or less, regardless
+	// of the specified value.
+	//
+	// Valid Values: 60 | 600
+	MaxAggregationInterval *int64 `locationName:"maxAggregationInterval" type:"integer"`
+
 	// The ID of the resource on which the flow log was created.
 	ResourceId *string `locationName:"resourceId" type:"string"`
+
+	// The tags for the flow log.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 
 	// The type of traffic captured for the flow log.
 	TrafficType *string `locationName:"trafficType" type:"string" enum:"TrafficType"`
@@ -72352,9 +76016,21 @@ func (s *FlowLog) SetLogGroupName(v string) *FlowLog {
 	return s
 }
 
+// SetMaxAggregationInterval sets the MaxAggregationInterval field's value.
+func (s *FlowLog) SetMaxAggregationInterval(v int64) *FlowLog {
+	s.MaxAggregationInterval = &v
+	return s
+}
+
 // SetResourceId sets the ResourceId field's value.
 func (s *FlowLog) SetResourceId(v string) *FlowLog {
 	s.ResourceId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *FlowLog) SetTags(v []*Tag) *FlowLog {
+	s.Tags = v
 	return s
 }
 
@@ -72721,6 +76397,111 @@ func (s *FpgaInfo) SetFpgas(v []*FpgaDeviceInfo) *FpgaInfo {
 // SetTotalFpgaMemoryInMiB sets the TotalFpgaMemoryInMiB field's value.
 func (s *FpgaInfo) SetTotalFpgaMemoryInMiB(v int64) *FpgaInfo {
 	s.TotalFpgaMemoryInMiB = &v
+	return s
+}
+
+type GetAssociatedIpv6PoolCidrsInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The maximum number of results to return with a single call. To retrieve the
+	// remaining results, make another call with the returned nextToken value.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// The token for the next page of results.
+	NextToken *string `type:"string"`
+
+	// The ID of the IPv6 address pool.
+	//
+	// PoolId is a required field
+	PoolId *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetAssociatedIpv6PoolCidrsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetAssociatedIpv6PoolCidrsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetAssociatedIpv6PoolCidrsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetAssociatedIpv6PoolCidrsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+	if s.PoolId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PoolId"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *GetAssociatedIpv6PoolCidrsInput) SetDryRun(v bool) *GetAssociatedIpv6PoolCidrsInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *GetAssociatedIpv6PoolCidrsInput) SetMaxResults(v int64) *GetAssociatedIpv6PoolCidrsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetAssociatedIpv6PoolCidrsInput) SetNextToken(v string) *GetAssociatedIpv6PoolCidrsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPoolId sets the PoolId field's value.
+func (s *GetAssociatedIpv6PoolCidrsInput) SetPoolId(v string) *GetAssociatedIpv6PoolCidrsInput {
+	s.PoolId = &v
+	return s
+}
+
+type GetAssociatedIpv6PoolCidrsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the IPv6 CIDR block associations.
+	Ipv6CidrAssociations []*Ipv6CidrAssociation `locationName:"ipv6CidrAssociationSet" locationNameList:"item" type:"list"`
+
+	// The token to use to retrieve the next page of results. This value is null
+	// when there are no more results to return.
+	NextToken *string `locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s GetAssociatedIpv6PoolCidrsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetAssociatedIpv6PoolCidrsOutput) GoString() string {
+	return s.String()
+}
+
+// SetIpv6CidrAssociations sets the Ipv6CidrAssociations field's value.
+func (s *GetAssociatedIpv6PoolCidrsOutput) SetIpv6CidrAssociations(v []*Ipv6CidrAssociation) *GetAssociatedIpv6PoolCidrsOutput {
+	s.Ipv6CidrAssociations = v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetAssociatedIpv6PoolCidrsOutput) SetNextToken(v string) *GetAssociatedIpv6PoolCidrsOutput {
+	s.NextToken = &v
 	return s
 }
 
@@ -73566,6 +77347,226 @@ func (s GetLaunchTemplateDataOutput) GoString() string {
 // SetLaunchTemplateData sets the LaunchTemplateData field's value.
 func (s *GetLaunchTemplateDataOutput) SetLaunchTemplateData(v *ResponseLaunchTemplateData) *GetLaunchTemplateDataOutput {
 	s.LaunchTemplateData = v
+	return s
+}
+
+type GetManagedPrefixListAssociationsInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The maximum number of results to return with a single call. To retrieve the
+	// remaining results, make another call with the returned nextToken value.
+	MaxResults *int64 `min:"5" type:"integer"`
+
+	// The token for the next page of results.
+	NextToken *string `type:"string"`
+
+	// The ID of the prefix list.
+	//
+	// PrefixListId is a required field
+	PrefixListId *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetManagedPrefixListAssociationsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetManagedPrefixListAssociationsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetManagedPrefixListAssociationsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetManagedPrefixListAssociationsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 5 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 5))
+	}
+	if s.PrefixListId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PrefixListId"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *GetManagedPrefixListAssociationsInput) SetDryRun(v bool) *GetManagedPrefixListAssociationsInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *GetManagedPrefixListAssociationsInput) SetMaxResults(v int64) *GetManagedPrefixListAssociationsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetManagedPrefixListAssociationsInput) SetNextToken(v string) *GetManagedPrefixListAssociationsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPrefixListId sets the PrefixListId field's value.
+func (s *GetManagedPrefixListAssociationsInput) SetPrefixListId(v string) *GetManagedPrefixListAssociationsInput {
+	s.PrefixListId = &v
+	return s
+}
+
+type GetManagedPrefixListAssociationsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The token to use to retrieve the next page of results. This value is null
+	// when there are no more results to return.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// Information about the associations.
+	PrefixListAssociations []*PrefixListAssociation `locationName:"prefixListAssociationSet" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s GetManagedPrefixListAssociationsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetManagedPrefixListAssociationsOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetManagedPrefixListAssociationsOutput) SetNextToken(v string) *GetManagedPrefixListAssociationsOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPrefixListAssociations sets the PrefixListAssociations field's value.
+func (s *GetManagedPrefixListAssociationsOutput) SetPrefixListAssociations(v []*PrefixListAssociation) *GetManagedPrefixListAssociationsOutput {
+	s.PrefixListAssociations = v
+	return s
+}
+
+type GetManagedPrefixListEntriesInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The maximum number of results to return with a single call. To retrieve the
+	// remaining results, make another call with the returned nextToken value.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// The token for the next page of results.
+	NextToken *string `type:"string"`
+
+	// The ID of the prefix list.
+	//
+	// PrefixListId is a required field
+	PrefixListId *string `type:"string" required:"true"`
+
+	// The version of the prefix list for which to return the entries. The default
+	// is the current version.
+	TargetVersion *int64 `type:"long"`
+}
+
+// String returns the string representation
+func (s GetManagedPrefixListEntriesInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetManagedPrefixListEntriesInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetManagedPrefixListEntriesInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetManagedPrefixListEntriesInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+	if s.PrefixListId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PrefixListId"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *GetManagedPrefixListEntriesInput) SetDryRun(v bool) *GetManagedPrefixListEntriesInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *GetManagedPrefixListEntriesInput) SetMaxResults(v int64) *GetManagedPrefixListEntriesInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetManagedPrefixListEntriesInput) SetNextToken(v string) *GetManagedPrefixListEntriesInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetPrefixListId sets the PrefixListId field's value.
+func (s *GetManagedPrefixListEntriesInput) SetPrefixListId(v string) *GetManagedPrefixListEntriesInput {
+	s.PrefixListId = &v
+	return s
+}
+
+// SetTargetVersion sets the TargetVersion field's value.
+func (s *GetManagedPrefixListEntriesInput) SetTargetVersion(v int64) *GetManagedPrefixListEntriesInput {
+	s.TargetVersion = &v
+	return s
+}
+
+type GetManagedPrefixListEntriesOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the prefix list entries.
+	Entries []*PrefixListEntry `locationName:"entrySet" locationNameList:"item" type:"list"`
+
+	// The token to use to retrieve the next page of results. This value is null
+	// when there are no more results to return.
+	NextToken *string `locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s GetManagedPrefixListEntriesOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetManagedPrefixListEntriesOutput) GoString() string {
+	return s.String()
+}
+
+// SetEntries sets the Entries field's value.
+func (s *GetManagedPrefixListEntriesOutput) SetEntries(v []*PrefixListEntry) *GetManagedPrefixListEntriesOutput {
+	s.Entries = v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetManagedPrefixListEntriesOutput) SetNextToken(v string) *GetManagedPrefixListEntriesOutput {
+	s.NextToken = &v
 	return s
 }
 
@@ -74448,7 +78449,7 @@ func (s *GroupIdentifier) SetGroupName(v string) *GroupIdentifier {
 
 // Indicates whether your instance is configured for hibernation. This parameter
 // is valid only if the instance meets the hibernation prerequisites (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html#hibernating-prerequisites).
-// For more information, see Hibernate Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
+// For more information, see Hibernate your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 type HibernationOptions struct {
 	_ struct{} `type:"structure"`
@@ -74476,7 +78477,7 @@ func (s *HibernationOptions) SetConfigured(v bool) *HibernationOptions {
 
 // Indicates whether your instance is configured for hibernation. This parameter
 // is valid only if the instance meets the hibernation prerequisites (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html#hibernating-prerequisites).
-// For more information, see Hibernate Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
+// For more information, see Hibernate your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
 // in the Amazon Elastic Compute Cloud User Guide.
 type HibernationOptionsRequest struct {
 	_ struct{} `type:"structure"`
@@ -75398,6 +79399,11 @@ type Image struct {
 	// This value is set to windows for Windows AMIs; otherwise, it is blank.
 	Platform *string `locationName:"platform" type:"string" enum:"PlatformValues"`
 
+	// The platform details associated with the billing code of the AMI. For more
+	// information, see Obtaining Billing Information (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-billing-info.html)
+	// in the Amazon Elastic Compute Cloud User Guide.
+	PlatformDetails *string `locationName:"platformDetails" type:"string"`
+
 	// Any product codes associated with the AMI.
 	ProductCodes []*ProductCode `locationName:"productCodes" locationNameList:"item" type:"list"`
 
@@ -75430,6 +79436,14 @@ type Image struct {
 
 	// Any tags assigned to the image.
 	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
+
+	// The operation of the Amazon EC2 instance and the billing code that is associated
+	// with the AMI. usageOperation corresponds to the lineitem/Operation (https://docs.aws.amazon.com/cur/latest/userguide/Lineitem-columns.html#Lineitem-details-O-Operation)
+	// column on your AWS Cost and Usage Report and in the AWS Price List API (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html).
+	// For the list of UsageOperation codes, see Platform Details and Usage Operation
+	// Billing Codes (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-billing-info.html#billing-info)
+	// in the Amazon Elastic Compute Cloud User Guide.
+	UsageOperation *string `locationName:"usageOperation" type:"string"`
 
 	// The type of virtualization of the AMI.
 	VirtualizationType *string `locationName:"virtualizationType" type:"string" enum:"VirtualizationType"`
@@ -75529,6 +79543,12 @@ func (s *Image) SetPlatform(v string) *Image {
 	return s
 }
 
+// SetPlatformDetails sets the PlatformDetails field's value.
+func (s *Image) SetPlatformDetails(v string) *Image {
+	s.PlatformDetails = &v
+	return s
+}
+
 // SetProductCodes sets the ProductCodes field's value.
 func (s *Image) SetProductCodes(v []*ProductCode) *Image {
 	s.ProductCodes = v
@@ -75583,6 +79603,12 @@ func (s *Image) SetTags(v []*Tag) *Image {
 	return s
 }
 
+// SetUsageOperation sets the UsageOperation field's value.
+func (s *Image) SetUsageOperation(v string) *Image {
+	s.UsageOperation = &v
+	return s
+}
+
 // SetVirtualizationType sets the VirtualizationType field's value.
 func (s *Image) SetVirtualizationType(v string) *Image {
 	s.VirtualizationType = &v
@@ -75601,7 +79627,7 @@ type ImageDiskContainer struct {
 
 	// The format of the disk image being imported.
 	//
-	// Valid values: VHD | VMDK | OVA
+	// Valid values: OVA | VHD | VHDX |VMDK
 	Format *string `type:"string"`
 
 	// The ID of the EBS snapshot to be used for importing the snapshot.
@@ -75843,6 +79869,9 @@ type ImportImageInput struct {
 
 	// The name of the role to use when not using the default role, 'vmimport'.
 	RoleName *string `type:"string"`
+
+	// The tags to apply to the image being imported.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -75933,6 +79962,12 @@ func (s *ImportImageInput) SetRoleName(v string) *ImportImageInput {
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *ImportImageInput) SetTagSpecifications(v []*TagSpecification) *ImportImageInput {
+	s.TagSpecifications = v
+	return s
+}
+
 // The request information of license configurations.
 type ImportImageLicenseConfigurationRequest struct {
 	_ struct{} `type:"structure"`
@@ -75990,7 +80025,7 @@ type ImportImageOutput struct {
 	// A description of the import task.
 	Description *string `locationName:"description" type:"string"`
 
-	// Indicates whether the AMI is encypted.
+	// Indicates whether the AMI is encrypted.
 	Encrypted *bool `locationName:"encrypted" type:"boolean"`
 
 	// The target hypervisor of the import task.
@@ -76026,6 +80061,9 @@ type ImportImageOutput struct {
 
 	// A detailed status message of the import task.
 	StatusMessage *string `locationName:"statusMessage" type:"string"`
+
+	// Any tags assigned to the image being imported.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -76122,6 +80160,12 @@ func (s *ImportImageOutput) SetStatusMessage(v string) *ImportImageOutput {
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *ImportImageOutput) SetTags(v []*Tag) *ImportImageOutput {
+	s.Tags = v
+	return s
+}
+
 // Describes an import image task.
 type ImportImageTask struct {
 	_ struct{} `type:"structure"`
@@ -76174,7 +80218,7 @@ type ImportImageTask struct {
 	// A descriptive status message for the import image task.
 	StatusMessage *string `locationName:"statusMessage" type:"string"`
 
-	// Any tags applied to the import image task.
+	// The tags for the import image task.
 	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
@@ -76655,6 +80699,9 @@ type ImportKeyPairInput struct {
 	//
 	// PublicKeyMaterial is a required field
 	PublicKeyMaterial []byte `locationName:"publicKeyMaterial" type:"blob" required:"true"`
+
+	// The tags to apply to the imported key pair.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -76701,6 +80748,12 @@ func (s *ImportKeyPairInput) SetPublicKeyMaterial(v []byte) *ImportKeyPairInput 
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *ImportKeyPairInput) SetTagSpecifications(v []*TagSpecification) *ImportKeyPairInput {
+	s.TagSpecifications = v
+	return s
+}
+
 type ImportKeyPairOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -76709,6 +80762,12 @@ type ImportKeyPairOutput struct {
 
 	// The key pair name you provided.
 	KeyName *string `locationName:"keyName" type:"string"`
+
+	// The ID of the resulting key pair.
+	KeyPairId *string `locationName:"keyPairId" type:"string"`
+
+	// The tags applied to the imported key pair.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -76730,6 +80789,18 @@ func (s *ImportKeyPairOutput) SetKeyFingerprint(v string) *ImportKeyPairOutput {
 // SetKeyName sets the KeyName field's value.
 func (s *ImportKeyPairOutput) SetKeyName(v string) *ImportKeyPairOutput {
 	s.KeyName = &v
+	return s
+}
+
+// SetKeyPairId sets the KeyPairId field's value.
+func (s *ImportKeyPairOutput) SetKeyPairId(v string) *ImportKeyPairOutput {
+	s.KeyPairId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *ImportKeyPairOutput) SetTags(v []*Tag) *ImportKeyPairOutput {
+	s.Tags = v
 	return s
 }
 
@@ -76795,6 +80866,9 @@ type ImportSnapshotInput struct {
 
 	// The name of the role to use when not using the default role, 'vmimport'.
 	RoleName *string `type:"string"`
+
+	// The tags to apply to the snapshot being imported.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -76855,6 +80929,12 @@ func (s *ImportSnapshotInput) SetRoleName(v string) *ImportSnapshotInput {
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *ImportSnapshotInput) SetTagSpecifications(v []*TagSpecification) *ImportSnapshotInput {
+	s.TagSpecifications = v
+	return s
+}
+
 type ImportSnapshotOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -76866,6 +80946,9 @@ type ImportSnapshotOutput struct {
 
 	// Information about the import snapshot task.
 	SnapshotTaskDetail *SnapshotTaskDetail `locationName:"snapshotTaskDetail" type:"structure"`
+
+	// Any tags assigned to the snapshot being imported.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -76896,6 +80979,12 @@ func (s *ImportSnapshotOutput) SetSnapshotTaskDetail(v *SnapshotTaskDetail) *Imp
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *ImportSnapshotOutput) SetTags(v []*Tag) *ImportSnapshotOutput {
+	s.Tags = v
+	return s
+}
+
 // Describes an import snapshot task.
 type ImportSnapshotTask struct {
 	_ struct{} `type:"structure"`
@@ -76909,7 +80998,7 @@ type ImportSnapshotTask struct {
 	// Describes an import snapshot task.
 	SnapshotTaskDetail *SnapshotTaskDetail `locationName:"snapshotTaskDetail" type:"structure"`
 
-	// Any tags applied to the import snapshot task.
+	// The tags for the import snapshot task.
 	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
@@ -77238,7 +81327,8 @@ type Instance struct {
 	// Indicates whether the instance is enabled for hibernation.
 	HibernationOptions *HibernationOptions `locationName:"hibernationOptions" type:"structure"`
 
-	// The hypervisor type of the instance.
+	// The hypervisor type of the instance. The value xen is used for both Xen and
+	// Nitro hypervisors.
 	Hypervisor *string `locationName:"hypervisor" type:"string" enum:"HypervisorType"`
 
 	// The IAM instance profile associated with the instance, if applicable.
@@ -78525,6 +82615,9 @@ type InstanceNetworkInterfaceSpecification struct {
 	Ipv6Addresses []*InstanceIpv6Address `locationName:"ipv6AddressesSet" queryName:"Ipv6Addresses" locationNameList:"item" type:"list"`
 
 	// The ID of the network interface.
+	//
+	// If you are creating a Spot Fleet, omit this parameter because you can’t
+	// specify a network interface ID in a launch specification.
 	NetworkInterfaceId *string `locationName:"networkInterfaceId" type:"string"`
 
 	// The private IPv4 address of the network interface. Applies only if creating
@@ -79089,6 +83182,41 @@ func (s *InstanceStorageInfo) SetTotalSizeInGB(v int64) *InstanceStorageInfo {
 	return s
 }
 
+// Describes the registered tag keys for the current Region.
+type InstanceTagNotificationAttribute struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates wheter all tag keys in the current Region are registered to appear
+	// in scheduled event notifications. true indicates that all tag keys in the
+	// current Region are registered.
+	IncludeAllTagsOfInstance *bool `locationName:"includeAllTagsOfInstance" type:"boolean"`
+
+	// The registered tag keys.
+	InstanceTagKeys []*string `locationName:"instanceTagKeySet" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s InstanceTagNotificationAttribute) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s InstanceTagNotificationAttribute) GoString() string {
+	return s.String()
+}
+
+// SetIncludeAllTagsOfInstance sets the IncludeAllTagsOfInstance field's value.
+func (s *InstanceTagNotificationAttribute) SetIncludeAllTagsOfInstance(v bool) *InstanceTagNotificationAttribute {
+	s.IncludeAllTagsOfInstance = &v
+	return s
+}
+
+// SetInstanceTagKeys sets the InstanceTagKeys field's value.
+func (s *InstanceTagNotificationAttribute) SetInstanceTagKeys(v []*string) *InstanceTagNotificationAttribute {
+	s.InstanceTagKeys = v
+	return s
+}
+
 // Describes the instance type.
 type InstanceTypeInfo struct {
 	_ struct{} `type:"structure"`
@@ -79156,6 +83284,9 @@ type InstanceTypeInfo struct {
 
 	// Indicates whether the instance type is offered for spot or On-Demand.
 	SupportedUsageClasses []*string `locationName:"supportedUsageClasses" locationNameList:"item" type:"list"`
+
+	// The supported virtualization types.
+	SupportedVirtualizationTypes []*string `locationName:"supportedVirtualizationTypes" locationNameList:"item" type:"list"`
 
 	// Describes the vCPU configurations for the instance type.
 	VCpuInfo *VCpuInfo `locationName:"vCpuInfo" type:"structure"`
@@ -79294,6 +83425,12 @@ func (s *InstanceTypeInfo) SetSupportedRootDeviceTypes(v []*string) *InstanceTyp
 // SetSupportedUsageClasses sets the SupportedUsageClasses field's value.
 func (s *InstanceTypeInfo) SetSupportedUsageClasses(v []*string) *InstanceTypeInfo {
 	s.SupportedUsageClasses = v
+	return s
+}
+
+// SetSupportedVirtualizationTypes sets the SupportedVirtualizationTypes field's value.
+func (s *InstanceTypeInfo) SetSupportedVirtualizationTypes(v []*string) *InstanceTypeInfo {
+	s.SupportedVirtualizationTypes = v
 	return s
 }
 
@@ -79493,9 +83630,7 @@ type IpPermission struct {
 	// [VPC only] The IPv6 ranges.
 	Ipv6Ranges []*Ipv6Range `locationName:"ipv6Ranges" locationNameList:"item" type:"list"`
 
-	// [VPC only] The prefix list IDs for an AWS service. With outbound rules, this
-	// is the AWS service to access through a VPC endpoint from instances associated
-	// with the security group.
+	// [VPC only] The prefix list IDs.
 	PrefixListIds []*PrefixListId `locationName:"prefixListIds" locationNameList:"item" type:"list"`
 
 	// The end of port range for the TCP and UDP protocols, or an ICMP/ICMPv6 code.
@@ -79597,6 +83732,39 @@ func (s *IpRange) SetDescription(v string) *IpRange {
 	return s
 }
 
+// Describes an IPv6 CIDR block association.
+type Ipv6CidrAssociation struct {
+	_ struct{} `type:"structure"`
+
+	// The resource that's associated with the IPv6 CIDR block.
+	AssociatedResource *string `locationName:"associatedResource" type:"string"`
+
+	// The IPv6 CIDR block.
+	Ipv6Cidr *string `locationName:"ipv6Cidr" type:"string"`
+}
+
+// String returns the string representation
+func (s Ipv6CidrAssociation) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Ipv6CidrAssociation) GoString() string {
+	return s.String()
+}
+
+// SetAssociatedResource sets the AssociatedResource field's value.
+func (s *Ipv6CidrAssociation) SetAssociatedResource(v string) *Ipv6CidrAssociation {
+	s.AssociatedResource = &v
+	return s
+}
+
+// SetIpv6Cidr sets the Ipv6Cidr field's value.
+func (s *Ipv6CidrAssociation) SetIpv6Cidr(v string) *Ipv6CidrAssociation {
+	s.Ipv6Cidr = &v
+	return s
+}
+
 // Describes an IPv6 CIDR block.
 type Ipv6CidrBlock struct {
 	_ struct{} `type:"structure"`
@@ -79618,6 +83786,57 @@ func (s Ipv6CidrBlock) GoString() string {
 // SetIpv6CidrBlock sets the Ipv6CidrBlock field's value.
 func (s *Ipv6CidrBlock) SetIpv6CidrBlock(v string) *Ipv6CidrBlock {
 	s.Ipv6CidrBlock = &v
+	return s
+}
+
+// Describes an IPv6 address pool.
+type Ipv6Pool struct {
+	_ struct{} `type:"structure"`
+
+	// The description for the address pool.
+	Description *string `locationName:"description" type:"string"`
+
+	// The CIDR blocks for the address pool.
+	PoolCidrBlocks []*PoolCidrBlock `locationName:"poolCidrBlockSet" locationNameList:"item" type:"list"`
+
+	// The ID of the address pool.
+	PoolId *string `locationName:"poolId" type:"string"`
+
+	// Any tags for the address pool.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s Ipv6Pool) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Ipv6Pool) GoString() string {
+	return s.String()
+}
+
+// SetDescription sets the Description field's value.
+func (s *Ipv6Pool) SetDescription(v string) *Ipv6Pool {
+	s.Description = &v
+	return s
+}
+
+// SetPoolCidrBlocks sets the PoolCidrBlocks field's value.
+func (s *Ipv6Pool) SetPoolCidrBlocks(v []*PoolCidrBlock) *Ipv6Pool {
+	s.PoolCidrBlocks = v
+	return s
+}
+
+// SetPoolId sets the PoolId field's value.
+func (s *Ipv6Pool) SetPoolId(v string) *Ipv6Pool {
+	s.PoolId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *Ipv6Pool) SetTags(v []*Tag) *Ipv6Pool {
+	s.Tags = v
 	return s
 }
 
@@ -82600,6 +86819,111 @@ func (s *LocalGatewayVirtualInterfaceGroup) SetTags(v []*Tag) *LocalGatewayVirtu
 	return s
 }
 
+// Describes a managed prefix list.
+type ManagedPrefixList struct {
+	_ struct{} `type:"structure"`
+
+	// The IP address version.
+	AddressFamily *string `locationName:"addressFamily" type:"string"`
+
+	// The maximum number of entries for the prefix list.
+	MaxEntries *int64 `locationName:"maxEntries" type:"integer"`
+
+	// The ID of the owner of the prefix list.
+	OwnerId *string `locationName:"ownerId" type:"string"`
+
+	// The Amazon Resource Name (ARN) for the prefix list.
+	PrefixListArn *string `locationName:"prefixListArn" min:"1" type:"string"`
+
+	// The ID of the prefix list.
+	PrefixListId *string `locationName:"prefixListId" type:"string"`
+
+	// The name of the prefix list.
+	PrefixListName *string `locationName:"prefixListName" type:"string"`
+
+	// The state of the prefix list.
+	State *string `locationName:"state" type:"string" enum:"PrefixListState"`
+
+	// The state message.
+	StateMessage *string `locationName:"stateMessage" type:"string"`
+
+	// The tags for the prefix list.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
+
+	// The version of the prefix list.
+	Version *int64 `locationName:"version" type:"long"`
+}
+
+// String returns the string representation
+func (s ManagedPrefixList) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ManagedPrefixList) GoString() string {
+	return s.String()
+}
+
+// SetAddressFamily sets the AddressFamily field's value.
+func (s *ManagedPrefixList) SetAddressFamily(v string) *ManagedPrefixList {
+	s.AddressFamily = &v
+	return s
+}
+
+// SetMaxEntries sets the MaxEntries field's value.
+func (s *ManagedPrefixList) SetMaxEntries(v int64) *ManagedPrefixList {
+	s.MaxEntries = &v
+	return s
+}
+
+// SetOwnerId sets the OwnerId field's value.
+func (s *ManagedPrefixList) SetOwnerId(v string) *ManagedPrefixList {
+	s.OwnerId = &v
+	return s
+}
+
+// SetPrefixListArn sets the PrefixListArn field's value.
+func (s *ManagedPrefixList) SetPrefixListArn(v string) *ManagedPrefixList {
+	s.PrefixListArn = &v
+	return s
+}
+
+// SetPrefixListId sets the PrefixListId field's value.
+func (s *ManagedPrefixList) SetPrefixListId(v string) *ManagedPrefixList {
+	s.PrefixListId = &v
+	return s
+}
+
+// SetPrefixListName sets the PrefixListName field's value.
+func (s *ManagedPrefixList) SetPrefixListName(v string) *ManagedPrefixList {
+	s.PrefixListName = &v
+	return s
+}
+
+// SetState sets the State field's value.
+func (s *ManagedPrefixList) SetState(v string) *ManagedPrefixList {
+	s.State = &v
+	return s
+}
+
+// SetStateMessage sets the StateMessage field's value.
+func (s *ManagedPrefixList) SetStateMessage(v string) *ManagedPrefixList {
+	s.StateMessage = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *ManagedPrefixList) SetTags(v []*Tag) *ManagedPrefixList {
+	s.Tags = v
+	return s
+}
+
+// SetVersion sets the Version field's value.
+func (s *ManagedPrefixList) SetVersion(v int64) *ManagedPrefixList {
+	s.Version = &v
+	return s
+}
+
 // Describes the memory for the instance type.
 type MemoryInfo struct {
 	_ struct{} `type:"structure"`
@@ -82621,6 +86945,95 @@ func (s MemoryInfo) GoString() string {
 // SetSizeInMiB sets the SizeInMiB field's value.
 func (s *MemoryInfo) SetSizeInMiB(v int64) *MemoryInfo {
 	s.SizeInMiB = &v
+	return s
+}
+
+type ModifyAvailabilityZoneGroupInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The name of the Availability Zone Group.
+	//
+	// GroupName is a required field
+	GroupName *string `type:"string" required:"true"`
+
+	// Indicates whether to enable or disable membership. The valid values are opted-in.
+	// You must contact AWS Support (https://console.aws.amazon.com/support/home#/case/create%3FissueType=customer-service%26serviceCode=general-info%26getting-started%26categoryCode=using-aws%26services)
+	// to disable an Availability Zone group.
+	//
+	// OptInStatus is a required field
+	OptInStatus *string `type:"string" required:"true" enum:"ModifyAvailabilityZoneOptInStatus"`
+}
+
+// String returns the string representation
+func (s ModifyAvailabilityZoneGroupInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ModifyAvailabilityZoneGroupInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ModifyAvailabilityZoneGroupInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ModifyAvailabilityZoneGroupInput"}
+	if s.GroupName == nil {
+		invalidParams.Add(request.NewErrParamRequired("GroupName"))
+	}
+	if s.OptInStatus == nil {
+		invalidParams.Add(request.NewErrParamRequired("OptInStatus"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *ModifyAvailabilityZoneGroupInput) SetDryRun(v bool) *ModifyAvailabilityZoneGroupInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetGroupName sets the GroupName field's value.
+func (s *ModifyAvailabilityZoneGroupInput) SetGroupName(v string) *ModifyAvailabilityZoneGroupInput {
+	s.GroupName = &v
+	return s
+}
+
+// SetOptInStatus sets the OptInStatus field's value.
+func (s *ModifyAvailabilityZoneGroupInput) SetOptInStatus(v string) *ModifyAvailabilityZoneGroupInput {
+	s.OptInStatus = &v
+	return s
+}
+
+type ModifyAvailabilityZoneGroupOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Is true if the request succeeds, and an error otherwise.
+	Return *bool `locationName:"return" type:"boolean"`
+}
+
+// String returns the string representation
+func (s ModifyAvailabilityZoneGroupOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ModifyAvailabilityZoneGroupOutput) GoString() string {
+	return s.String()
+}
+
+// SetReturn sets the Return field's value.
+func (s *ModifyAvailabilityZoneGroupOutput) SetReturn(v bool) *ModifyAvailabilityZoneGroupOutput {
+	s.Return = &v
 	return s
 }
 
@@ -82776,6 +87189,9 @@ type ModifyClientVpnEndpointInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
 
+	// The IDs of one or more security groups to apply to the target network.
+	SecurityGroupIds []*string `locationName:"SecurityGroupId" locationNameList:"item" type:"list"`
+
 	// The ARN of the server certificate to be used. The server certificate must
 	// be provisioned in AWS Certificate Manager (ACM).
 	ServerCertificateArn *string `type:"string"`
@@ -82786,6 +87202,16 @@ type ModifyClientVpnEndpointInput struct {
 	// VPN Endpoint (https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/split-tunnel-vpn.html)
 	// in the AWS Client VPN Administrator Guide.
 	SplitTunnel *bool `type:"boolean"`
+
+	// The ID of the VPC to associate with the Client VPN endpoint.
+	VpcId *string `type:"string"`
+
+	// The port number to assign to the Client VPN endpoint for TCP and UDP traffic.
+	//
+	// Valid Values: 443 | 1194
+	//
+	// Default Value: 443
+	VpnPort *int64 `type:"integer"`
 }
 
 // String returns the string representation
@@ -82841,6 +87267,12 @@ func (s *ModifyClientVpnEndpointInput) SetDryRun(v bool) *ModifyClientVpnEndpoin
 	return s
 }
 
+// SetSecurityGroupIds sets the SecurityGroupIds field's value.
+func (s *ModifyClientVpnEndpointInput) SetSecurityGroupIds(v []*string) *ModifyClientVpnEndpointInput {
+	s.SecurityGroupIds = v
+	return s
+}
+
 // SetServerCertificateArn sets the ServerCertificateArn field's value.
 func (s *ModifyClientVpnEndpointInput) SetServerCertificateArn(v string) *ModifyClientVpnEndpointInput {
 	s.ServerCertificateArn = &v
@@ -82850,6 +87282,18 @@ func (s *ModifyClientVpnEndpointInput) SetServerCertificateArn(v string) *Modify
 // SetSplitTunnel sets the SplitTunnel field's value.
 func (s *ModifyClientVpnEndpointInput) SetSplitTunnel(v bool) *ModifyClientVpnEndpointInput {
 	s.SplitTunnel = &v
+	return s
+}
+
+// SetVpcId sets the VpcId field's value.
+func (s *ModifyClientVpnEndpointInput) SetVpcId(v string) *ModifyClientVpnEndpointInput {
+	s.VpcId = &v
+	return s
+}
+
+// SetVpnPort sets the VpnPort field's value.
+func (s *ModifyClientVpnEndpointInput) SetVpnPort(v int64) *ModifyClientVpnEndpointInput {
+	s.VpnPort = &v
 	return s
 }
 
@@ -83751,7 +88195,7 @@ type ModifyInstanceAttributeInput struct {
 	//
 	// To add instance store volumes to an Amazon EBS-backed instance, you must
 	// add them when you launch the instance. For more information, see Updating
-	// the Block Device Mapping when Launching an Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html#Using_OverridingAMIBDM)
+	// the block device mapping when launching an instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html#Using_OverridingAMIBDM)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	BlockDeviceMappings []*InstanceBlockDeviceMappingSpecification `locationName:"blockDeviceMapping" locationNameList:"item" type:"list"`
 
@@ -83794,7 +88238,7 @@ type ModifyInstanceAttributeInput struct {
 	InstanceInitiatedShutdownBehavior *AttributeValue `locationName:"instanceInitiatedShutdownBehavior" type:"structure"`
 
 	// Changes the instance type to the specified value. For more information, see
-	// Instance Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
+	// Instance types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
 	// If the instance type is not valid, the error returned is InvalidInstanceAttributeValue.
 	InstanceType *AttributeValue `locationName:"instanceType" type:"structure"`
 
@@ -84602,6 +89046,135 @@ func (s *ModifyLaunchTemplateOutput) SetLaunchTemplate(v *LaunchTemplate) *Modif
 	return s
 }
 
+type ModifyManagedPrefixListInput struct {
+	_ struct{} `type:"structure"`
+
+	// One or more entries to add to the prefix list.
+	AddEntries []*AddPrefixListEntry `locationName:"AddEntry" type:"list"`
+
+	// The current version of the prefix list.
+	CurrentVersion *int64 `type:"long"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The ID of the prefix list.
+	//
+	// PrefixListId is a required field
+	PrefixListId *string `type:"string" required:"true"`
+
+	// A name for the prefix list.
+	PrefixListName *string `type:"string"`
+
+	// One or more entries to remove from the prefix list.
+	RemoveEntries []*RemovePrefixListEntry `locationName:"RemoveEntry" type:"list"`
+}
+
+// String returns the string representation
+func (s ModifyManagedPrefixListInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ModifyManagedPrefixListInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ModifyManagedPrefixListInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ModifyManagedPrefixListInput"}
+	if s.PrefixListId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PrefixListId"))
+	}
+	if s.AddEntries != nil {
+		for i, v := range s.AddEntries {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "AddEntries", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.RemoveEntries != nil {
+		for i, v := range s.RemoveEntries {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "RemoveEntries", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAddEntries sets the AddEntries field's value.
+func (s *ModifyManagedPrefixListInput) SetAddEntries(v []*AddPrefixListEntry) *ModifyManagedPrefixListInput {
+	s.AddEntries = v
+	return s
+}
+
+// SetCurrentVersion sets the CurrentVersion field's value.
+func (s *ModifyManagedPrefixListInput) SetCurrentVersion(v int64) *ModifyManagedPrefixListInput {
+	s.CurrentVersion = &v
+	return s
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *ModifyManagedPrefixListInput) SetDryRun(v bool) *ModifyManagedPrefixListInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetPrefixListId sets the PrefixListId field's value.
+func (s *ModifyManagedPrefixListInput) SetPrefixListId(v string) *ModifyManagedPrefixListInput {
+	s.PrefixListId = &v
+	return s
+}
+
+// SetPrefixListName sets the PrefixListName field's value.
+func (s *ModifyManagedPrefixListInput) SetPrefixListName(v string) *ModifyManagedPrefixListInput {
+	s.PrefixListName = &v
+	return s
+}
+
+// SetRemoveEntries sets the RemoveEntries field's value.
+func (s *ModifyManagedPrefixListInput) SetRemoveEntries(v []*RemovePrefixListEntry) *ModifyManagedPrefixListInput {
+	s.RemoveEntries = v
+	return s
+}
+
+type ModifyManagedPrefixListOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the prefix list.
+	PrefixList *ManagedPrefixList `locationName:"prefixList" type:"structure"`
+}
+
+// String returns the string representation
+func (s ModifyManagedPrefixListOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ModifyManagedPrefixListOutput) GoString() string {
+	return s.String()
+}
+
+// SetPrefixList sets the PrefixList field's value.
+func (s *ModifyManagedPrefixListOutput) SetPrefixList(v *ManagedPrefixList) *ModifyManagedPrefixListOutput {
+	s.PrefixList = v
+	return s
+}
+
 // Contains the parameters for ModifyNetworkInterfaceAttribute.
 type ModifyNetworkInterfaceAttributeInput struct {
 	_ struct{} `type:"structure"`
@@ -85013,8 +89586,20 @@ type ModifySubnetAttributeInput struct {
 	// or later of the Amazon EC2 API.
 	AssignIpv6AddressOnCreation *AttributeBooleanValue `type:"structure"`
 
-	// Specify true to indicate that ENIs attached to instances created in the specified
-	// subnet should be assigned a public IPv4 address.
+	// The customer-owned IPv4 address pool associated with the subnet.
+	//
+	// You must set this value when you specify true for MapCustomerOwnedIpOnLaunch.
+	CustomerOwnedIpv4Pool *string `type:"string"`
+
+	// Specify true to indicate that network interfaces attached to instances created
+	// in the specified subnet should be assigned a customer-owned IPv4 address.
+	//
+	// When this value is true, you must specify the customer-owned IP pool using
+	// CustomerOwnedIpv4Pool.
+	MapCustomerOwnedIpOnLaunch *AttributeBooleanValue `type:"structure"`
+
+	// Specify true to indicate that network interfaces attached to instances created
+	// in the specified subnet should be assigned a public IPv4 address.
 	MapPublicIpOnLaunch *AttributeBooleanValue `type:"structure"`
 
 	// The ID of the subnet.
@@ -85049,6 +89634,18 @@ func (s *ModifySubnetAttributeInput) Validate() error {
 // SetAssignIpv6AddressOnCreation sets the AssignIpv6AddressOnCreation field's value.
 func (s *ModifySubnetAttributeInput) SetAssignIpv6AddressOnCreation(v *AttributeBooleanValue) *ModifySubnetAttributeInput {
 	s.AssignIpv6AddressOnCreation = v
+	return s
+}
+
+// SetCustomerOwnedIpv4Pool sets the CustomerOwnedIpv4Pool field's value.
+func (s *ModifySubnetAttributeInput) SetCustomerOwnedIpv4Pool(v string) *ModifySubnetAttributeInput {
+	s.CustomerOwnedIpv4Pool = &v
+	return s
+}
+
+// SetMapCustomerOwnedIpOnLaunch sets the MapCustomerOwnedIpOnLaunch field's value.
+func (s *ModifySubnetAttributeInput) SetMapCustomerOwnedIpOnLaunch(v *AttributeBooleanValue) *ModifySubnetAttributeInput {
+	s.MapCustomerOwnedIpOnLaunch = v
 	return s
 }
 
@@ -87684,6 +92281,9 @@ func (s *NetworkAclEntry) SetRuleNumber(v int64) *NetworkAclEntry {
 type NetworkInfo struct {
 	_ struct{} `type:"structure"`
 
+	// Indicates whether Elastic Fabric Adapter (EFA) is supported.
+	EfaSupported *bool `locationName:"efaSupported" type:"boolean"`
+
 	// Indicates whether Elastic Network Adapter (ENA) is supported.
 	EnaSupport *string `locationName:"enaSupport" type:"string" enum:"EnaSupport"`
 
@@ -87711,6 +92311,12 @@ func (s NetworkInfo) String() string {
 // GoString returns the string representation
 func (s NetworkInfo) GoString() string {
 	return s.String()
+}
+
+// SetEfaSupported sets the EfaSupported field's value.
+func (s *NetworkInfo) SetEfaSupported(v bool) *NetworkInfo {
+	s.EfaSupported = &v
+	return s
 }
 
 // SetEnaSupport sets the EnaSupport field's value.
@@ -89005,37 +93611,54 @@ type Placement struct {
 	_ struct{} `type:"structure"`
 
 	// The affinity setting for the instance on the Dedicated Host. This parameter
-	// is not supported for the ImportInstance command.
+	// is not supported for the ImportInstance (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportInstance.html)
+	// command.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	Affinity *string `locationName:"affinity" type:"string"`
 
 	// The Availability Zone of the instance.
 	//
 	// If not specified, an Availability Zone will be automatically chosen for you
 	// based on the load balancing criteria for the Region.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	AvailabilityZone *string `locationName:"availabilityZone" type:"string"`
 
 	// The name of the placement group the instance is in.
 	GroupName *string `locationName:"groupName" type:"string"`
 
 	// The ID of the Dedicated Host on which the instance resides. This parameter
-	// is not supported for the ImportInstance command.
+	// is not supported for the ImportInstance (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportInstance.html)
+	// command.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	HostId *string `locationName:"hostId" type:"string"`
 
 	// The ARN of the host resource group in which to launch the instances. If you
 	// specify a host resource group ARN, omit the Tenancy parameter or set it to
 	// host.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	HostResourceGroupArn *string `locationName:"hostResourceGroupArn" type:"string"`
 
 	// The number of the partition the instance is in. Valid only if the placement
 	// group strategy is set to partition.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	PartitionNumber *int64 `locationName:"partitionNumber" type:"integer"`
 
 	// Reserved for future use.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	SpreadDomain *string `locationName:"spreadDomain" type:"string"`
 
 	// The tenancy of the instance (if the instance is running in a VPC). An instance
 	// with a tenancy of dedicated runs on single-tenant hardware. The host tenancy
-	// is not supported for the ImportInstance command.
+	// is not supported for the ImportInstance (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportInstance.html)
+	// command.
+	//
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	Tenancy *string `locationName:"tenancy" type:"string" enum:"Tenancy"`
 }
 
@@ -89214,6 +93837,30 @@ func (s *PlacementResponse) SetGroupName(v string) *PlacementResponse {
 	return s
 }
 
+// Describes a CIDR block for an address pool.
+type PoolCidrBlock struct {
+	_ struct{} `type:"structure"`
+
+	// The CIDR block.
+	Cidr *string `locationName:"poolCidrBlock" type:"string"`
+}
+
+// String returns the string representation
+func (s PoolCidrBlock) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PoolCidrBlock) GoString() string {
+	return s.String()
+}
+
+// SetCidr sets the Cidr field's value.
+func (s *PoolCidrBlock) SetCidr(v string) *PoolCidrBlock {
+	s.Cidr = &v
+	return s
+}
+
 // Describes a range of ports.
 type PortRange struct {
 	_ struct{} `type:"structure"`
@@ -89286,6 +93933,72 @@ func (s *PrefixList) SetPrefixListId(v string) *PrefixList {
 // SetPrefixListName sets the PrefixListName field's value.
 func (s *PrefixList) SetPrefixListName(v string) *PrefixList {
 	s.PrefixListName = &v
+	return s
+}
+
+// Describes the resource with which a prefix list is associated.
+type PrefixListAssociation struct {
+	_ struct{} `type:"structure"`
+
+	// The ID of the resource.
+	ResourceId *string `locationName:"resourceId" type:"string"`
+
+	// The owner of the resource.
+	ResourceOwner *string `locationName:"resourceOwner" type:"string"`
+}
+
+// String returns the string representation
+func (s PrefixListAssociation) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PrefixListAssociation) GoString() string {
+	return s.String()
+}
+
+// SetResourceId sets the ResourceId field's value.
+func (s *PrefixListAssociation) SetResourceId(v string) *PrefixListAssociation {
+	s.ResourceId = &v
+	return s
+}
+
+// SetResourceOwner sets the ResourceOwner field's value.
+func (s *PrefixListAssociation) SetResourceOwner(v string) *PrefixListAssociation {
+	s.ResourceOwner = &v
+	return s
+}
+
+// Describes a prefix list entry.
+type PrefixListEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The CIDR block.
+	Cidr *string `locationName:"cidr" type:"string"`
+
+	// The description.
+	Description *string `locationName:"description" type:"string"`
+}
+
+// String returns the string representation
+func (s PrefixListEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PrefixListEntry) GoString() string {
+	return s.String()
+}
+
+// SetCidr sets the Cidr field's value.
+func (s *PrefixListEntry) SetCidr(v string) *PrefixListEntry {
+	s.Cidr = &v
+	return s
+}
+
+// SetDescription sets the Description field's value.
+func (s *PrefixListEntry) SetDescription(v string) *PrefixListEntry {
+	s.Description = &v
 	return s
 }
 
@@ -89684,9 +94397,10 @@ func (s *PropagatingVgw) SetGatewayId(v string) *PropagatingVgw {
 type ProvisionByoipCidrInput struct {
 	_ struct{} `type:"structure"`
 
-	// The public IPv4 address range, in CIDR notation. The most specific prefix
-	// that you can specify is /24. The address range cannot overlap with another
-	// address range that you've brought to this or another Region.
+	// The public IPv4 or IPv6 address range, in CIDR notation. The most specific
+	// IPv4 prefix that you can specify is /24. The most specific IPv6 prefix you
+	// can specify is /56. The address range cannot overlap with another address
+	// range that you've brought to this or another Region.
 	//
 	// Cidr is a required field
 	Cidr *string `type:"string" required:"true"`
@@ -89703,6 +94417,15 @@ type ProvisionByoipCidrInput struct {
 	// the required permissions, the error response is DryRunOperation. Otherwise,
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
+
+	// The tags to apply to the address pool.
+	PoolTagSpecifications []*TagSpecification `locationName:"PoolTagSpecification" locationNameList:"item" type:"list"`
+
+	// (IPv6 only) Indicate whether the address range will be publicly advertised
+	// to the internet.
+	//
+	// Default: true
+	PubliclyAdvertisable *bool `type:"boolean"`
 }
 
 // String returns the string representation
@@ -89757,10 +94480,22 @@ func (s *ProvisionByoipCidrInput) SetDryRun(v bool) *ProvisionByoipCidrInput {
 	return s
 }
 
+// SetPoolTagSpecifications sets the PoolTagSpecifications field's value.
+func (s *ProvisionByoipCidrInput) SetPoolTagSpecifications(v []*TagSpecification) *ProvisionByoipCidrInput {
+	s.PoolTagSpecifications = v
+	return s
+}
+
+// SetPubliclyAdvertisable sets the PubliclyAdvertisable field's value.
+func (s *ProvisionByoipCidrInput) SetPubliclyAdvertisable(v bool) *ProvisionByoipCidrInput {
+	s.PubliclyAdvertisable = &v
+	return s
+}
+
 type ProvisionByoipCidrOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Information about the address pool.
+	// Information about the address range.
 	ByoipCidr *ByoipCidr `locationName:"byoipCidr" type:"structure"`
 }
 
@@ -89852,18 +94587,26 @@ func (s *ProvisionedBandwidth) SetStatus(v string) *ProvisionedBandwidth {
 	return s
 }
 
-// Describes an address pool.
+// Describes an IPv4 address pool.
 type PublicIpv4Pool struct {
 	_ struct{} `type:"structure"`
 
 	// A description of the address pool.
 	Description *string `locationName:"description" type:"string"`
 
+	// The name of the location from which the address pool is advertised. A network
+	// border group is a unique set of Availability Zones or Local Zones from where
+	// AWS advertises public IP addresses.
+	NetworkBorderGroup *string `locationName:"networkBorderGroup" type:"string"`
+
 	// The address ranges.
 	PoolAddressRanges []*PublicIpv4PoolRange `locationName:"poolAddressRangeSet" locationNameList:"item" type:"list"`
 
-	// The ID of the IPv4 address pool.
+	// The ID of the address pool.
 	PoolId *string `locationName:"poolId" type:"string"`
+
+	// Any tags for the address pool.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 
 	// The total number of addresses.
 	TotalAddressCount *int64 `locationName:"totalAddressCount" type:"integer"`
@@ -89888,6 +94631,12 @@ func (s *PublicIpv4Pool) SetDescription(v string) *PublicIpv4Pool {
 	return s
 }
 
+// SetNetworkBorderGroup sets the NetworkBorderGroup field's value.
+func (s *PublicIpv4Pool) SetNetworkBorderGroup(v string) *PublicIpv4Pool {
+	s.NetworkBorderGroup = &v
+	return s
+}
+
 // SetPoolAddressRanges sets the PoolAddressRanges field's value.
 func (s *PublicIpv4Pool) SetPoolAddressRanges(v []*PublicIpv4PoolRange) *PublicIpv4Pool {
 	s.PoolAddressRanges = v
@@ -89897,6 +94646,12 @@ func (s *PublicIpv4Pool) SetPoolAddressRanges(v []*PublicIpv4PoolRange) *PublicI
 // SetPoolId sets the PoolId field's value.
 func (s *PublicIpv4Pool) SetPoolId(v string) *PublicIpv4Pool {
 	s.PoolId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *PublicIpv4Pool) SetTags(v []*Tag) *PublicIpv4Pool {
+	s.Tags = v
 	return s
 }
 
@@ -90080,6 +94835,9 @@ type PurchaseHostReservationInput struct {
 	//
 	// OfferingId is a required field
 	OfferingId *string `type:"string" required:"true"`
+
+	// The tags to apply to the Dedicated Host Reservation during purchase.
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -90135,6 +94893,12 @@ func (s *PurchaseHostReservationInput) SetLimitPrice(v string) *PurchaseHostRese
 // SetOfferingId sets the OfferingId field's value.
 func (s *PurchaseHostReservationInput) SetOfferingId(v string) *PurchaseHostReservationInput {
 	s.OfferingId = &v
+	return s
+}
+
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *PurchaseHostReservationInput) SetTagSpecifications(v []*TagSpecification) *PurchaseHostReservationInput {
+	s.TagSpecifications = v
 	return s
 }
 
@@ -90799,6 +95563,101 @@ func (s *RegisterImageOutput) SetImageId(v string) *RegisterImageOutput {
 	return s
 }
 
+type RegisterInstanceEventNotificationAttributesInput struct {
+	_ struct{} `type:"structure"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// Information about the tag keys to register.
+	InstanceTagAttribute *RegisterInstanceTagAttributeRequest `type:"structure"`
+}
+
+// String returns the string representation
+func (s RegisterInstanceEventNotificationAttributesInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s RegisterInstanceEventNotificationAttributesInput) GoString() string {
+	return s.String()
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *RegisterInstanceEventNotificationAttributesInput) SetDryRun(v bool) *RegisterInstanceEventNotificationAttributesInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetInstanceTagAttribute sets the InstanceTagAttribute field's value.
+func (s *RegisterInstanceEventNotificationAttributesInput) SetInstanceTagAttribute(v *RegisterInstanceTagAttributeRequest) *RegisterInstanceEventNotificationAttributesInput {
+	s.InstanceTagAttribute = v
+	return s
+}
+
+type RegisterInstanceEventNotificationAttributesOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The resulting set of tag keys.
+	InstanceTagAttribute *InstanceTagNotificationAttribute `locationName:"instanceTagAttribute" type:"structure"`
+}
+
+// String returns the string representation
+func (s RegisterInstanceEventNotificationAttributesOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s RegisterInstanceEventNotificationAttributesOutput) GoString() string {
+	return s.String()
+}
+
+// SetInstanceTagAttribute sets the InstanceTagAttribute field's value.
+func (s *RegisterInstanceEventNotificationAttributesOutput) SetInstanceTagAttribute(v *InstanceTagNotificationAttribute) *RegisterInstanceEventNotificationAttributesOutput {
+	s.InstanceTagAttribute = v
+	return s
+}
+
+// Information about the tag keys to register for the current Region. You can
+// either specify individual tag keys or register all tag keys in the current
+// Region. You must specify either IncludeAllTagsOfInstance or InstanceTagKeys
+// in the request
+type RegisterInstanceTagAttributeRequest struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether to register all tag keys in the current Region. Specify
+	// true to register all tag keys.
+	IncludeAllTagsOfInstance *bool `type:"boolean"`
+
+	// The tag keys to register.
+	InstanceTagKeys []*string `locationName:"InstanceTagKey" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s RegisterInstanceTagAttributeRequest) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s RegisterInstanceTagAttributeRequest) GoString() string {
+	return s.String()
+}
+
+// SetIncludeAllTagsOfInstance sets the IncludeAllTagsOfInstance field's value.
+func (s *RegisterInstanceTagAttributeRequest) SetIncludeAllTagsOfInstance(v bool) *RegisterInstanceTagAttributeRequest {
+	s.IncludeAllTagsOfInstance = &v
+	return s
+}
+
+// SetInstanceTagKeys sets the InstanceTagKeys field's value.
+func (s *RegisterInstanceTagAttributeRequest) SetInstanceTagKeys(v []*string) *RegisterInstanceTagAttributeRequest {
+	s.InstanceTagKeys = v
+	return s
+}
+
 type RegisterTransitGatewayMulticastGroupMembersInput struct {
 	_ struct{} `type:"structure"`
 
@@ -91404,6 +96263,45 @@ func (s *ReleaseHostsOutput) SetUnsuccessful(v []*UnsuccessfulItem) *ReleaseHost
 	return s
 }
 
+// An entry for a prefix list.
+type RemovePrefixListEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The CIDR block.
+	//
+	// Cidr is a required field
+	Cidr *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s RemovePrefixListEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s RemovePrefixListEntry) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *RemovePrefixListEntry) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "RemovePrefixListEntry"}
+	if s.Cidr == nil {
+		invalidParams.Add(request.NewErrParamRequired("Cidr"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetCidr sets the Cidr field's value.
+func (s *RemovePrefixListEntry) SetCidr(v string) *RemovePrefixListEntry {
+	s.Cidr = &v
+	return s
+}
+
 type ReplaceIamInstanceProfileAssociationInput struct {
 	_ struct{} `type:"structure"`
 
@@ -91744,6 +96642,9 @@ type ReplaceRouteInput struct {
 	// you provide must match the CIDR of an existing route in the table.
 	DestinationIpv6CidrBlock *string `locationName:"destinationIpv6CidrBlock" type:"string"`
 
+	// The ID of the prefix list for the route.
+	DestinationPrefixListId *string `type:"string"`
+
 	// Checks whether you have the required permissions for the action, without
 	// actually making the request, and provides an error response. If you have
 	// the required permissions, the error response is DryRunOperation. Otherwise,
@@ -91815,6 +96716,12 @@ func (s *ReplaceRouteInput) SetDestinationCidrBlock(v string) *ReplaceRouteInput
 // SetDestinationIpv6CidrBlock sets the DestinationIpv6CidrBlock field's value.
 func (s *ReplaceRouteInput) SetDestinationIpv6CidrBlock(v string) *ReplaceRouteInput {
 	s.DestinationIpv6CidrBlock = &v
+	return s
+}
+
+// SetDestinationPrefixListId sets the DestinationPrefixListId field's value.
+func (s *ReplaceRouteInput) SetDestinationPrefixListId(v string) *ReplaceRouteInput {
+	s.DestinationPrefixListId = &v
 	return s
 }
 
@@ -92245,12 +97152,6 @@ type RequestLaunchTemplateData struct {
 	_ struct{} `type:"structure"`
 
 	// The block device mapping.
-	//
-	// Supplying both a snapshot ID and an encryption value as arguments for block-device
-	// mapping results in an error. This is because only blank volumes can be encrypted
-	// on start, and these are not created from a snapshot. If a snapshot is the
-	// basis for the volume, it contains data by definition and its encryption status
-	// cannot be changed using this action.
 	BlockDeviceMappings []*LaunchTemplateBlockDeviceMappingRequest `locationName:"BlockDeviceMapping" locationNameList:"BlockDeviceMapping" type:"list"`
 
 	// The Capacity Reservation targeting option. If you do not specify this parameter,
@@ -94717,6 +99618,107 @@ func (s *RestoreAddressToClassicOutput) SetStatus(v string) *RestoreAddressToCla
 	return s
 }
 
+type RestoreManagedPrefixListVersionInput struct {
+	_ struct{} `type:"structure"`
+
+	// The current version number for the prefix list.
+	//
+	// CurrentVersion is a required field
+	CurrentVersion *int64 `type:"long" required:"true"`
+
+	// Checks whether you have the required permissions for the action, without
+	// actually making the request, and provides an error response. If you have
+	// the required permissions, the error response is DryRunOperation. Otherwise,
+	// it is UnauthorizedOperation.
+	DryRun *bool `type:"boolean"`
+
+	// The ID of the prefix list.
+	//
+	// PrefixListId is a required field
+	PrefixListId *string `type:"string" required:"true"`
+
+	// The version to restore.
+	//
+	// PreviousVersion is a required field
+	PreviousVersion *int64 `type:"long" required:"true"`
+}
+
+// String returns the string representation
+func (s RestoreManagedPrefixListVersionInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s RestoreManagedPrefixListVersionInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *RestoreManagedPrefixListVersionInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "RestoreManagedPrefixListVersionInput"}
+	if s.CurrentVersion == nil {
+		invalidParams.Add(request.NewErrParamRequired("CurrentVersion"))
+	}
+	if s.PrefixListId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PrefixListId"))
+	}
+	if s.PreviousVersion == nil {
+		invalidParams.Add(request.NewErrParamRequired("PreviousVersion"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetCurrentVersion sets the CurrentVersion field's value.
+func (s *RestoreManagedPrefixListVersionInput) SetCurrentVersion(v int64) *RestoreManagedPrefixListVersionInput {
+	s.CurrentVersion = &v
+	return s
+}
+
+// SetDryRun sets the DryRun field's value.
+func (s *RestoreManagedPrefixListVersionInput) SetDryRun(v bool) *RestoreManagedPrefixListVersionInput {
+	s.DryRun = &v
+	return s
+}
+
+// SetPrefixListId sets the PrefixListId field's value.
+func (s *RestoreManagedPrefixListVersionInput) SetPrefixListId(v string) *RestoreManagedPrefixListVersionInput {
+	s.PrefixListId = &v
+	return s
+}
+
+// SetPreviousVersion sets the PreviousVersion field's value.
+func (s *RestoreManagedPrefixListVersionInput) SetPreviousVersion(v int64) *RestoreManagedPrefixListVersionInput {
+	s.PreviousVersion = &v
+	return s
+}
+
+type RestoreManagedPrefixListVersionOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the prefix list.
+	PrefixList *ManagedPrefixList `locationName:"prefixList" type:"structure"`
+}
+
+// String returns the string representation
+func (s RestoreManagedPrefixListVersionOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s RestoreManagedPrefixListVersionOutput) GoString() string {
+	return s.String()
+}
+
+// SetPrefixList sets the PrefixList field's value.
+func (s *RestoreManagedPrefixListVersionOutput) SetPrefixList(v *ManagedPrefixList) *RestoreManagedPrefixListVersionOutput {
+	s.PrefixList = v
+	return s
+}
+
 type RevokeClientVpnIngressInput struct {
 	_ struct{} `type:"structure"`
 
@@ -95440,20 +100442,23 @@ type RunInstancesInput struct {
 	CapacityReservationSpecification *CapacityReservationSpecification `type:"structure"`
 
 	// Unique, case-sensitive identifier you provide to ensure the idempotency of
-	// the request. For more information, see Ensuring Idempotency (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
+	// the request. If you do not specify a client token, a randomly generated token
+	// is used for the request to ensure idempotency.
+	//
+	// For more information, see Ensuring Idempotency (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
 	//
 	// Constraints: Maximum 64 ASCII characters
-	ClientToken *string `locationName:"clientToken" type:"string"`
+	ClientToken *string `locationName:"clientToken" type:"string" idempotencyToken:"true"`
 
 	// The CPU options for the instance. For more information, see Optimizing CPU
-	// Options (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-optimize-cpu.html)
+	// options (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-optimize-cpu.html)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	CpuOptions *CpuOptionsRequest `type:"structure"`
 
 	// The credit option for CPU usage of the burstable performance instance. Valid
 	// values are standard and unlimited. To change this attribute after launch,
 	// use ModifyInstanceCreditSpecification (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceCreditSpecification.html).
-	// For more information, see Burstable Performance Instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
+	// For more information, see Burstable performance instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	//
 	// Default: standard (T2 instances) or unlimited (T3/T3a instances)
@@ -95492,10 +100497,12 @@ type RunInstancesInput struct {
 	// An elastic inference accelerator to associate with the instance. Elastic
 	// inference accelerators are a resource you can attach to your Amazon EC2 instances
 	// to accelerate your Deep Learning (DL) inference workloads.
+	//
+	// You cannot specify accelerators from different generations in the same request.
 	ElasticInferenceAccelerators []*ElasticInferenceAccelerator `locationName:"ElasticInferenceAccelerator" locationNameList:"item" type:"list"`
 
 	// Indicates whether an instance is enabled for hibernation. For more information,
-	// see Hibernate Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
+	// see Hibernate your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	HibernationOptions *HibernationOptionsRequest `type:"structure"`
 
@@ -95518,7 +100525,7 @@ type RunInstancesInput struct {
 	// InstanceInterruptionBehavior is set to either hibernate or stop.
 	InstanceMarketOptions *InstanceMarketOptionsRequest `type:"structure"`
 
-	// The instance type. For more information, see Instance Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html)
+	// The instance type. For more information, see Instance types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	//
 	// Default: m1.small
@@ -95578,7 +100585,7 @@ type RunInstancesInput struct {
 	MaxCount *int64 `type:"integer" required:"true"`
 
 	// The metadata options for the instance. For more information, see Instance
-	// Metadata and User Data (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
+	// metadata and user data (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 	MetadataOptions *InstanceMetadataOptionsRequest `type:"structure"`
 
 	// The minimum number of instances to launch. If you specify a minimum that
@@ -95655,7 +100662,7 @@ type RunInstancesInput struct {
 	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 
 	// The user data to make available to the instance. For more information, see
-	// Running Commands on Your Linux Instance at Launch (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
+	// Running commands on your Linux instance at launch (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
 	// (Linux) and Adding User Data (https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-instance-metadata.html#instancedata-add-user-data)
 	// (Windows). If you are using a command line tool, base64-encoding is performed
 	// for you, and you can load the text from a file. Otherwise, you must provide
@@ -98161,9 +103168,10 @@ type Snapshot struct {
 	// key for the parent volume.
 	KmsKeyId *string `locationName:"kmsKeyId" type:"string"`
 
-	// Value from an Amazon-maintained list (amazon | self | all | aws-marketplace
-	// | microsoft) of snapshot owners. Not to be confused with the user-configured
-	// AWS account alias, which is set from the IAM console.
+	// The AWS owner alias, as maintained by Amazon. The possible values are: amazon
+	// | self | all | aws-marketplace | microsoft. This AWS owner alias is not to
+	// be confused with the user-configured AWS account alias, which is set from
+	// the IAM console.
 	OwnerAlias *string `locationName:"ownerAlias" type:"string"`
 
 	// The AWS account ID of the EBS snapshot owner.
@@ -98326,7 +103334,7 @@ type SnapshotDetail struct {
 	// The URL used to access the disk image.
 	Url *string `locationName:"url" type:"string"`
 
-	// The S3 bucket for the disk image.
+	// The Amazon S3 bucket for the disk image.
 	UserBucket *UserBucketDetails `locationName:"userBucket" type:"structure"`
 }
 
@@ -98416,7 +103424,7 @@ type SnapshotDiskContainer struct {
 	// a https URL (https://..) or an Amazon S3 URL (s3://..).
 	Url *string `type:"string"`
 
-	// The S3 bucket for the disk image.
+	// The Amazon S3 bucket for the disk image.
 	UserBucket *UserBucket `type:"structure"`
 }
 
@@ -98596,7 +103604,7 @@ type SnapshotTaskDetail struct {
 	// The URL of the disk image from which the snapshot is created.
 	Url *string `locationName:"url" type:"string"`
 
-	// The S3 bucket for the disk image.
+	// The Amazon S3 bucket for the disk image.
 	UserBucket *UserBucketDetails `locationName:"userBucket" type:"structure"`
 }
 
@@ -98990,6 +103998,9 @@ type SpotFleetRequestConfig struct {
 
 	// The state of the Spot Fleet request.
 	SpotFleetRequestState *string `locationName:"spotFleetRequestState" type:"string" enum:"BatchState"`
+
+	// The tags for a Spot Fleet resource.
+	Tags []*Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -99032,6 +104043,12 @@ func (s *SpotFleetRequestConfig) SetSpotFleetRequestState(v string) *SpotFleetRe
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *SpotFleetRequestConfig) SetTags(v []*Tag) *SpotFleetRequestConfig {
+	s.Tags = v
+	return s
+}
+
 // Describes the configuration of a Spot Fleet request.
 type SpotFleetRequestConfigData struct {
 	_ struct{} `type:"structure"`
@@ -99071,8 +104088,8 @@ type SpotFleetRequestConfigData struct {
 	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet-requests.html#spot-fleet-prerequisites)
 	// in the Amazon EC2 User Guide for Linux Instances. Spot Fleet can terminate
 	// Spot Instances on your behalf when you cancel its Spot Fleet request using
-	// CancelSpotFleetRequests or when the Spot Fleet request expires, if you set
-	// TerminateInstancesWithExpiration.
+	// CancelSpotFleetRequests (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CancelSpotFleetRequests)
+	// or when the Spot Fleet request expires, if you set TerminateInstancesWithExpiration.
 	//
 	// IamFleetRole is a required field
 	IamFleetRole *string `locationName:"iamFleetRole" type:"string" required:"true"`
@@ -99150,6 +104167,16 @@ type SpotFleetRequestConfigData struct {
 	// The maximum price per unit hour that you are willing to pay for a Spot Instance.
 	// The default is the On-Demand price.
 	SpotPrice *string `locationName:"spotPrice" type:"string"`
+
+	// The key-value pair for tagging the Spot Fleet request on creation. The value
+	// for ResourceType must be spot-fleet-request, otherwise the Spot Fleet request
+	// fails. To tag instances at launch, specify the tags in the launch template
+	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html#create-launch-template)
+	// (valid only if you use LaunchTemplateConfigs) or in the SpotFleetTagSpecification
+	// (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotFleetTagSpecification.html)
+	// (valid only if you use LaunchSpecifications). For information about tagging
+	// after launch, see Tagging Your Resources (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-resources).
+	TagSpecifications []*TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 
 	// The number of units to request for the Spot Fleet. You can choose to set
 	// the target capacity in terms of instances or a performance characteristic
@@ -99328,6 +104355,12 @@ func (s *SpotFleetRequestConfigData) SetSpotPrice(v string) *SpotFleetRequestCon
 	return s
 }
 
+// SetTagSpecifications sets the TagSpecifications field's value.
+func (s *SpotFleetRequestConfigData) SetTagSpecifications(v []*TagSpecification) *SpotFleetRequestConfigData {
+	s.TagSpecifications = v
+	return s
+}
+
 // SetTargetCapacity sets the TargetCapacity field's value.
 func (s *SpotFleetRequestConfigData) SetTargetCapacity(v int64) *SpotFleetRequestConfigData {
 	s.TargetCapacity = &v
@@ -99363,7 +104396,8 @@ type SpotFleetTagSpecification struct {
 	_ struct{} `type:"structure"`
 
 	// The type of resource. Currently, the only resource type that is supported
-	// is instance.
+	// is instance. To tag the Spot Fleet request on creation, use the TagSpecifications
+	// parameter in SpotFleetRequestConfigData (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotFleetRequestConfigData.html).
 	ResourceType *string `locationName:"resourceType" type:"string" enum:"ResourceType"`
 
 	// The tags.
@@ -99684,9 +104718,9 @@ type SpotMarketOptions struct {
 	// default is the On-Demand price.
 	MaxPrice *string `type:"string"`
 
-	// The Spot Instance request type. For RunInstances, persistent Spot Instance
-	// requests are only supported when InstanceInterruptionBehavior is set to either
-	// hibernate or stop.
+	// The Spot Instance request type. For RunInstances (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_RunInstances),
+	// persistent Spot Instance requests are only supported when InstanceInterruptionBehavior
+	// is set to either hibernate or stop.
 	SpotInstanceType *string `type:"string" enum:"SpotInstanceType"`
 
 	// The end date of the request. For a one-time request, the request remains
@@ -100052,8 +105086,7 @@ type StaleIpPermission struct {
 	// The IP ranges. Not applicable for stale security group rules.
 	IpRanges []*string `locationName:"ipRanges" locationNameList:"item" type:"list"`
 
-	// The prefix list IDs for an AWS service. Not applicable for stale security
-	// group rules.
+	// The prefix list IDs. Not applicable for stale security group rules.
 	PrefixListIds []*string `locationName:"prefixListIds" locationNameList:"item" type:"list"`
 
 	// The end of the port range for the TCP and UDP protocols, or an ICMP type
@@ -100425,7 +105458,7 @@ type StopInstancesInput struct {
 
 	// Hibernates the instance if the instance was enabled for hibernation at launch.
 	// If the instance cannot hibernate successfully, a normal shutdown occurs.
-	// For more information, see Hibernate Your Instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
+	// For more information, see Hibernate your instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)
 	// in the Amazon Elastic Compute Cloud User Guide.
 	//
 	// Default: false
@@ -100585,11 +105618,19 @@ type Subnet struct {
 	// The IPv4 CIDR block assigned to the subnet.
 	CidrBlock *string `locationName:"cidrBlock" type:"string"`
 
+	// The customer-owned IPv4 address pool associated with the subnet.
+	CustomerOwnedIpv4Pool *string `locationName:"customerOwnedIpv4Pool" type:"string"`
+
 	// Indicates whether this is the default subnet for the Availability Zone.
 	DefaultForAz *bool `locationName:"defaultForAz" type:"boolean"`
 
 	// Information about the IPv6 CIDR blocks associated with the subnet.
 	Ipv6CidrBlockAssociationSet []*SubnetIpv6CidrBlockAssociation `locationName:"ipv6CidrBlockAssociationSet" locationNameList:"item" type:"list"`
+
+	// Indicates whether a network interface created in this subnet (including a
+	// network interface created by RunInstances) receives a customer-owned IPv4
+	// address.
+	MapCustomerOwnedIpOnLaunch *bool `locationName:"mapCustomerOwnedIpOnLaunch" type:"boolean"`
 
 	// Indicates whether instances launched in this subnet receive a public IPv4
 	// address.
@@ -100657,6 +105698,12 @@ func (s *Subnet) SetCidrBlock(v string) *Subnet {
 	return s
 }
 
+// SetCustomerOwnedIpv4Pool sets the CustomerOwnedIpv4Pool field's value.
+func (s *Subnet) SetCustomerOwnedIpv4Pool(v string) *Subnet {
+	s.CustomerOwnedIpv4Pool = &v
+	return s
+}
+
 // SetDefaultForAz sets the DefaultForAz field's value.
 func (s *Subnet) SetDefaultForAz(v bool) *Subnet {
 	s.DefaultForAz = &v
@@ -100666,6 +105713,12 @@ func (s *Subnet) SetDefaultForAz(v bool) *Subnet {
 // SetIpv6CidrBlockAssociationSet sets the Ipv6CidrBlockAssociationSet field's value.
 func (s *Subnet) SetIpv6CidrBlockAssociationSet(v []*SubnetIpv6CidrBlockAssociation) *Subnet {
 	s.Ipv6CidrBlockAssociationSet = v
+	return s
+}
+
+// SetMapCustomerOwnedIpOnLaunch sets the MapCustomerOwnedIpOnLaunch field's value.
+func (s *Subnet) SetMapCustomerOwnedIpOnLaunch(v bool) *Subnet {
+	s.MapCustomerOwnedIpOnLaunch = &v
 	return s
 }
 
@@ -100970,10 +106023,14 @@ type TagSpecification struct {
 
 	// The type of resource to tag. Currently, the resource types that support tagging
 	// on creation are: capacity-reservation | client-vpn-endpoint | dedicated-host
-	// | fleet | fpga-image | instance | key-pair | launch-template | placement-group
-	// | snapshot | traffic-mirror-filter | traffic-mirror-session | traffic-mirror-target
-	// | transit-gateway | transit-gateway-attachment | transit-gateway-route-table
-	// | volume.
+	// | dhcp-options | export-image-task | export-instance-task | fleet | fpga-image
+	// | host-reservation | import-image-task | import-snapshot-task | instance
+	// | internet-gateway | ipv4pool-ec2 | ipv6pool-ec2 | key-pair | launch-template
+	// | placement-group | prefix-list | launch-template | natgateway | network-acl
+	// | security-group | spot-fleet-request | snapshot | subnet | traffic-mirror-filter
+	// | traffic-mirror-session | traffic-mirror-target | transit-gateway | transit-gateway-attachment
+	// | transit-gateway-route-table | volume |vpc | vpc-endpoint (for interface
+	// and gateway endpoints) | vpc-endpoint-service (for AWS PrivateLink) | vpc-flow-log.
 	//
 	// To tag a resource after it has been created, see CreateTags (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html).
 	ResourceType *string `locationName:"resourceType" type:"string" enum:"ResourceType"`
@@ -101017,7 +106074,8 @@ func (s *TagSpecification) SetTags(v []*Tag) *TagSpecification {
 // reaches the maximum amount that you're willing to pay. When the maximum amount
 // you're willing to pay is reached, the fleet stops launching instances even
 // if it hasn’t met the target capacity. The MaxTotalPrice parameters are
-// located in and
+// located in OnDemandOptions (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_OnDemandOptions.html)
+// and SpotOptions (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotOptions)
 type TargetCapacitySpecification struct {
 	_ struct{} `type:"structure"`
 
@@ -101083,7 +106141,8 @@ func (s *TargetCapacitySpecification) SetTotalTargetCapacity(v int64) *TargetCap
 // instances until it reaches the maximum amount that you're willing to pay.
 // When the maximum amount you're willing to pay is reached, the fleet stops
 // launching instances even if it hasn’t met the target capacity. The MaxTotalPrice
-// parameters are located in and .
+// parameters are located in OnDemandOptionsRequest (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_OnDemandOptionsRequest)
+// and SpotOptionsRequest (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotOptionsRequest).
 type TargetCapacitySpecificationRequest struct {
 	_ struct{} `type:"structure"`
 
@@ -103537,7 +108596,7 @@ type TransitGatewayVpcAttachmentOptions struct {
 	// Indicates whether DNS support is enabled.
 	DnsSupport *string `locationName:"dnsSupport" type:"string" enum:"DnsSupportValue"`
 
-	// Indicates whether IPv6 support is enabled.
+	// Indicates whether IPv6 support is disabled.
 	Ipv6Support *string `locationName:"ipv6Support" type:"string" enum:"Ipv6SupportValue"`
 }
 
@@ -104276,11 +109335,11 @@ func (s *UpdateSecurityGroupRuleDescriptionsIngressOutput) SetReturn(v bool) *Up
 	return s
 }
 
-// Describes the S3 bucket for the disk image.
+// Describes the Amazon S3 bucket for the disk image.
 type UserBucket struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the S3 bucket where the disk image is located.
+	// The name of the Amazon S3 bucket where the disk image is located.
 	S3Bucket *string `type:"string"`
 
 	// The file name of the disk image.
@@ -104309,11 +109368,11 @@ func (s *UserBucket) SetS3Key(v string) *UserBucket {
 	return s
 }
 
-// Describes the S3 bucket for the disk image.
+// Describes the Amazon S3 bucket for the disk image.
 type UserBucketDetails struct {
 	_ struct{} `type:"structure"`
 
-	// The S3 bucket from which the disk image was created.
+	// The Amazon S3 bucket from which the disk image was created.
 	S3Bucket *string `locationName:"s3Bucket" type:"string"`
 
 	// The file name of the disk image.
@@ -104524,6 +109583,70 @@ func (s *VCpuInfo) SetValidThreadsPerCore(v []*int64) *VCpuInfo {
 	return s
 }
 
+// The error code and error message that is returned for a parameter or parameter
+// combination that is not valid when a new launch template or new version of
+// a launch template is created.
+type ValidationError struct {
+	_ struct{} `type:"structure"`
+
+	// The error code that indicates why the parameter or parameter combination
+	// is not valid. For more information about error codes, see Error Codes (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/errors-overview.html.html).
+	Code *string `locationName:"code" type:"string"`
+
+	// The error message that describes why the parameter or parameter combination
+	// is not valid. For more information about error messages, see Error Codes
+	// (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/errors-overview.html.html).
+	Message *string `locationName:"message" type:"string"`
+}
+
+// String returns the string representation
+func (s ValidationError) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ValidationError) GoString() string {
+	return s.String()
+}
+
+// SetCode sets the Code field's value.
+func (s *ValidationError) SetCode(v string) *ValidationError {
+	s.Code = &v
+	return s
+}
+
+// SetMessage sets the Message field's value.
+func (s *ValidationError) SetMessage(v string) *ValidationError {
+	s.Message = &v
+	return s
+}
+
+// The error codes and error messages that are returned for the parameters or
+// parameter combinations that are not valid when a new launch template or new
+// version of a launch template is created.
+type ValidationWarning struct {
+	_ struct{} `type:"structure"`
+
+	// The error codes and error messages.
+	Errors []*ValidationError `locationName:"errorSet" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s ValidationWarning) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ValidationWarning) GoString() string {
+	return s.String()
+}
+
+// SetErrors sets the Errors field's value.
+func (s *ValidationWarning) SetErrors(v []*ValidationError) *ValidationWarning {
+	s.Errors = v
+	return s
+}
+
 // Describes telemetry for a VPN tunnel.
 type VgwTelemetry struct {
 	_ struct{} `type:"structure"`
@@ -104635,6 +109758,9 @@ type Volume struct {
 	// key for the volume.
 	KmsKeyId *string `locationName:"kmsKeyId" type:"string"`
 
+	// Indicates whether Amazon EBS Multi-Attach is enabled.
+	MultiAttachEnabled *bool `locationName:"multiAttachEnabled" type:"boolean"`
+
 	// The Amazon Resource Name (ARN) of the Outpost.
 	OutpostArn *string `locationName:"outpostArn" type:"string"`
 
@@ -104708,6 +109834,12 @@ func (s *Volume) SetIops(v int64) *Volume {
 // SetKmsKeyId sets the KmsKeyId field's value.
 func (s *Volume) SetKmsKeyId(v string) *Volume {
 	s.KmsKeyId = &v
+	return s
+}
+
+// SetMultiAttachEnabled sets the MultiAttachEnabled field's value.
+func (s *Volume) SetMultiAttachEnabled(v bool) *Volume {
+	s.MultiAttachEnabled = &v
 	return s
 }
 
@@ -104877,7 +110009,7 @@ type VolumeModification struct {
 	// The original IOPS rate of the volume.
 	OriginalIops *int64 `locationName:"originalIops" type:"integer"`
 
-	// The original size of the volume.
+	// The original size of the volume, in GiB.
 	OriginalSize *int64 `locationName:"originalSize" type:"integer"`
 
 	// The original EBS volume type of the volume.
@@ -105038,6 +110170,39 @@ func (s *VolumeStatusAction) SetEventType(v string) *VolumeStatusAction {
 	return s
 }
 
+// Information about the instances to which the volume is attached.
+type VolumeStatusAttachmentStatus struct {
+	_ struct{} `type:"structure"`
+
+	// The ID of the attached instance.
+	InstanceId *string `locationName:"instanceId" type:"string"`
+
+	// The maximum IOPS supported by the attached instance.
+	IoPerformance *string `locationName:"ioPerformance" type:"string"`
+}
+
+// String returns the string representation
+func (s VolumeStatusAttachmentStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s VolumeStatusAttachmentStatus) GoString() string {
+	return s.String()
+}
+
+// SetInstanceId sets the InstanceId field's value.
+func (s *VolumeStatusAttachmentStatus) SetInstanceId(v string) *VolumeStatusAttachmentStatus {
+	s.InstanceId = &v
+	return s
+}
+
+// SetIoPerformance sets the IoPerformance field's value.
+func (s *VolumeStatusAttachmentStatus) SetIoPerformance(v string) *VolumeStatusAttachmentStatus {
+	s.IoPerformance = &v
+	return s
+}
+
 // Describes a volume status.
 type VolumeStatusDetails struct {
 	_ struct{} `type:"structure"`
@@ -105084,6 +110249,9 @@ type VolumeStatusEvent struct {
 	// The type of this event.
 	EventType *string `locationName:"eventType" type:"string"`
 
+	// The ID of the instance associated with the event.
+	InstanceId *string `locationName:"instanceId" type:"string"`
+
 	// The latest end time of the event.
 	NotAfter *time.Time `locationName:"notAfter" type:"timestamp"`
 
@@ -105116,6 +110284,12 @@ func (s *VolumeStatusEvent) SetEventId(v string) *VolumeStatusEvent {
 // SetEventType sets the EventType field's value.
 func (s *VolumeStatusEvent) SetEventType(v string) *VolumeStatusEvent {
 	s.EventType = &v
+	return s
+}
+
+// SetInstanceId sets the InstanceId field's value.
+func (s *VolumeStatusEvent) SetInstanceId(v string) *VolumeStatusEvent {
+	s.InstanceId = &v
 	return s
 }
 
@@ -105171,6 +110345,9 @@ type VolumeStatusItem struct {
 	// The details of the operation.
 	Actions []*VolumeStatusAction `locationName:"actionsSet" locationNameList:"item" type:"list"`
 
+	// Information about the instances to which the volume is attached.
+	AttachmentStatuses []*VolumeStatusAttachmentStatus `locationName:"attachmentStatuses" locationNameList:"item" type:"list"`
+
 	// The Availability Zone of the volume.
 	AvailabilityZone *string `locationName:"availabilityZone" type:"string"`
 
@@ -105200,6 +110377,12 @@ func (s VolumeStatusItem) GoString() string {
 // SetActions sets the Actions field's value.
 func (s *VolumeStatusItem) SetActions(v []*VolumeStatusAction) *VolumeStatusItem {
 	s.Actions = v
+	return s
+}
+
+// SetAttachmentStatuses sets the AttachmentStatuses field's value.
+func (s *VolumeStatusItem) SetAttachmentStatuses(v []*VolumeStatusAttachmentStatus) *VolumeStatusItem {
+	s.AttachmentStatuses = v
 	return s
 }
 
@@ -105750,6 +110933,9 @@ type VpcIpv6CidrBlockAssociation struct {
 	// Information about the state of the CIDR block.
 	Ipv6CidrBlockState *VpcCidrBlockState `locationName:"ipv6CidrBlockState" type:"structure"`
 
+	// The ID of the IPv6 address pool from which the IPv6 CIDR block is allocated.
+	Ipv6Pool *string `locationName:"ipv6Pool" type:"string"`
+
 	// The name of the location from which we advertise the IPV6 CIDR block.
 	NetworkBorderGroup *string `locationName:"networkBorderGroup" type:"string"`
 }
@@ -105779,6 +110965,12 @@ func (s *VpcIpv6CidrBlockAssociation) SetIpv6CidrBlock(v string) *VpcIpv6CidrBlo
 // SetIpv6CidrBlockState sets the Ipv6CidrBlockState field's value.
 func (s *VpcIpv6CidrBlockAssociation) SetIpv6CidrBlockState(v *VpcCidrBlockState) *VpcIpv6CidrBlockAssociation {
 	s.Ipv6CidrBlockState = v
+	return s
+}
+
+// SetIpv6Pool sets the Ipv6Pool field's value.
+func (s *VpcIpv6CidrBlockAssociation) SetIpv6Pool(v string) *VpcIpv6CidrBlockAssociation {
+	s.Ipv6Pool = &v
 	return s
 }
 
@@ -106355,7 +111547,7 @@ func (s *VpnStaticRoute) SetState(v string) *VpnStaticRoute {
 	return s
 }
 
-// The tunnel options for a VPN connection.
+// The tunnel options for a single VPN tunnel.
 type VpnTunnelOptionsSpecification struct {
 	_ struct{} `type:"structure"`
 
@@ -106580,7 +111772,7 @@ func (s *VpnTunnelOptionsSpecification) SetTunnelInsideCidr(v string) *VpnTunnel
 type WithdrawByoipCidrInput struct {
 	_ struct{} `type:"structure"`
 
-	// The public IPv4 address range, in CIDR notation.
+	// The address range, in CIDR notation.
 	//
 	// Cidr is a required field
 	Cidr *string `type:"string" required:"true"`
@@ -106885,6 +112077,9 @@ const (
 
 	// ByoipCidrStateProvisioned is a ByoipCidrState enum value
 	ByoipCidrStateProvisioned = "provisioned"
+
+	// ByoipCidrStateProvisionedNotPubliclyAdvertisable is a ByoipCidrState enum value
+	ByoipCidrStateProvisionedNotPubliclyAdvertisable = "provisioned-not-publicly-advertisable"
 )
 
 const (
@@ -107000,6 +112195,9 @@ const (
 
 	// ClientVpnAuthenticationTypeDirectoryServiceAuthentication is a ClientVpnAuthenticationType enum value
 	ClientVpnAuthenticationTypeDirectoryServiceAuthentication = "directory-service-authentication"
+
+	// ClientVpnAuthenticationTypeFederatedAuthentication is a ClientVpnAuthenticationType enum value
+	ClientVpnAuthenticationTypeFederatedAuthentication = "federated-authentication"
 )
 
 const (
@@ -107217,6 +112415,17 @@ const (
 
 	// EbsEncryptionSupportSupported is a EbsEncryptionSupport enum value
 	EbsEncryptionSupportSupported = "supported"
+)
+
+const (
+	// EbsNvmeSupportUnsupported is a EbsNvmeSupport enum value
+	EbsNvmeSupportUnsupported = "unsupported"
+
+	// EbsNvmeSupportSupported is a EbsNvmeSupport enum value
+	EbsNvmeSupportSupported = "supported"
+
+	// EbsNvmeSupportRequired is a EbsNvmeSupport enum value
+	EbsNvmeSupportRequired = "required"
 )
 
 const (
@@ -107949,6 +113158,33 @@ const (
 	// InstanceTypeR5ad24xlarge is a InstanceType enum value
 	InstanceTypeR5ad24xlarge = "r5ad.24xlarge"
 
+	// InstanceTypeR6gMetal is a InstanceType enum value
+	InstanceTypeR6gMetal = "r6g.metal"
+
+	// InstanceTypeR6gMedium is a InstanceType enum value
+	InstanceTypeR6gMedium = "r6g.medium"
+
+	// InstanceTypeR6gLarge is a InstanceType enum value
+	InstanceTypeR6gLarge = "r6g.large"
+
+	// InstanceTypeR6gXlarge is a InstanceType enum value
+	InstanceTypeR6gXlarge = "r6g.xlarge"
+
+	// InstanceTypeR6g2xlarge is a InstanceType enum value
+	InstanceTypeR6g2xlarge = "r6g.2xlarge"
+
+	// InstanceTypeR6g4xlarge is a InstanceType enum value
+	InstanceTypeR6g4xlarge = "r6g.4xlarge"
+
+	// InstanceTypeR6g8xlarge is a InstanceType enum value
+	InstanceTypeR6g8xlarge = "r6g.8xlarge"
+
+	// InstanceTypeR6g12xlarge is a InstanceType enum value
+	InstanceTypeR6g12xlarge = "r6g.12xlarge"
+
+	// InstanceTypeR6g16xlarge is a InstanceType enum value
+	InstanceTypeR6g16xlarge = "r6g.16xlarge"
+
 	// InstanceTypeX116xlarge is a InstanceType enum value
 	InstanceTypeX116xlarge = "x1.16xlarge"
 
@@ -108099,6 +113335,30 @@ const (
 	// InstanceTypeC5Metal is a InstanceType enum value
 	InstanceTypeC5Metal = "c5.metal"
 
+	// InstanceTypeC5aLarge is a InstanceType enum value
+	InstanceTypeC5aLarge = "c5a.large"
+
+	// InstanceTypeC5aXlarge is a InstanceType enum value
+	InstanceTypeC5aXlarge = "c5a.xlarge"
+
+	// InstanceTypeC5a2xlarge is a InstanceType enum value
+	InstanceTypeC5a2xlarge = "c5a.2xlarge"
+
+	// InstanceTypeC5a4xlarge is a InstanceType enum value
+	InstanceTypeC5a4xlarge = "c5a.4xlarge"
+
+	// InstanceTypeC5a8xlarge is a InstanceType enum value
+	InstanceTypeC5a8xlarge = "c5a.8xlarge"
+
+	// InstanceTypeC5a12xlarge is a InstanceType enum value
+	InstanceTypeC5a12xlarge = "c5a.12xlarge"
+
+	// InstanceTypeC5a16xlarge is a InstanceType enum value
+	InstanceTypeC5a16xlarge = "c5a.16xlarge"
+
+	// InstanceTypeC5a24xlarge is a InstanceType enum value
+	InstanceTypeC5a24xlarge = "c5a.24xlarge"
+
 	// InstanceTypeC5dLarge is a InstanceType enum value
 	InstanceTypeC5dLarge = "c5d.large"
 
@@ -108144,6 +113404,33 @@ const (
 	// InstanceTypeC5n18xlarge is a InstanceType enum value
 	InstanceTypeC5n18xlarge = "c5n.18xlarge"
 
+	// InstanceTypeC6gMetal is a InstanceType enum value
+	InstanceTypeC6gMetal = "c6g.metal"
+
+	// InstanceTypeC6gMedium is a InstanceType enum value
+	InstanceTypeC6gMedium = "c6g.medium"
+
+	// InstanceTypeC6gLarge is a InstanceType enum value
+	InstanceTypeC6gLarge = "c6g.large"
+
+	// InstanceTypeC6gXlarge is a InstanceType enum value
+	InstanceTypeC6gXlarge = "c6g.xlarge"
+
+	// InstanceTypeC6g2xlarge is a InstanceType enum value
+	InstanceTypeC6g2xlarge = "c6g.2xlarge"
+
+	// InstanceTypeC6g4xlarge is a InstanceType enum value
+	InstanceTypeC6g4xlarge = "c6g.4xlarge"
+
+	// InstanceTypeC6g8xlarge is a InstanceType enum value
+	InstanceTypeC6g8xlarge = "c6g.8xlarge"
+
+	// InstanceTypeC6g12xlarge is a InstanceType enum value
+	InstanceTypeC6g12xlarge = "c6g.12xlarge"
+
+	// InstanceTypeC6g16xlarge is a InstanceType enum value
+	InstanceTypeC6g16xlarge = "c6g.16xlarge"
+
 	// InstanceTypeCc14xlarge is a InstanceType enum value
 	InstanceTypeCc14xlarge = "cc1.4xlarge"
 
@@ -108185,6 +113472,9 @@ const (
 
 	// InstanceTypeG4dn16xlarge is a InstanceType enum value
 	InstanceTypeG4dn16xlarge = "g4dn.16xlarge"
+
+	// InstanceTypeG4dnMetal is a InstanceType enum value
+	InstanceTypeG4dnMetal = "g4dn.metal"
 
 	// InstanceTypeCg14xlarge is a InstanceType enum value
 	InstanceTypeCg14xlarge = "cg1.4xlarge"
@@ -108506,6 +113796,33 @@ const (
 
 	// InstanceTypeInf124xlarge is a InstanceType enum value
 	InstanceTypeInf124xlarge = "inf1.24xlarge"
+
+	// InstanceTypeM6gMetal is a InstanceType enum value
+	InstanceTypeM6gMetal = "m6g.metal"
+
+	// InstanceTypeM6gMedium is a InstanceType enum value
+	InstanceTypeM6gMedium = "m6g.medium"
+
+	// InstanceTypeM6gLarge is a InstanceType enum value
+	InstanceTypeM6gLarge = "m6g.large"
+
+	// InstanceTypeM6gXlarge is a InstanceType enum value
+	InstanceTypeM6gXlarge = "m6g.xlarge"
+
+	// InstanceTypeM6g2xlarge is a InstanceType enum value
+	InstanceTypeM6g2xlarge = "m6g.2xlarge"
+
+	// InstanceTypeM6g4xlarge is a InstanceType enum value
+	InstanceTypeM6g4xlarge = "m6g.4xlarge"
+
+	// InstanceTypeM6g8xlarge is a InstanceType enum value
+	InstanceTypeM6g8xlarge = "m6g.8xlarge"
+
+	// InstanceTypeM6g12xlarge is a InstanceType enum value
+	InstanceTypeM6g12xlarge = "m6g.12xlarge"
+
+	// InstanceTypeM6g16xlarge is a InstanceType enum value
+	InstanceTypeM6g16xlarge = "m6g.16xlarge"
 )
 
 const (
@@ -108659,6 +113976,14 @@ const (
 
 	// MembershipTypeIgmp is a MembershipType enum value
 	MembershipTypeIgmp = "igmp"
+)
+
+const (
+	// ModifyAvailabilityZoneOptInStatusOptedIn is a ModifyAvailabilityZoneOptInStatus enum value
+	ModifyAvailabilityZoneOptInStatusOptedIn = "opted-in"
+
+	// ModifyAvailabilityZoneOptInStatusNotOptedIn is a ModifyAvailabilityZoneOptInStatus enum value
+	ModifyAvailabilityZoneOptInStatusNotOptedIn = "not-opted-in"
 )
 
 const (
@@ -108871,6 +114196,44 @@ const (
 )
 
 const (
+	// PrefixListStateCreateInProgress is a PrefixListState enum value
+	PrefixListStateCreateInProgress = "create-in-progress"
+
+	// PrefixListStateCreateComplete is a PrefixListState enum value
+	PrefixListStateCreateComplete = "create-complete"
+
+	// PrefixListStateCreateFailed is a PrefixListState enum value
+	PrefixListStateCreateFailed = "create-failed"
+
+	// PrefixListStateModifyInProgress is a PrefixListState enum value
+	PrefixListStateModifyInProgress = "modify-in-progress"
+
+	// PrefixListStateModifyComplete is a PrefixListState enum value
+	PrefixListStateModifyComplete = "modify-complete"
+
+	// PrefixListStateModifyFailed is a PrefixListState enum value
+	PrefixListStateModifyFailed = "modify-failed"
+
+	// PrefixListStateRestoreInProgress is a PrefixListState enum value
+	PrefixListStateRestoreInProgress = "restore-in-progress"
+
+	// PrefixListStateRestoreComplete is a PrefixListState enum value
+	PrefixListStateRestoreComplete = "restore-complete"
+
+	// PrefixListStateRestoreFailed is a PrefixListState enum value
+	PrefixListStateRestoreFailed = "restore-failed"
+
+	// PrefixListStateDeleteInProgress is a PrefixListState enum value
+	PrefixListStateDeleteInProgress = "delete-in-progress"
+
+	// PrefixListStateDeleteComplete is a PrefixListState enum value
+	PrefixListStateDeleteComplete = "delete-complete"
+
+	// PrefixListStateDeleteFailed is a PrefixListState enum value
+	PrefixListStateDeleteFailed = "delete-failed"
+)
+
+const (
 	// PrincipalTypeAll is a PrincipalType enum value
 	PrincipalTypeAll = "All"
 
@@ -109014,6 +114377,15 @@ const (
 	// ResourceTypeElasticIp is a ResourceType enum value
 	ResourceTypeElasticIp = "elastic-ip"
 
+	// ResourceTypeElasticGpu is a ResourceType enum value
+	ResourceTypeElasticGpu = "elastic-gpu"
+
+	// ResourceTypeExportImageTask is a ResourceType enum value
+	ResourceTypeExportImageTask = "export-image-task"
+
+	// ResourceTypeExportInstanceTask is a ResourceType enum value
+	ResourceTypeExportInstanceTask = "export-instance-task"
+
 	// ResourceTypeFleet is a ResourceType enum value
 	ResourceTypeFleet = "fleet"
 
@@ -109026,6 +114398,12 @@ const (
 	// ResourceTypeImage is a ResourceType enum value
 	ResourceTypeImage = "image"
 
+	// ResourceTypeImportImageTask is a ResourceType enum value
+	ResourceTypeImportImageTask = "import-image-task"
+
+	// ResourceTypeImportSnapshotTask is a ResourceType enum value
+	ResourceTypeImportSnapshotTask = "import-snapshot-task"
+
 	// ResourceTypeInstance is a ResourceType enum value
 	ResourceTypeInstance = "instance"
 
@@ -109037,6 +114415,9 @@ const (
 
 	// ResourceTypeLaunchTemplate is a ResourceType enum value
 	ResourceTypeLaunchTemplate = "launch-template"
+
+	// ResourceTypeLocalGatewayRouteTableVpcAssociation is a ResourceType enum value
+	ResourceTypeLocalGatewayRouteTableVpcAssociation = "local-gateway-route-table-vpc-association"
 
 	// ResourceTypeNatgateway is a ResourceType enum value
 	ResourceTypeNatgateway = "natgateway"
@@ -109106,6 +114487,9 @@ const (
 
 	// ResourceTypeVpnGateway is a ResourceType enum value
 	ResourceTypeVpnGateway = "vpn-gateway"
+
+	// ResourceTypeVpcFlowLog is a ResourceType enum value
+	ResourceTypeVpcFlowLog = "vpc-flow-log"
 )
 
 const (
